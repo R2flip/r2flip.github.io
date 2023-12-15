@@ -6,8 +6,12 @@
 		<meta charset="utf-8" />
  
 <style>
-html, body {
+html {
   height: 100%;
+}
+
+body {
+  min-height: 100%;
 }
 
 body {
@@ -37,30 +41,37 @@ h1 span {
   align-items: center;
   width: 100%;
   height: 100%;
+  min-height: 500px;
 }
 
 .input-flex-container {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  flex-wrap: wrap;
   width: 80vw;
-  height: 100px;
   max-width: 1000px;
   position: relative;
   z-index: 0;
+  margin-left: calc((80vw - 25px) / 14);
 }
 
-.input {
+input {
   width: 25px;
   height: 25px;
   background-color: #2C3E50;
   position: relative;
   border-radius: 50%;
-}
-.input:hover {
+  display: block;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
   cursor: pointer;
 }
-.input::before, .input::after {
+input:focus {
+  outline: none;
+}
+input::before, input::after {
   content: "";
   display: block;
   position: absolute;
@@ -72,102 +83,129 @@ h1 span {
   height: 5px;
   max-width: 71.4285714286px;
 }
-.input::before {
+input::before {
   left: calc(-5.7142857143vw + 12.5px);
 }
-.input::after {
+input::after {
   right: calc(-5.7142857143vw + 12.5px);
 }
-.input.active {
+input:checked {
   background-color: #2C3E50;
 }
-.input.active::before {
+input:checked::before {
   background-color: #2C3E50;
 }
-.input.active::after {
+input:checked::after {
   background-color: #AEB6BF;
 }
-.input.active span {
-  font-weight: 700;
+input:checked ~ input, input:checked ~ input::before, input:checked ~ input::after {
+  background-color: #AEB6BF;
 }
-.input.active span::before {
+input:checked + .dot-info span {
   font-size: 13px;
+  font-weight: bold;
 }
-.input.active span::after {
-  font-size: 15px;
-}
-.input.active ~ .input, .input.active ~ .input::before, .input.active ~ .input::after {
-  background-color: #AEB6BF;
-}
-.input span {
-  width: 1px;
-  height: 1px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+
+.dot-info {
+  width: 25px;
+  height: 25px;
+  display: block;
   visibility: hidden;
+  position: relative;
+  z-index: -1;
+  left: calc((((80vw - 25px) / 14) * -1) - 1px);
 }
-.input span::before, .input span::after {
+.dot-info span {
   visibility: visible;
   position: absolute;
-  left: 50%;
-}
-.input span::after {
-  content: attr(data-year);
-  top: 25px;
-  transform: translateX(-50%);
-  font-size: 14px;
-}
-.input span::before {
-  content: attr(data-info);
-  top: -65px;
-  width: 70px;
-  transform: translateX(-5px) rotateZ(-45deg);
   font-size: 12px;
+}
+.dot-info span.year {
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.dot-info span.label {
+  top: -65px;
+  left: 0;
+  transform: rotateZ(-45deg);
+  width: 70px;
   text-indent: -10px;
 }
 
-.description-flex-container {
-  width: 80vw;
-  font-weight: 400;
+#timeline-descriptions-wrapper {
+  width: 100%;
+  margin-top: 140px;
   font-size: 22px;
-  margin-top: 100px;
-  max-width: 1000px;
+  font-weight: 400;
+  margin-left: calc((-80vw - 25px) / 14);
 }
-.description-flex-container p {
+#timeline-descriptions-wrapper p {
   margin-top: 0;
   display: none;
 }
-.description-flex-container p.active {
+
+input[data-description="1910"]:checked ~ #timeline-descriptions-wrapper p[data-description="1910"] {
+  display: block;
+}
+
+input[data-description="1920"]:checked ~ #timeline-descriptions-wrapper p[data-description="1920"] {
+  display: block;
+}
+
+input[data-description="1930"]:checked ~ #timeline-descriptions-wrapper p[data-description="1930"] {
+  display: block;
+}
+
+input[data-description="1940"]:checked ~ #timeline-descriptions-wrapper p[data-description="1940"] {
+  display: block;
+}
+
+input[data-description="1950"]:checked ~ #timeline-descriptions-wrapper p[data-description="1950"] {
+  display: block;
+}
+
+input[data-description="1960"]:checked ~ #timeline-descriptions-wrapper p[data-description="1960"] {
+  display: block;
+}
+
+input[data-description="1970"]:checked ~ #timeline-descriptions-wrapper p[data-description="1970"] {
+  display: block;
+}
+
+input[data-description="1980"]:checked ~ #timeline-descriptions-wrapper p[data-description="1980"] {
+  display: block;
+}
+
+input[data-description="1990"]:checked ~ #timeline-descriptions-wrapper p[data-description="1990"] {
+  display: block;
+}
+
+input[data-description="2000"]:checked ~ #timeline-descriptions-wrapper p[data-description="2000"] {
   display: block;
 }
 
 @media (min-width: 1250px) {
-  .input::before {
-    left: -58.9285714286px;
+  .input-flex-container {
+    margin-left: 83.9285714286px;
   }
 
-  .input::after {
+  input::before {
+    left: -58.9285714286px;
+  }
+  input::after {
     right: -58.9285714286px;
   }
-}
-@media (max-width: 850px) {
-  .input {
-    width: 17px;
-    height: 17px;
+
+  .dot-info {
+    left: calc((((1000px - 25px) / 14) * -1) - 1px);
   }
-  .input::before, .input::after {
-    height: 3px;
-  }
-  .input::before {
-    left: calc(-5.7142857143vw + 8.5px);
-  }
-  .input::after {
-    right: calc(-5.7142857143vw + 8.5px);
+
+  #timeline-descriptions-wrapper {
+    margin-left: -58.9285714286px;
   }
 }
-@media (max-width: 600px) {
+@media (max-width: 630px) {
   .flex-parent {
     justify-content: initial;
   }
@@ -175,45 +213,77 @@ h1 span {
   .input-flex-container {
     flex-wrap: wrap;
     justify-content: center;
-    width: 100%;
+    width: 400px;
     height: auto;
     margin-top: 15vh;
+    margin-left: 0;
+    padding-bottom: 30px;
   }
 
-  .input {
+  input, .dot-info {
     width: 60px;
     height: 60px;
     margin: 0 10px 50px;
-    background-color: #AEB6BF;
   }
-  .input::before, .input::after {
+
+  input {
+    background-color: transparent !important;
+    z-index: 1;
+  }
+  input::before, input::after {
     content: none;
   }
-  .input span {
+  input:checked + .dot-info {
+    background-color: #2C3E50;
+  }
+  input:checked + .dot-info span.year {
+    font-size: 14px;
+  }
+  input:checked + .dot-info span.label {
+    font-size: 12px;
+  }
+
+  .dot-info {
+    visibility: visible;
+    border-radius: 50%;
+    z-index: 0;
+    left: 0;
+    margin-left: -70px;
+    background-color: #AEB6BF;
+  }
+  .dot-info span.year {
+    top: 0;
+    left: 0;
+    transform: none;
     width: 100%;
     height: 100%;
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ECF0F1;
   }
-  .input span::before {
+  .dot-info span.label {
     top: calc(100% + 5px);
+    left: 50%;
     transform: translateX(-50%);
     text-indent: 0;
     text-align: center;
   }
-  .input span::after {
-    top: 50%;
-    transform: translate(-50%, -50%);
-    color: #ECF0F1;
-  }
 
-  .description-flex-container {
+  #timeline-descriptions-wrapper {
     margin-top: 30px;
+    margin-left: 0;
     text-align: center;
   }
 }
+@media (max-width: 480px) {
+  .input-flex-container {
+    width: 340px;
+  }
+}
 @media (max-width: 400px) {
-  body {
-    min-height: 950px;
+  .input-flex-container {
+    width: 300px;
   }
 }
 </style>
@@ -242,27 +312,27 @@ h1 span {
 		</div>
 		<input type="radio" name="timeline-dot" data-description="1930" checked>
 		<div class="dot-info" data-description="1930">
-			<span class="year">1930</span>
+			<span class="year">A03</span>
 			<span class="label">學生第二宿舍</span>
 		</div>
 		<input type="radio" name="timeline-dot" data-description="1940">
 		<div class="dot-info" data-description="1940">
-			<span class="year">1940</span>
+			<span class="year">A04</span>
 			<span class="label">體健休大樓</span>
 		</div>
 		<input type="radio" name="timeline-dot" data-description="1950">
 		<div class="dot-info" data-description="1950">
-			<span class="year">1950</span>
+			<span class="year">A05</span>
 			<span class="label">工學院</span>
 		</div>
 		<input type="radio" name="timeline-dot" data-description="1960">
 		<div class="dot-info" data-description="1960">
-			<span class="year">1960</span>
+			<span class="year">A06</span>
 			<span class="label">活動中心</span>
 		</div>
 		<input type="radio" name="timeline-dot" data-description="1970">
 		<div class="dot-info" data-description="1970">
-			<span class="year">1970</span>
+			<span class="year">A07</span>
 			<span class="label">圖資大樓</span>
 		</div>
 
