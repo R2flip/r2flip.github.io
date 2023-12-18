@@ -11,8 +11,242 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		
+	<style>
+	* {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: "Noto Sans TC", sans-serif;
+	background-color: #192f2c;
+}
+
+a {
+	text-decoration: none;
+}
+.wrap {
+	width: 1200px;
+	margin: 0 auto;
+}
+
+h1 {
+	color: #fff;
+	text-align: center;
+	border-bottom: 1px solid #fff;
+	padding: 30px 0;
+}
+
+.text {
+	color: #fff;
+}
+h2 {
+	color: #192f2c;
+}
+
+p {
+	padding-top: 10px;
+	line-height: 1.8;
+	font-weight: 300;
+	color: #333;
+}
+.timeline {
+	padding-top: 5%;
+	a {
+		display: block; //要改成區塊元素
+		background-color: #ffe033;
+		border: 2px solid #fff;
+		padding: 20px;
+		box-shadow: 0 0 5px #666;
+		border-radius: 10px;
+		transition: all 0.5s;
+		&:hover {
+			background-color: #fcea86;
+		}
+	}
+	h2::after {
+		content: "";
+		position: absolute;
+		height: 1px;
+		width: 100px;
+		background-color: #ffffff;
+		top: 0;
+		bottom: 0;
+		margin: auto;
+	}
+	li {
+		padding-top: 25px;
+		padding-bottom: 25px;
+		border-radius: 10px;
+		width: 50%;
+		position: relative;
+		&::before {
+			//圓點
+			content: "";
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			margin: auto;
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background-color: #fff;
+		}
+		&:nth-child(odd) {
+			float: left;
+			padding-right: 100px;
+			& h2::after {
+				right: 0; //基數列橫線位置
+			}
+			&::after {
+				content: ""; //繪製基數列橫線
+				position: absolute;
+				top: 0;
+				right: 0;
+				width: 1px;
+				height: 100%;
+				background-color: #ffffff;
+			}
+			&::before {
+				right: -10px; //基數列圓點位置
+			}
+		}
+		&:nth-child(even) {
+			float: right;
+			padding-left: 100px;
+			transform: translateY(50%); //偶數列往下移動 50% 空間
+			& h2::after {
+				left: 0; //偶數列橫線位置
+			}
+			&:last-child {
+				height: 50%; //最後一個偶數列下方空間
+			}
+			&::before {
+				left: -10px; //偶數列圓點位置
+			}
+		}
+	}
+}
+
+	</style>
+		
+		
 	</head>
+	
+	
 	<body class="is-preload">
+
+  <div class="wrap">
+	<h1>金魚系列 XIX - 時間軸</h1>
+	<p class="text">
+		圖形地球體育環境模組走進更新時間會員查找組成都能，目光尷尬部落房屋絶對感興趣證券市政府我是微笑移動當時做出，去年力量並非即使最高現金評價既然廠家資料庫，均為部隊尷尬沒有任何機會沒想到左右有限責任公司，招標時期還在提升關鍵能學到，一直也就任何人元素走出，圖。
+	</p>
+	<ul class="timeline">
+		<li>
+			<a href="#">
+				<h2>時間軸標題</h2>
+				<p>
+					信號儘快看見報導營養現金歷史碩士添加五年色彩學科市政府，兩次避免推廣玩家前面裡面試題同志以上原文日子反覆名字，中學集團教育訓練不承擔運用終於傳播，深刻溫州歲月你怎不來就是模型材料，把他預期品牌都在付出套件此刻畢業生分享完善，笑道詳細內容股份有限公司，很多。
+				</p>
+			</a>
+		</li>
+
+		<li>
+			<a href="#">
+				<h2>時間軸標題</h2>
+				<p>
+					信號儘快看見報導營養現金歷史碩士添加五年色彩學科市政府，兩次避免推廣玩家前面裡面試題同志以上原文日子反覆名字，中學集團教育訓練不承擔運用終於傳播，深刻溫州歲月你怎不來就是模型材料，把他預期品牌都在付出套件此刻畢業生分享完善，笑道詳細內容股份有限公司，很多。
+				</p>
+			</a>
+		</li>
+
+		<li>
+			<a href="#">
+				<h2>時間軸標題</h2>
+				<p>
+					信號儘快看見報導營養現金歷史碩士添加五年色彩學科市政府，兩次避免推廣玩家前面裡面試題同志以上原文日子反覆名字，中學集團教育訓練不承擔運用終於傳播，深刻溫州歲月你怎不來就是模型材料，把他預期品牌都在付出套件此刻畢業生分享完善，笑道詳細內容股份有限公司，很多。
+				</p>
+			</a>
+		</li>
+
+		<li>
+			<a href="#">
+				<h2>時間軸標題</h2>
+				<p>
+					信號儘快看見報導營養現金歷史碩士添加五年色彩學科市政府，兩次避免推廣玩家前面裡面試題同志以上原文日子反覆名字，中學集團教育訓練不承擔運用終於傳播，深刻溫州歲月你怎不來就是模型材料，把他預期品牌都在付出套件此刻畢業生分享完善，笑道詳細內容股份有限公司，很多。
+				</p>
+			</a>
+		</li>
+
+		<li>
+			<a href="#">
+				<h2>時間軸標題</h2>
+				<p>
+					信號儘快看見報導營養現金歷史碩士添加五年色彩學科市政府，兩次避免推廣玩家前面裡面試題同志以上原文日子反覆名字，中學集團教育訓練不承擔運用終於傳播，深刻溫州歲月你怎不來就是模型材料，把他預期品牌都在付出套件此刻畢業生分享完善，笑道詳細內容股份有限公司，很多。
+				</p>
+			</a>
+		</li>
+
+		<li>
+			<a href="#">
+				<h2>時間軸標題</h2>
+				<p>
+					信號儘快看見報導營養現金歷史碩士添加五年色彩學科市政府，兩次避免推廣玩家前面裡面試題同志以上原文日子反覆名字，中學集團教育訓練不承擔運用終於傳播，深刻溫州歲月你怎不來就是模型材料，把他預期品牌都在付出套件此刻畢業生分享完善，笑道詳細內容股份有限公司，很多。
+				</p>
+			</a>
+		</li>
+
+		<li>
+			<a href="#">
+				<h2>時間軸標題</h2>
+				<p>
+					信號儘快看見報導營養現金歷史碩士添加五年色彩學科市政府，兩次避免推廣玩家前面裡面試題同志以上原文日子反覆名字，中學集團教育訓練不承擔運用終於傳播，深刻溫州歲月你怎不來就是模型材料，把他預期品牌都在付出套件此刻畢業生分享完善，笑道詳細內容股份有限公司，很多。
+				</p>
+			</a>
+		</li>
+
+		<li>
+			<a href="#">
+				<h2>時間軸標題</h2>
+				<p>
+					信號儘快看見報導營養現金歷史碩士添加五年色彩學科市政府，兩次避免推廣玩家前面裡面試題同志以上原文日子反覆名字，中學集團教育訓練不承擔運用終於傳播，深刻溫州歲月你怎不來就是模型材料，把他預期品牌都在付出套件此刻畢業生分享完善，笑道詳細內容股份有限公司，很多。
+				</p>
+			</a>
+		</li>
+		<li>
+			<a href="#">
+				<h2>時間軸標題</h2>
+				<p>
+					信號儘快看見報導營養現金歷史碩士添加五年色彩學科市政府，兩次避免推廣玩家前面裡面試題同志以上原文日子反覆名字，中學集團教育訓練不承擔運用終於傳播，深刻溫州歲月你怎不來就是模型材料，把他預期品牌都在付出套件此刻畢業生分享完善，笑道詳細內容股份有限公司，很多。
+				</p>
+			</a>
+		</li>
+		<li>
+			<a href="#">
+				<h2>時間軸標題</h2>
+				<p>
+					信號儘快看見報導營養現金歷史碩士添加五年色彩學科市政府，兩次避免推廣玩家前面裡面試題同志以上原文日子反覆名字，中學集團教育訓練不承擔運用終於傳播，深刻溫州歲月你怎不來就是模型材料，把他預期品牌都在付出套件此刻畢業生分享完善，笑道詳細內容股份有限公司，很多。
+				</p>
+			</a>
+		</li>
+
+		<li>
+			<a href="#">
+				<h2>時間軸標題123</h2>
+				<p>
+					信號儘快看見報導營養現金歷史碩士添加五年色彩學科市政府，兩次避免推廣玩家前面裡面試題同志以上原文日子反覆名字，中學集團教育訓練不承擔運用終於傳播，深刻溫州歲月你怎不來就是模型材料，把他預期品牌都在付出套件此刻畢業生分享完善，笑道詳細內容股份有限公司，很多。
+				</p>
+			</a>
+		</li>
+		
+		
+	</ul>
+</div>
+
+
 
 		<!-- Wrapper -->
 			<div id="wrapper">
