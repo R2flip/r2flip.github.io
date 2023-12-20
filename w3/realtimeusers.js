@@ -18,7 +18,7 @@ Repeated abuse of this service will result in the removal of your website.
     };
     
     var _initElement = function() {
-      var inner = '<div class="realtimeuserscounter__num">&mdash;</div> <a href="https://realtimeusers.bycontrast.co/" class="realtimeuserscounter__attr" target="_blank">Powered </a>';
+      var inner = '<div class="realtimeuserscounter__num"> 訪客人數 &mdash;</div> ';
       
       Array.prototype.forEach.call(_counters, function(counter) {
         counter.innerHTML = inner;
