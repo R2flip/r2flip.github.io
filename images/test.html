@@ -1,52 +1,95 @@
+<!DOCTYPE html>
 <html>
-
 <head>
-    <meta charset="UTF-8" />
-    <script type="text/javascript">
-        function showHint(str) {
-            var xmlhttp;
-
-            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-                xmlhttp = new XMLHttpRequest();
-            }
-            else {// code for IE6, IE5
-                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-            }
-            xmlhttp.onreadystatechange = function () {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    var result = xmlhttp.responseText;
-                    var obj = JSON.parse(result);//解析json字串為json物件形式
-
-                    var html = '<table border=1 width=100%>';//
-
-                    for (var i = 0; i < obj.length; i++) {//
-                        html += '<tr>';//
-                        for (j = 0; j < obj[i].data.length; j++) {
-                            html += '<td>' + obj[i].data[j] + '</td>';
-                        }
-                        html += '</tr>';
-                    }
-                    html += "</table>";
-
-                    document.getElementById("order_status").innerHTML = html;
-                    if (obj.length == 1) //只有一筆代表查不到資料
-                        alert('查無資料');
-                }
-
-            }
-      var url = "https://script.google.com/macros/s/AKfycbw2IJPIzcYjlz6KjNpLayCZxSCvNRasEwQbNoGrGs-muY5JYD0WGY1qytjugFIaeIGS/exec";
-            xmlhttp.open("get", url + "?uid=" + encodeURIComponent(str), true);
-            xmlhttp.send();
-        }
-    </script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>訂單查詢</title>
+  <!-- 可以加上 CSS 美化樣式 -->
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 5px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
 </head>
-
 <body>
 
-    輸入購買者身分證號：<input type="text" id="uid" />
-    <input type="button" name="inq" value="查詢" onclick="showHint(uid.value);"></br>
+<h2>訂單查詢</h2>
 
-    <span id="order_status"></span>
+<!-- 【選擇性修改】修改提示文字 -->
+請輸入訂單編號：
+<!-- 【注意】輸入框的 id="uid" 需與 Apps Script 的參數名對應 -->
+<input type="text" id="uid" placeholder="輸入查詢關鍵字">
+
+<!-- 【選擇性修改】修改按鈕文字 -->
+<input type="button" value="查詢" onclick="showList(document.getElementById('uid').value);">
+<br><br>
+
+<!-- 顯示查詢結果的區域 -->
+<span id="order_status">請輸入關鍵字後點擊查詢按鈕</span>
+
+<script>
+function showList(crit) {
+  if (!crit) {
+    document.getElementById('order_status').innerHTML = '<font color="red">請輸入查詢關鍵字！</font>';
+    return;
+  }
+
+  document.getElementById('order_status').innerHTML = '查詢中...';
+
+  // *** 【重要】請將下方 url 的值換成你部署後取得的網路應用程式網址 ***
+  // var url = "【請貼上你剛剛複製的網路應用程式網址】";
+  var url = "https://script.google.com/macros/s/AKfycbw2IJPIzcYjlz6KjNpLayCZxSCvNRasEwQbNoGrGs-muY5JYD0WGY1qytjugFIaeIGS/exec";
+  var finalUrl = url + "?uid=" + encodeURIComponent(crit); // 組合查詢網址
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", finalUrl, true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+      try {
+        // 解析 Apps Script 回傳的 JSON 資料
+        var jsonData = JSON.parse(xhr.responseText);
+
+        // 如果回傳的資料只有一筆 (通常是標題列)，表示查無資料
+        if (jsonData.length <= 1) {
+          document.getElementById('order_status').innerHTML = '<font color="red">查無資料</font>';
+        } else {
+          // 建立 HTML 表格來顯示資料
+          var html = '<table>';
+          // 建立表頭 (第一筆資料是標題)
+          html += '<tr>';
+          for (var j = 0; j < jsonData[0].length; j++) {
+            html += '<th>' + jsonData[0][j] + '</th>';
+          }
+          html += '</tr>';
+
+          // 建立資料列 (從第二筆資料開始)
+          for (var i = 1; i < jsonData.length; i++) {
+            html += '<tr>';
+            for (var j = 0; j < jsonData[i].length; j++) {
+              html += '<td>' + jsonData[i][j] + '</td>';
+            }
+            html += '</tr>';
+          }
+          html += '</table>';
+          document.getElementById('order_status').innerHTML = html;
+        }
+      } catch (e) {
+        document.getElementById('order_status').innerHTML = '<font color="red">查詢出錯，請稍後再試或聯繫管理員。</font>';
+        console.error("JSON Parsing Error:", e);
+        console.error("Received Text:", xhr.responseText);
+      }
+    } else if (xhr.readyState == 4) {
+         document.getElementById('order_status').innerHTML = '<font color="red">查詢失敗 (Status: ' + xhr.status + ')</font>';
+    }
+  };
+  xhr.send();
+}
+</script>
+
 </body>
-
-</html>
+</html>         
