@@ -23,11 +23,12 @@
 
 <!-- 【選擇性修改】修改提示文字 -->
 計畫年度　：
-        <select name="" id="Syear1">
+        <select  id="Lyear">
+	<option selected="selected" value="113">113</option>
 	<option selected="selected" value="114">114</option>
 	</select>
                                         ～
-        <select name="" id="Syear2">
+        <select id="Uyear">
 	<option selected="selected" value="114">114</option>
 	</select>
 <br>  
@@ -44,15 +45,15 @@
 主持人姓名：                                 
              <input type="text" maxlength="10" id="uname" />
   
-             <button  value="查詢" onclick="showList(document.getElementById('uid').value,document.getElementById('uname').value);"> 查詢 </button>
+             <button  value="查詢" onclick="showList(document.getElementById('uid').value, document.getElementById('uname').value, document.getElementById('Lyear').value, document.getElementById('Uyear').value);"> 查詢 </button>
 <br><br>
 
 <!-- 顯示查詢結果的區域 -->
 <span id="order_status">請輸入關鍵字後點擊查詢按鈕</span>
 
 <script>
-function showList(crit,crit2) {
-  if (!crit && !crit2) {
+function showList(crit,crit2,crit3,crit4) {
+  if (!crit && !crit2 && !crit3 && !crit4) {
     document.getElementById('order_status').innerHTML = '<font color="red">請輸入查詢關鍵字！</font>';
     return;
   }
@@ -62,7 +63,7 @@ function showList(crit,crit2) {
   // *** 【重要】請將下方 url 的值換成你部署後取得的網路應用程式網址 ***
   // var url = "【請貼上你剛剛複製的網路應用程式網址】";
   var url = "https://script.google.com/macros/s/AKfycbw2IJPIzcYjlz6KjNpLayCZxSCvNRasEwQbNoGrGs-muY5JYD0WGY1qytjugFIaeIGS/exec";
-  var finalUrl = url + "?uid=" + encodeURIComponent(crit)+  "&uname=" + encodeURIComponent(crit2); // 組合查詢網址	
+  var finalUrl = url + "?uid=" + encodeURIComponent(crit)+  "&uname=" + encodeURIComponent(crit2)+  "&Lyear=" + encodeURIComponent(crit3)+  "&Uyear=" + encodeURIComponent(crit4); // 組合查詢網址	
 	
   var xhr = new XMLHttpRequest();
   xhr.open("GET", finalUrl, true);
