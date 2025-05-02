@@ -21,7 +21,17 @@
 <h2>深耕計畫核准查詢</h2>
 
 <!-- 【選擇性修改】修改提示文字 -->
-請輸入學院別：
+計畫年度　：
+        <select name="" id="">
+					<option selected="selected" value="114">114</option>
+				</select>
+                                        ～
+        <select name="" id="">
+					<option selected="selected" value="114">114</option>
+				</select>
+
+  
+執行學院：
            <select id="uid">
              <option value=""> - -請選擇- -</option>
              <option value="人文社會科學院">人文社會科學院</option>
@@ -30,6 +40,10 @@
              <option value="理學院">理學院</option>
              <option value="工學院">工學院</option>
             </select>  
+
+主持人姓名：                                   
+            <input name=" " type="text" maxlength="10" id=" " />
+  
              <button  value="查詢" onclick="showList(document.getElementById('uid').value);"> 學院查詢 </button>
 <br><br>
 
