@@ -70,8 +70,9 @@ function showList(crit,crit2) {
 if (!crit2) {
   var finalUrl = url + "?uid=" + encodeURIComponent(crit); // 組合查詢網址
  }
-
-
+if (crit && crit2) {
+var finalUrl = url + "?uid=" + encodeURIComponent(crit)+  "&uname=" + encodeURIComponent(crit2); // 組合查詢網址
+}	
 	
   var xhr = new XMLHttpRequest();
   xhr.open("GET", finalUrl, true);
