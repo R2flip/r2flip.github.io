@@ -30,10 +30,12 @@
 class='chartjs-render-monitor'>
 </canvas>
 </div>
+	
 <script>
 $(document).ready(function () {
 getSales();
 });
+	
 function getSales() {
 google.script.run.withSuccessHandler(function (ar) {
 // console.log(ar);
@@ -43,8 +45,7 @@ ar.forEach(function (item, index) {
 data.push(item[1]);
 label.push(item[0]);
 });
-var barChartDiv = document.getElementById(
-"barchart").getContext("2d");
+var barChartDiv = document.getElementById("barchart").getContext("2d");
 var barchart = new Chart(barChartDiv, {
 type: "bar",
 title: {
