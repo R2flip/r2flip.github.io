@@ -30,7 +30,8 @@
 	</select>
                                         ～
         <select id="Uyear">
-	<option value="114">114</option>
+	<option  value="113">113</option>
+	<option  value="114">114</option>
 	</select>
 <br>  
 執行學院　：
@@ -59,6 +60,10 @@ function showList(crit,crit2,crit3,crit4) {
     return;
   }
 
+  if (crit3 > crit4 ) {
+    document.getElementById('order_status').innerHTML = '<font color="red">計畫年度輸入錯誤，截止年需大於起始年！</font>';
+    return;
+  }	
   document.getElementById('order_status').innerHTML = '查詢中...';
 
   // *** 【重要】請將下方 url 的值換成你部署後取得的網路應用程式網址 ***
