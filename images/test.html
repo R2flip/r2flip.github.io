@@ -23,14 +23,13 @@
 <!-- 【選擇性修改】修改提示文字 -->
 計畫年度*　：
         <select name="" id="Syear1">
-					<option selected="selected" value="114">114</option>
-				</select>
+	<option selected="selected" value="114">114</option>
+	</select>
                                         ～
         <select name="" id="Syear2">
-					<option selected="selected" value="114">114</option>
-				</select>
-
-  
+	<option selected="selected" value="114">114</option>
+	</select>
+<br>  
 執行學院*　：
             <select id="uid">
              <option value=""> - -請選擇- -</option>
@@ -40,7 +39,7 @@
              <option value="理學院">理學院</option>
              <option value="工學院">工學院</option>
             </select>  
-
+<br>  
 主持人姓名：                                   
              <input type="text" maxlength="10" id="uname" />
   
@@ -52,7 +51,7 @@
 
 <script>
 function showList(crit,crit2) {
-  if (!crit || !crit2) {
+  if (!crit && !crit2) {
     document.getElementById('order_status').innerHTML = '<font color="red">請輸入查詢關鍵字！</font>';
     return;
   }
