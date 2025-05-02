@@ -52,7 +52,7 @@
 
 <script>
 function showList(crit,crit2) {
-  if (!crit) {
+  if (!crit || !crit2) {
     document.getElementById('order_status').innerHTML = '<font color="red">請輸入查詢關鍵字！</font>';
     return;
   }
