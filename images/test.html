@@ -52,7 +52,7 @@
 
 <script>
 function showList(crit,crit2) {
-  if (!crit || !crit2) {
+  if (!crit && !crit2) {
     document.getElementById('order_status').innerHTML = '<font color="red">請輸入查詢關鍵字！</font>';
     return;
   }
@@ -62,8 +62,17 @@ function showList(crit,crit2) {
   // *** 【重要】請將下方 url 的值換成你部署後取得的網路應用程式網址 ***
   // var url = "【請貼上你剛剛複製的網路應用程式網址】";
   var url = "https://script.google.com/macros/s/AKfycbw2IJPIzcYjlz6KjNpLayCZxSCvNRasEwQbNoGrGs-muY5JYD0WGY1qytjugFIaeIGS/exec";
-  var finalUrl = url + "?uid=" + encodeURIComponent(crit)+ "&uname=" + encodeURIComponent(crit2); // 組合查詢網址
 
+ if (!crit) {
+  var finalUrl = url +  "&uname=" + encodeURIComponent(crit2); // 組合查詢網址
+ }
+
+if (!crit2) {
+  var finalUrl = url + "?uid=" + encodeURIComponent(crit); // 組合查詢網址
+ }
+
+
+	
   var xhr = new XMLHttpRequest();
   xhr.open("GET", finalUrl, true);
   xhr.onreadystatechange = function() {
