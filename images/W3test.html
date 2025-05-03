@@ -1,10 +1,8 @@
-<!DOCTYPE html>
 <html>
-<title>W3.CSS</title>
+<title>Template</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="../lib/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 <style>
 html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 </style>
@@ -12,37 +10,49 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 
 <!-- Top container -->
 <div class="w3-container w3-top w3-black w3-large w3-padding" style="z-index:4">
-  <button class="w3-btn w3-hide-large w3-padding-0 w3-hover-text-grey" onclick="w3_open()"><i class="fa fa-bars"></i>  Menu</button>
+  <button class="w3-btn w3-hide-large w3-padding-0 w3-hover-text-grey" onclick="w3_open();"><i class="fa fa-bars"></i>  Menu</button>
   <span class="w3-right">Logo</span>
 </div>
 
 <!-- Sidenav/menu -->
-<nav class="w3-sidenav w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;"><br>
+<nav class="w3-sidenav w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidenav"><br>
+  <div class="w3-container w3-row">
+    <div class="w3-col s4">
+      <img src="http://lorempixel.com/400/400/business/" class="w3-circle w3-margin-right" style="width:46px">
+    </div>
+    <div class="w3-col s8">
+      <span>Welcome, <strong>Mike</strong></span><br>
+      <a href="#" class="w3-hover-none w3-hover-text-red w3-show-inline-block"><i class="fa fa-envelope"></i></a>
+      <a href="#" class="w3-hover-none w3-hover-text-green w3-show-inline-block"><i class="fa fa-user"></i></a>
+      <a href="#" class="w3-hover-none w3-hover-text-blue w3-show-inline-block"><i class="fa fa-cog"></i></a>
+    </div>
+  </div>
+  <hr>
   <div class="w3-container">
     <h5>Dashboard</h5>
   </div>
-  <a href="#" class="w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove"></i>  Close Menu</a>
-  <a href="#" class="w3-padding w3-blue"><i class="fa fa-users"></i>  Overview</a>
-  <a href="#myBar" class="w3-padding"><i class="fa fa-eye"></i>  Views</a>
-  <a href="#" class="w3-padding"><i class="fa fa-users"></i>  Traffic</a>
-  <a href="#" class="w3-padding"><i class="fa fa-bullseye"></i>  Geo</a>
-  <a href="#" class="w3-padding"><i class="fa fa-diamond"></i>  Orders</a>
-  <a href="#" class="w3-padding"><i class="fa fa-bell"></i>  News</a>
-  <a href="#" class="w3-padding"><i class="fa fa-bank"></i>  General</a>
-  <a href="#" class="w3-padding"><i class="fa fa-history"></i>  History</a>
-  <a href="#" class="w3-padding"><i class="fa fa-cog"></i>  Settings</a><br><br>
+  <a href="#" class="w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
+  <a href="#" class="w3-padding w3-blue"><i class="fa fa-users fa-fw"></i>  Overview</a>
+  <a href="#" class="w3-padding"><i class="fa fa-eye fa-fw"></i>  Views</a>
+  <a href="#" class="w3-padding"><i class="fa fa-users fa-fw"></i>  Traffic</a>
+  <a href="#" class="w3-padding"><i class="fa fa-bullseye fa-fw"></i>  Geo</a>
+  <a href="#" class="w3-padding"><i class="fa fa-diamond fa-fw"></i>  Orders</a>
+  <a href="#" class="w3-padding"><i class="fa fa-bell fa-fw"></i>  News</a>
+  <a href="#" class="w3-padding"><i class="fa fa-bank fa-fw"></i>  General</a>
+  <a href="#" class="w3-padding"><i class="fa fa-history fa-fw"></i>  History</a>
+  <a href="#" class="w3-padding"><i class="fa fa-cog fa-fw"></i>  Settings</a><br><br>
 </nav>
 
 
 <!-- Overlay effect when opening sidenav on small screens -->
-<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu"></div>
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
 
 <!-- !PAGE CONTENT! -->
 <div class="w3-main" style="margin-left:300px;margin-top:43px;">
 
   <!-- Header -->
   <header class="w3-container" style="padding-top:22px">
-    <h5><b>My Dashboard</b></h5>
+    <h5><b><i class="fa fa-dashboard"></i> My Dashboard</b></h5>
   </header>
 
   <div class="w3-row-padding w3-margin-bottom">
@@ -92,7 +102,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     <div class="w3-row-padding" style="margin:0 -16px">
       <div class="w3-third">
         <h5>Regions</h5>
-        <img src="img_region.jpg" style="width:100%" alt="Google Regional Map">
+        <img src="http://lorempixel.com/400/400/business/" style="width:100%" alt="Google Regional Map">
       </div>
       <div class="w3-twothird">
         <h5>Feeds</h5>
@@ -198,17 +208,17 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     <ul class="w3-ul w3-card-4 w3-white">
       <li class="w3-padding-16">
         <span onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding w3-margin-right w3-medium">x</span>
-        <img src="img_avatar2.png" class="w3-left w3-circle w3-margin-right" style="width:35px">
+        <img src="http://lorempixel.com/400/400/business/" class="w3-left w3-circle w3-margin-right" style="width:35px">
         <span class="w3-xlarge">Mike</span><br>
       </li>
       <li class="w3-padding-16">
         <span onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding w3-margin-right w3-medium">x</span>
-        <img src="img_avatar5.png" class="w3-left w3-circle w3-margin-right" style="width:35px">
+        <img src="http://lorempixel.com/400/400/business/" class="w3-left w3-circle w3-margin-right" style="width:35px">
         <span class="w3-xlarge">Jill</span><br>
       </li>
       <li class="w3-padding-16">
         <span onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding w3-margin-right w3-medium">x</span>
-        <img src="img_avatar6.png" class="w3-left w3-circle w3-margin-right" style="width:35px">
+        <img src="http://lorempixel.com/400/400/business/" class="w3-left w3-circle w3-margin-right" style="width:35px">
         <span class="w3-xlarge">Jane</span><br>
       </li>
     </ul>
@@ -218,20 +228,20 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
   <div class="w3-container">
     <h5>Recent Comments</h5>
     <div class="w3-row">
-      <div class="w3-col s2 text-center">
-        <img class="w3-circle w3-image" src="img_avatar3.png" width="96" height="96">
+      <div class="w3-col m2 text-center">
+        <img class="w3-circle" src="http://lorempixel.com/400/400/business/" style="width:96px;height:96px">
       </div>
-      <div class="w3-col s10 w3-container">
+      <div class="w3-col m10 w3-container">
         <h4>John <span class="w3-opacity w3-medium">Sep 29, 2014, 9:12 PM</span></h4>
         <p>Keep up the GREAT work! I am cheering for you!! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p><br>
       </div>
     </div>
 
     <div class="w3-row">
-      <div class="w3-col s2 text-center">
-        <img class="w3-circle w3-image" src="img_avatar1.png" width="96" height="96">
+      <div class="w3-col m2 text-center">
+        <img class="w3-circle" src="http://lorempixel.com/400/400/business/" style="width:96px;height:96px">
       </div>
-      <div class="w3-col s10 w3-container">
+      <div class="w3-col m10 w3-container">
         <h4>Bo <span class="w3-opacity w3-medium">Sep 28, 2014, 10:15 PM</span></h4>
         <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p><br>
       </div>
@@ -265,24 +275,11 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
   <!-- Footer -->
   <footer class="w3-container w3-padding-16 w3-light-grey">
     <h4>FOOTER</h4>
-    <p>Powered by <a href="default.html" target="_blank">w3.css</a></p>
+    <p>Powered by w3.css</a></p>
   </footer>
 
   <!-- End page content -->
 </div>
-
-<script>
-// Script to open and close sidenav
-function w3_open() {
-    document.getElementsByClassName("w3-sidenav")[0].style.display = "block";
-    document.getElementsByClassName("w3-overlay")[0].style.display = "block";
-}
- 
-function w3_close() {
-    document.getElementsByClassName("w3-sidenav")[0].style.display = "none";
-    document.getElementsByClassName("w3-overlay")[0].style.display = "none";
-}
-</script>
 
 </body>
 </html>
