@@ -101,7 +101,7 @@ function showList(crit,crit2,crit3,crit4) {
             html += '</tr>';
           }
           html += '</table>';
-	  html += '<br> 核准件數 : jsonData.length';	
+	  html += '<br> 核准件數 :' + jsonData.length  + '件';	
           document.getElementById('order_status').innerHTML = html;
         }
       } catch (e) {
