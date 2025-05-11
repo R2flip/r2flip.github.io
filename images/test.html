@@ -86,6 +86,7 @@ function showList(crit,crit2,crit3,crit4) {
           // 建立 HTML 表格來顯示資料
           var html = '<table>';
           // 建立表頭 (第一筆資料是標題)
+          html += '<br> 核准件數 :' + (jsonData.length-1)  + '件';
           html += '<tr>';
           for (var j = 0; j < jsonData[0].length; j++) {
             html += '<th>' + jsonData[0][j] + '</th>';
@@ -101,7 +102,7 @@ function showList(crit,crit2,crit3,crit4) {
             html += '</tr>';
           }
           html += '</table>';
-	  html += '<br> 核准件數 :' + jsonData.length  + '件';	
+	  html += '<br> 核准件數 :' + (jsonData.length-1)  + '件';	
           document.getElementById('order_status').innerHTML = html;
         }
       } catch (e) {
