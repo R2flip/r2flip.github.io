@@ -94,8 +94,6 @@ function showList(crit,crit2,crit3,crit4,crit5) {
     return;
   }	
   document.getElementById('order_status').innerHTML = '查詢中...';
-
-  google.script.run.withSuccessHandler().changeNumber(crit,crit2);	
 	
   // *** 【重要】請將下方 url 的值換成你部署後取得的網路應用程式網址 ***
   // var url = "【請貼上你剛剛複製的網路應用程式網址】";
