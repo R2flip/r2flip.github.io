@@ -122,7 +122,13 @@ function showList(crit,crit2,crit3,crit4,crit5) {
           }
           html += '</tr>';
 
-	  var nuk = 10 ;	
+          var nuk = 0;		
+          // 取得當前網址的查詢參數
+          const params = new URLSearchParams(window.location.search);
+
+          // 取得名為 "nuk" 的參數值
+          const nuk = params.get('nuk');
+		
           // 建立資料列 (從第二筆資料開始)
           for (var i = 1; i < jsonData.length; i++) {
             html += '<tr>';
