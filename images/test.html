@@ -118,11 +118,7 @@ function showList(crit,crit2,crit3,crit4,crit5) {
           html += '<div align="left"> 本次查詢條件核准件數 :  <font color=red>' + (jsonData.length-1)  + '</font>  件 </div><br>';
           html += '<tr>';
           for (var j = 0; j < jsonData[0].length; j++) {
-            if (j==7) {
-	    html += '<th> --暫不公開 --</th>';	    
-	    } else {		  
-            html += '<th>' + jsonData[0][j] + '</th>';
-	    }		    
+	     html += '<td>' + jsonData[0][j] + '</td>';    
           }
           html += '</tr>';
 
@@ -130,7 +126,13 @@ function showList(crit,crit2,crit3,crit4,crit5) {
           for (var i = 1; i < jsonData.length; i++) {
             html += '<tr>';
             for (var j = 0; j < jsonData[i].length; j++) {
-              html += '<td>' + jsonData[i][j] + '</td>';
+
+	    if (j==7) {
+	        html += '<th> --暫不公開 --</th>';	    
+	    } else {		  
+               html += '<th>' + jsonData[i][j] + '</th>';
+	    }    
+
             }
             html += '</tr>';
           }
