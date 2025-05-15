@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>深耕計畫核准查詢</title>
+  <!-- 可以加上 CSS 美化樣式 -->
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 5px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">	
+</head>	
+	
+<body>
+<h2><b><i class="fa fa-handshake-o"></i>深耕計畫核准查詢 </b></h2>
+
+<!-- 【選擇性修改】修改提示文字 -->
+計畫年度　：
+  <select  id="Lyear">
+	<option  value="114" selected >114</option>
+	</select>
+                                        ～
+  <select id="Uyear">
+	<option  value="114" selected >114</option>
+	</select>
+
+ <!-- 第一層選單 -->
+<br>  
+執行學院　：
+    <select id="uid" onchange="updateSubCategory()">
+    <option value="">-- 請選擇 --</option>
+    <option value="人文社會科學院">人文社會科學院</option>
+    <option value="法學院">法學院</option>
+    <option value="管理學院">管理學院</option>
+    <option value="理學院">理學院</option>
+    <option value="工學院">工學院</option>
+  </select>
+
+  <!-- 第二層選單 -->
+<br>  
+執行學系　：
+  	<select id="sclass">
+     <option value="">-- 請先選擇類別 --</option>
+   </select>
+	
+<br>  
+主持人姓名：                                 
+             <input type="text" maxlength="10" id="uname" />
+  
+             <button  value="查詢" onclick="showList(document.getElementById('uid').value, document.getElementById('uname').value, document.getElementById('Lyear').value, document.getElementById('Uyear').value, document.getElementById('sclass').value);"> 查詢 </button>
+<br><br>
+
+<!-- 顯示查詢結果的區域 -->
+<span id="order_status">請選擇查詢條件後，點擊查詢按鈕</span>
+
+<script>
+function showList(crit,crit2,crit3,crit4,crit5) {
+  if (!crit && !crit2 && !crit3 && !crit4 && !crit5) {
+    document.getElementById('order_status').innerHTML = '<font color="red">請輸入查詢關鍵字！</font>';
+    return;
+  }
+
+  if (crit3 > crit4 ) {
+    document.getElementById('order_status').innerHTML = '<font color="red">計畫年度輸入錯誤，截止年需大於起始年！</font>';
+    return;
+  }	
+  document.getElementById('order_status').innerHTML = '查詢中...';
+	
+  // *** 【重要】請將下方 url 的值換成你部署後取得的網路應用程式網址 ***
+  // var url = "【請貼上你剛剛複製的網路應用程式網址】";
+  var url = "https://script.google.com/macros/s/AKfycbw2IJPIzcYjlz6KjNpLayCZxSCvNRasEwQbNoGrGs-muY5JYD0WGY1qytjugFIaeIGS/exec";
+  var finalUrl = url + "?uid=" + encodeURIComponent(crit)+  "&uname=" + encodeURIComponent(crit2)+  "&Lyear=" + encodeURIComponent(crit3)+  "&Uyear=" + encodeURIComponent(crit4)+  "&sclass=" + encodeURIComponent(crit5); // 組合查詢網址	
+	
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", finalUrl, true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+      try {
+        // 解析 Apps Script 回傳的 JSON 資料
+        var jsonData = JSON.parse(xhr.responseText);
+
+        // 如果回傳的資料只有一筆 (通常是標題列)，表示查無資料
+        if (jsonData.length <= 1) {
+          document.getElementById('order_status').innerHTML = '<font color="red">查無資料</font>';
+        } else {
+          // 建立 HTML 表格來顯示資料
+          var html = '<table>';
+          // 建立表頭 (第一筆資料是標題)
+          html += '<div align="left"> 本次查詢條件核准件數 :  <font color=red>' + (jsonData.length-1)  + '</font>  件 </div><br>';
+          html += '<tr>';
+          for (var j = 0; j < jsonData[0].length; j++) {
+	     html += '<td>' + jsonData[0][j] + '</td>';    
+          }
+          html += '</tr>';
+	
+          // 取得當前網址的查詢參數
+          const params = new URLSearchParams(window.location.search);
+
+          // 取得名為 "nuk" 的參數值
+          const nuk = params.get('nuk');
+		
+          // 建立資料列 (從第二筆資料開始)
+          for (var i = 1; i < jsonData.length; i++) {
+            html += '<tr>';
+            for (var j = 0; j < jsonData[i].length; j++) {
+
+	   if (nuk == 1) {
+		   html += '<td>' + jsonData[i][j] + '</td>';
+	   } else {
+		   if (j==7) {
+	              html += '<td> --暫不公開 --</td>';	    
+	            } else {		  
+                      html += '<td>' + jsonData[i][j] + '</td>';
+	          }    
+	      }
+            }
+            html += '</tr>';
+          }
+          html += '</table>';
+	  html += '<br> 核准件數 :' + (jsonData.length-1)  + '件';	
+          document.getElementById('order_status').innerHTML = html;
+        }
+      } catch (e) {
+        document.getElementById('order_status').innerHTML = '<font color="red">查詢出錯，請稍後再試或聯繫管理員。</font>';
+        console.error("JSON Parsing Error:", e);
+        console.error("Received Text:", xhr.responseText);
+      }
+    } else if (xhr.readyState == 4) {
+         document.getElementById('order_status').innerHTML = '<font color="red">查詢失敗 (Status: ' + xhr.status + ')</font>';
+    }
+  };
+  xhr.send();
+}
+  // 第二層選項資料
+    const subCategories = {
+      人文社會科學院: ["西語系", "東語系", "運競技系","運健休系","工藝系","建築系"],
+      法學院: ["法律系", "政法系", "財法系"],
+      管理學院: ["應經系","亞太系","財金系","資管系"],
+      理學院: ["應數系","應化系","應物系","生科系","統計所"],
+      工學院: ["電機系","土環系","資工系","化材系"]
+    };
+  
+      function updateSubCategory() {
+      const category = document.getElementById("uid").value;
+      const subcategorySelect = document.getElementById("sclass");
+
+      // 清空現有選項
+      subcategorySelect.innerHTML = "";
+
+      if (category && subCategories[category]) {
+        // 加入新選項
+        subCategories[category].forEach(item => {
+          const option = document.createElement("option");
+          option.value = item;
+          option.textContent = item;
+          subcategorySelect.appendChild(option);
+        });
+      } else {
+        // 沒選類別時顯示預設提示
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "-- 請先選擇類別 --";
+        subcategorySelect.appendChild(option);
+      }
+    }
+</script>
+	
+</body>
+</html>         
