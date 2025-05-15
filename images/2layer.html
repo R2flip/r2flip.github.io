@@ -11,8 +11,11 @@
   <label for="category">類別：</label>
   <select id="category" onchange="updateSubCategory()">
     <option value="">-- 請選擇 --</option>
-    <option value="fruits">人文社會科學院</option>
-    <option value="animals">法學院</option>
+    <option value="人文社會科學院">人文社會科學院</option>
+    <option value="法學院">法學院</option>
+    <option value="管理學院<">管理學院</option>
+    <option value="理學院">理學院</option>
+    <option value="工學院">工學院</option>
   </select>
 
   <!-- 第二層選單 -->
@@ -24,8 +27,11 @@
   <script>
     // 第二層選項資料
     const subCategories = {
-      fruits: ["西語系", "東語系", "運競技系","運健休系","工藝系","建築系"],
-      animals: ["法律系", "政法系", "財法系"]
+      人文社會科學院: ["西語系", "東語系", "運競技系","運健休系","工藝系","建築系"],
+      法學院: ["法律系", "政法系", "財法系"]
+      管理學院: ["應經系","亞太系","財金系","資管系"]
+      理學院: ["應數系","應化系","應物系","生科系","統計所"]
+      工學院: ["電機系","土環系","資工系","化材系"]
     };
 
     function updateSubCategory() {
