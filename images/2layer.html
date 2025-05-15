@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>兩層階層式下拉選單</title>
+</head>
+<body>
+  <h2>選擇項目</h2>
+
+  <!-- 第一層選單 -->
+  <label for="category">類別：</label>
+  <select id="category" onchange="updateSubCategory()">
+    <option value="">-- 請選擇 --</option>
+    <option value="fruits">水果</option>
+    <option value="animals">動物</option>
+  </select>
+
+  <!-- 第二層選單 -->
+  <label for="subcategory">子類別：</label>
+  <select id="subcategory">
+    <option value="">-- 請先選擇類別 --</option>
+  </select>
+
+  <script>
+    // 第二層選項資料
+    const subCategories = {
+      fruits: ["蘋果", "香蕉", "橘子"],
+      animals: ["狗", "貓", "鳥"]
+    };
+
+    function updateSubCategory() {
+      const category = document.getElementById("category").value;
+      const subcategorySelect = document.getElementById("subcategory");
+
+      // 清空現有選項
+      subcategorySelect.innerHTML = "";
+
+      if (category && subCategories[category]) {
+        // 加入新選項
+        subCategories[category].forEach(item => {
+          const option = document.createElement("option");
+          option.value = item;
+          option.textContent = item;
+          subcategorySelect.appendChild(option);
+        });
+      } else {
+        // 沒選類別時顯示預設提示
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "-- 請先選擇類別 --";
+        subcategorySelect.appendChild(option);
+      }
+    }
+  </script>
+</body>
+</html>
