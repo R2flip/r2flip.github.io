@@ -8,11 +8,11 @@
 <body>
   <h1>網站統計</h1>
   <div class="count">👁️🟢 總查閱人數： <span id="total-count"> -- </span></div>
-  <div class="count">🟢 線上人數：   <span id="online-count"> -- </span></div>
+  <div class="count">🟢👁️ 線上人數：   <span id="online-count"> -- </span></div>
 
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhWHGuDISk5686ZR4DANrxyl85dsK51NSZVH8PwO41__2aE-Vg-nhQBdYJPMEe3-lU/exec";
-    const sessionId = "12322222"; // 生成唯一識別碼
+    const sessionId = crypto.randomUUID() ; // 生成唯一識別碼
 
     // 查閱人數：僅進入頁面時請求一次
     fetch(SCRIPT_URL)
@@ -30,7 +30,7 @@
       })
       .then(res => res.json())
       .then(data => {
-        document.getElementById('online-count').innerText = data.viewCount;
+        document.getElementById('online-count').innerText = data.online;
       });
     }
 
