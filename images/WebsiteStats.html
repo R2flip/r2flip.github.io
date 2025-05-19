@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google Sheets 線上與查閱人數</title>
+</head>
+<body>
+  <h2>線上人數：<span id="online-count">0</span></h2>
+  <h2>查閱人數：<span id="total-count">0</span></h2>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhWHGuDISk5686ZR4DANrxyl85dsK51NSZVH8PwO41__2aE-Vg-nhQBdYJPMEe3-lU/exec";
+
+    const sessionId = crypto.randomUUID(); // 生成唯一識別碼
+
+    // 查閱人數：僅進入頁面時請求一次
+    fetch(SCRIPT_URL)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('total-count').innerText = data.viewCount;
+      });
+
+    // 線上人數：定時 ping
+    function pingServer() {
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ sessionId }),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('online-count').innerText = data.online;
+      });
+    }
+
+    pingServer(); // 首次執行
+    setInterval(pingServer, 15000); // 每 15 秒更新
+  </script>
+</body>
+</html>
