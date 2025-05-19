@@ -9,8 +9,16 @@
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhWHGuDISk5686ZR4DANrxyl85dsK51NSZVH8PwO41__2aE-Vg-nhQBdYJPMEe3-lU/exec";
+    
+  function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
 
-    const sessionId = crypto.randomUUID(); // 生成唯一識別碼
+  const sessionId = generateUUID(); // 生成唯一識別碼
 
     // 查閱人數：僅進入頁面時請求一次
     fetch(SCRIPT_URL)
