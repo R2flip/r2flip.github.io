@@ -142,14 +142,14 @@ typeEffect("order_status", " ... 查 詢 中 ...", 200);
           const params = new URLSearchParams(window.location.search);
 
           // 取得名為 "nuk" 的參數值
-          const nuk = params.get('nuk');
+          const nuk = params.get('ncuk');
 		
           // 建立資料列 (從第二筆資料開始)
           for (var i = 1; i < jsonData.length; i++) {
             html += '<tr>';
             for (var j = 0; j < jsonData[i].length; j++) {
 
-	   if (nuk == 1) {
+	   if (ncuk == 1) {
 		   html += '<td>' + jsonData[i][j] + '</td>';
 	   } else {
 		   if (j==7) {
@@ -157,6 +157,13 @@ typeEffect("order_status", " ... 查 詢 中 ...", 200);
 	            } else {		  
                       html += '<td>' + jsonData[i][j] + '</td>';
 	          }    
+
+           if (j==8) {
+	              html += '<td> --暫不公開 --</td>';	    
+	            } else {		  
+                      html += '<td>' + jsonData[i][j] + '</td>';
+	          }   
+		   
 	      }
             }
             html += '</tr>';
