@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>成大教師資源挹注核准查詢</title>
+  <title>成大教師資源挹注查詢</title>
   <!-- 可以加上 CSS 美化樣式 -->
   <style>
     table, th, td {
@@ -22,7 +22,7 @@
 </head>	
 	
 <body>
-<h2><b><i class="fa fa-handshake-o"></i>成大教師資源挹注核准查詢 </b></h2>
+<h2><b><i class="fa fa-handshake-o"></i>成大教師資源挹注查詢系統 </b></h2>
 
 <!-- 【選擇性修改】修改提示文字 -->
 計畫年度　：
@@ -141,15 +141,15 @@ typeEffect("order_status", " ... 查    詢   中 .............", 200);
           // 取得當前網址的查詢參數
           const params = new URLSearchParams(window.location.search);
 
-          // 取得名為 "nuk" 的參數值
-          const nuk = params.get('ncuk');
+          // 取得名為 "ncku" 的參數值
+          const ncku = params.get('ncku');
 		
           // 建立資料列 (從第二筆資料開始)
           for (var i = 1; i < jsonData.length; i++) {
             html += '<tr>';
             for (var j = 0; j < jsonData[i].length; j++) {
 
-	   if (ncuk == 1) {
+	   if (ncku == 1) {
 		   html += '<td>' + jsonData[i][j] + '</td>';
 	   } else {
 		   if (j==7) {
