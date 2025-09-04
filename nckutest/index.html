@@ -94,19 +94,7 @@
             "entry.623142751": pageviewCount // 計數欄位
         };
 
-        // 提交到 Google 表單
-        $.ajax({
-            type: "POST",
-            url: "https://docs.google.com/forms/d/e/1FAIpQLSd8ud6x0eYi7dFZEC1qGS82RDxfWe4oyN5mK2TJWbpprdOs1Q/formResponse",
-            data: data,
-            dataType: "xml",
-            success: function () {
-                console.log("成功送出到 Google 表單");
-            },
-            error: function () {
-                console.log("表單送出完成 (Google 會回 0/200，算正常)");
-            }
-        });
+
 
     // 從 Google Apps Script 取得計數
     let apiUrl = "https://script.google.com/macros/s/AKfycbycPAPD3JRzL2TLfT5u8doN1g_3j8s5HdCOidvSuJ8WIrM1VLFChyMHVfWFYgdfJkQ/exec";
