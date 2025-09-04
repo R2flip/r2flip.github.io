@@ -4,28 +4,30 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-    <meta name="description" content="">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <meta name="robots" content="noindex">
     <title>【Demo】用 Google Sheet + Google App Script 打造網頁計數器</title>
     <style>
-        html{
+        html {
             background-color: #22272e;
             color: #fff;
             font-family: sans-serif;
             text-align: center;
         }
-        .container{
+
+        .container {
             width: 50%;
             min-width: 450px;
             margin: 0 auto;
         }
-        a{
+
+        a {
             color: #fff;
             text-decoration: none;
         }
-        footer{
-            position: absolute;
+
+        footer {
+            position: fixed;
             left: 50%;
             transform: translateX(-50%);
             font-size: 0.9em;
@@ -33,19 +35,23 @@
             color: #eee;
             margin-top: 15px;
         }
-        .show{
+
+        .show {
             background-color: #000;
             padding: 10px;
             border-radius: 10px;
         }
-        li{
+
+        li {
             list-style: none;
-            display: inline;
+            display: inline-block;
             padding: 10px;
             border: #fff solid 2px;
             border-radius: 10px;
+            margin: 0 5px;
         }
-        ul{
+
+        ul {
             margin: 50px 0 0;
             padding: 0;
         }
@@ -77,42 +83,49 @@
 
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"
         integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-    <script>
 
+    <script>
         let pageviewUrl = location.pathname;
         let pageviewCount = 1;
 
+        // ⚠️ 這裡要換成你自己 Google 表單的 entry ID
         let data = {
-            'entry.1515159479': pageviewUrl,
-            'entry.790304345': pageviewCount
+            "entry.1111111111": pageviewUrl,   // 網址欄位
+            "entry.2222222222": pageviewCount // 計數欄位
         };
+
+        // 提交到 Google 表單
         $.ajax({
-            type: 'POST',
-            url: 'https://docs.google.com/forms/d/e/1FAIpQLSd8ud6x0eYi7dFZEC1qGS82RDxfWe4oyN5mK2TJWbpprdOs1Q/viewform',
+            type: "POST",
+            url: "https://docs.google.com/forms/d/e/1FAIpQLSd8ud6x0eYi7dFZEC1qGS82RDxfWe4oyN5mK2TJWbpprdOs1Q/formResponse",
             data: data,
-            contentType: 'application/json',
-            dataType: 'jsonp'
+            dataType: "xml",
+            success: function () {
+                console.log("成功送出到 Google 表單");
+            },
+            error: function () {
+                console.log("表單送出完成 (Google 會回 0/200，算正常)");
+            }
         });
 
-$.ajax({
-    url: 'https://script.google.com/macros/s/AKfycbycPAPD3JRzL2TLfT5u8doN1g_3j8s5HdCOidvSuJ8WIrM1VLFChyMHVfWFYgdfJkQ/exec',
-    type: 'get',
-    async: false,
-    success: function (res) {
-        for (var i of res) {
-            if (i[0] === pageviewUrl) { // 當 i[0] 也就是陣列中的網址 等於 本頁路徑時
-                var pv = i[1]; // 讓 pv 等於 i[1] 也就是陣列中的計數
-                $('#pageviewUrl').text(pageviewUrl);
-                $('#pv').text(pv); // 將 #pv 元素加入此數值
+        // 從 Google Apps Script 取得計數
+        $.ajax({
+            url: "https://script.google.com/macros/s/AKfycbycPAPD3JRzL2TLfT5u8doN1g_3j8s5HdCOidvSuJ8WIrM1VLFChyMHVfWFYgdfJkQ/exec",
+            type: "GET",
+            dataType: "json",
+            success: function (res) {
+                for (var i of res) {
+                    if (i[0] === pageviewUrl) {
+                        var pv = i[1];
+                        $("#pageviewUrl").text(pageviewUrl);
+                        $("#pv").text(pv);
+                    }
+                }
+            },
+            error: function () {
+                console.log("讀取計數失敗");
             }
-        }
-    },
-    error: function (res) {
-        console.log('Error')
-    }
-});
-
+        });
     </script>
 </body>
-
 </html>
