@@ -75,7 +75,7 @@
      <option value="">-- 請選擇 --</option>
    </select>
 <br>  
-資源挹注方案　：
+挹注方案　：
   	<select id="scase">
      <option value="">-- 請選擇 --</option>
    </select>
@@ -92,7 +92,7 @@
 
 
 <script>
-function showList(crit,crit2,crit3,crit4,crit5) {
+function showList(crit,crit2,crit3,crit4,crit5,crit6) {
   if (!crit && !crit2 && !crit3 && !crit4 && !crit5) {
     document.getElementById('order_status').innerHTML = '<font color="red">請輸入查詢關鍵字！</font>';
     return;
@@ -127,7 +127,7 @@ typeEffect("order_status", " ... 查   詢  中 ...", 200);
   // *** 【重要】請將下方 url 的值換成你部署後取得的網路應用程式網址 ***
   // var url = "【請貼上你剛剛複製的網路應用程式網址】";
   var url = "https://script.google.com/macros/s/AKfycbzJ2guYVOkghPUsoe8vf20rpPdNNt51GdHbbvp8xnJT2zHUjw-G7RRPw_alE9nf0SKamw/exec";
-  var finalUrl = url + "?uid=" + encodeURIComponent(crit)+  "&uname=" + encodeURIComponent(crit2)+  "&Lyear=" + encodeURIComponent(crit3)+  "&Uyear=" + encodeURIComponent(crit4)+  "&sclass=" + encodeURIComponent(crit5); // 組合查詢網址	
+  var finalUrl = url + "?uid=" + encodeURIComponent(crit)+  "&uname=" + encodeURIComponent(crit2)+  "&Lyear=" + encodeURIComponent(crit3)+  "&Uyear=" + encodeURIComponent(crit4)+  "&sclass=" + encodeURIComponent(crit5)+  "&scase=" + encodeURIComponent(crit6); // 組合查詢網址	
 	
   var xhr = new XMLHttpRequest();
   xhr.open("GET", finalUrl, true);
