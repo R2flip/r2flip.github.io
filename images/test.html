@@ -43,6 +43,13 @@
 	  <option  value="114" selected >114</option>
 	</select> (114 : 114/1/1~114/6/31)
 
+<br>  
+經費來源　：
+  	<select id="source">
+     <option value="">-- 請選擇 --</option>
+	 <option value="深耕計畫-教務處">深耕計畫-教務處</option>
+   </select>	
+	
  <!-- 第一層選單 -->
 <br>  
 執行機構　：
@@ -87,7 +94,7 @@
 主持人姓名：                                 
              <input type="text" maxlength="10" id="uname" />
   
-             <button  value="查詢" onclick="showList(document.getElementById('uid').value, document.getElementById('uname').value, document.getElementById('Lyear').value, document.getElementById('Uyear').value, document.getElementById('sclass').value, document.getElementById('scase').value);"> 查詢 </button>
+             <button  value="查詢" onclick="showList(document.getElementById('uid').value, document.getElementById('uname').value, document.getElementById('Lyear').value, document.getElementById('Uyear').value, document.getElementById('sclass').value, document.getElementById('scase').value, document.getElementById('source').value);"> 查詢 </button>
 <br><br>
 
 <!-- 顯示查詢結果的區域 -->
@@ -95,8 +102,8 @@
 
 
 <script>
-function showList(crit,crit2,crit3,crit4,crit5,crit6) {
-  if (!crit && !crit2 && !crit3 && !crit4 && !crit5 && !crit6) {
+function showList(crit,crit2,crit3,crit4,crit5,crit6,crit7) {
+  if (!crit && !crit2 && !crit3 && !crit4 && !crit5 && !crit6 && !crit7) {
     document.getElementById('order_status').innerHTML = '<font color="red">請輸入查詢關鍵字！</font>';
     return;
   }
@@ -130,7 +137,7 @@ typeEffect("order_status", " ... 查   詢  中 ...", 200);
   // *** 【重要】請將下方 url 的值換成你部署後取得的網路應用程式網址 ***
   // var url = "【請貼上你剛剛複製的網路應用程式網址】";
   var url = "https://script.google.com/macros/s/AKfycbzJ2guYVOkghPUsoe8vf20rpPdNNt51GdHbbvp8xnJT2zHUjw-G7RRPw_alE9nf0SKamw/exec";
-  var finalUrl = url + "?uid=" + encodeURIComponent(crit)+  "&uname=" + encodeURIComponent(crit2)+  "&Lyear=" + encodeURIComponent(crit3)+  "&Uyear=" + encodeURIComponent(crit4)+  "&sclass=" + encodeURIComponent(crit5)+  "&scase=" + encodeURIComponent(crit6); // 組合查詢網址	
+  var finalUrl = url + "?uid=" + encodeURIComponent(crit)+  "&uname=" + encodeURIComponent(crit2)+  "&Lyear=" + encodeURIComponent(crit3)+  "&Uyear=" + encodeURIComponent(crit4)+  "&sclass=" + encodeURIComponent(crit5)+  "&scase=" + encodeURIComponent(crit6)+  "&source=" + encodeURIComponent(crit7); // 組合查詢網址	
 	
   var xhr = new XMLHttpRequest();
   xhr.open("GET", finalUrl, true);
