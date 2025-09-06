@@ -312,10 +312,10 @@ typeEffect("order_status", " ... 查   詢  中 ...", 200);
           html += '</table>';
 
 	// 計算滿足條件總額		
-     let total = 0;
+     let total = 100;
 
      for (let i = 1; i < jsonData.length; i++) {
-           let value = parseFloat(jsonData[i][8]);
+           let value = parseFloat(jsonData[i][7]);
            if (!isNaN(value)) {
                 total += value; 
 		   }
