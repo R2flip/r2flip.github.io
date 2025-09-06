@@ -295,31 +295,26 @@ typeEffect("order_status", " ... 查   詢  中 ...", 200);
                 if (typeof cellContent === 'string') {
                   cellContent = cellContent.replace(/\r?\n/g, '<br>');
                 }
-              html += '<td>' + cellContent + '</td>';
-
-		   
+              html += '<td>' + cellContent + '</td>';   
 	   } else {
 		   if (j==7 || j==8) {
 	              html += '<td> --暫不公開 -- </td>';	    
 	            } else {		  
                       html += '<td>' + jsonData[i][j] + '</td>';
 	          }    
-	      }
-            }
-            html += '</tr>';
-          }
-          html += '</table>';
+	         }
+           }
+             html += '</tr>';
+      }
+         html += '</table>';
 
 	// 計算滿足條件總額		
      let total = 0;
 
      for (let i = 1; i < jsonData.length; i++) {
            let value = jsonData[i][7];
-           if (!isNaN(value)) {
                 total += value; 
-		   }
 	 }
-
 			
 	  html += '<br> 核准件數 :' + (jsonData.length-1)  + '件    ' + total ;	
           document.getElementById('order_status').innerHTML = html;
