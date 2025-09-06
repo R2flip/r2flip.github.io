@@ -268,10 +268,23 @@ typeEffect("order_status", " ... 查   詢  中 ...", 200);
         if (jsonData.length <= 1) {
           document.getElementById('order_status').innerHTML = '<font color="red">查無資料</font>';
         } else {
+
+        // 計算滿足條件總額		
+          let total = 0;
+
+          for (let i = 1; i < jsonData.length; i++) {
+                  let rawValue = jsonData[i][7];
+                  let cleaned = rawValue.replace(/,/g, '');  // 去除逗號
+                  let value = parseFloat(cleaned);
+             if (!isNaN(value)) {
+                    total += value;
+              }
+          }
+			
           // 建立 HTML 表格來顯示資料
           var html = '<table>';
           // 建立表頭 (第一筆資料是標題)
-          html += '<div align="left"> 本次查詢條件核准件數 :  <font color=red>' + (jsonData.length-1)  + '</font>  件 </div><br>';
+          html += '<div align="left"> 本次查詢條件核准件數 :  <font color=red>' + (jsonData.length-1)  + '</font>  件    總金額：' + total.toLocaleString() +  '</div> <br>'   ;
           html += '<tr>';
           for (var j = 0; j < jsonData[0].length; j++) {
 	     html += '<td>' + jsonData[0][j] + '</td>';    
@@ -307,20 +320,8 @@ typeEffect("order_status", " ... 查   詢  中 ...", 200);
              html += '</tr>';
       }
          html += '</table>';
-
-	// 計算滿足條件總額		
-     let total = 0;
-
-   for (let i = 1; i < jsonData.length; i++) {
-        let rawValue = jsonData[i][7];
-        let cleaned = rawValue.replace(/,/g, '');  // 去除逗號
-        let value = parseFloat(cleaned);
-      if (!isNaN(value)) {
-         total += value;
-      }
-  }
 			
-	  html += '<br> 核准件數 :' + (jsonData.length-1)  + '件    　總金額：' + total.toLocaleString() ;	
+	  html += '<br> 核准件數 :' + (jsonData.length-1)  + '件'  ;	
           document.getElementById('order_status').innerHTML = html;
         }
       } catch (e) {
