@@ -310,7 +310,19 @@ typeEffect("order_status", " ... 查   詢  中 ...", 200);
             html += '</tr>';
           }
           html += '</table>';
-	  html += '<br> 核准件數 :' + (jsonData.length-1)  + '件';	
+
+	// 計算滿足條件總額		
+     let total = 0;
+
+     for (let i = 0; i < jsonData.length; i++) {
+           let value = parseFloat(jsonData[i][8]);
+           if (!isNaN(value)) {
+                total += value; 
+		   }
+	 }
+
+			
+	  html += '<br> 核准件數 :' + (jsonData.length-1)  + '件' + total ;	
           document.getElementById('order_status').innerHTML = html;
         }
       } catch (e) {
