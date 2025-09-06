@@ -312,11 +312,13 @@ typeEffect("order_status", " ... 查   詢  中 ...", 200);
      let total = 0;
 
      for (let i = 1; i < jsonData.length; i++) {
-           let value = jsonData[i][7];
-                total += value; 
+           let value = parseFloat(jsonData[i][7]);  // 第8欄（索引7）
+		     if (!isNaN(value)) {
+                total += value;
+			 }
 	 }
 			
-	  html += '<br> 核准件數 :' + (jsonData.length-1)  + '件    ' + total ;	
+	  html += '<br> 核准件數 :' + (jsonData.length-1)  + '件    　總金額：' + total.toLocaleString() ;	
           document.getElementById('order_status').innerHTML = html;
         }
       } catch (e) {
