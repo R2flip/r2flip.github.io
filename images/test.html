@@ -284,7 +284,7 @@ typeEffect("order_status", " ... 查   詢  中 ...", 200);
           // 建立 HTML 表格來顯示資料
           var html = '<table>';
           // 建立表頭 (第一筆資料是標題)
-          html += '<div align="left"> 本次查詢條件核准件數 :  <font color=red>' + (jsonData.length-1)  + '</font>  件    總金額：' + total.toLocaleString() +  '</div> <br>'   ;
+          html += '<div align="left"> 本次查詢條件核准件數 :  <font color=red>' + (jsonData.length-1)  + '</font>  件     總金額：<font color=red>' + total.toLocaleString() +  ' </font> 元</div> <br>'   ;
           html += '<tr>';
           for (var j = 0; j < jsonData[0].length; j++) {
 	     html += '<td>' + jsonData[0][j] + '</td>';    
