@@ -279,9 +279,8 @@ typeEffect("order_status", " ... 查   詢  中 ...", 200);
           html += '</tr>';
 	
           // 取得當前網址的查詢參數
-          const params = new URLSearchParams(window.location.search);
-
-          // 取得名為 "ncku" 的參數值
+		// 取得名為 "ncku" 的參數值
+          const params = new URLSearchParams(window.location.search);    
           const ncku = params.get('ncku');
 		
           // 建立資料列 (從第二筆資料開始)
@@ -312,17 +311,17 @@ typeEffect("order_status", " ... 查   詢  中 ...", 200);
           html += '</table>';
 
 	// 計算滿足條件總額		
-     let total = 100;
+     let total = 0;
 
      for (let i = 1; i < jsonData.length; i++) {
-           let value = parseFloat(jsonData[i][7]);
+           let value = jsonData[i][7];
            if (!isNaN(value)) {
                 total += value; 
 		   }
 	 }
 
 			
-	  html += '<br> 核准件數 :' + (jsonData.length-1)  + '件' + total ;	
+	  html += '<br> 核准件數 :' + (jsonData.length-1)  + '件    ' + total ;	
           document.getElementById('order_status').innerHTML = html;
         }
       } catch (e) {
