@@ -51,9 +51,8 @@
         // 檢查 sessionStorage 中是否有用戶登入資訊
         const username = sessionStorage.getItem('email');
         
-        if (email) {
+        if (username) {
             // 如果存在用戶名，顯示歡迎信息
-            document.getElementById('welcomeMessage').innerText = `Welcome, ${email}!`;
         } else {
             // 如果沒有登入資訊，重定向回登入頁面
             window.location.href = 'https://reurl.cc/Y3Qnno';
