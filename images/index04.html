@@ -48,16 +48,21 @@
 <body class="w3-light-grey">
 
 <script>
-  var token = localStorage.getItem("sessionToken");
+  function getToken() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("token") || localStorage.getItem("sessionToken");
+  }
 
+  var token = getToken();
   if (!token) {
-    window.location.href = 'https://script.google.com/a/macros/gs.ncku.edu.tw/s/AKfycbx_DGpYOd0MP6JFR0FRIkUt5f-1UfzF5ZvkKlfF4jhxhpGA0AfXCyuQPNgEE7qCVyEOVg/exec';
+    // 沒 token 就導回登入頁
+    window.location.href = "https://script.google.com/a/macros/gs.ncku.edu.tw/s/AKfycbx_DGpYOd0MP6JFR0FRIkUt5f-1UfzF5ZvkKlfF4jhxhpGA0AfXCyuQPNgEE7qCVyEOVg/exec";
   } else {
     console.log("目前使用 token:", token);
   }
 </script>
 
- 
+
 <!-- Top container -->
 <div class="w3-container w3-top w3-black w3-large w3-padding" style="z-index:4">
   <button class="w3-btn w3-hide-large w3-padding-0 w3-hover-text-grey" onclick="w3_open();"><i class="fa fa-bars"></i>  Menu</button>
