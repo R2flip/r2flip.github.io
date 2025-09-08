@@ -47,17 +47,11 @@
   
 <body class="w3-light-grey">
 
-    <script>
-        // 檢查 sessionStorage 中是否有用戶登入資訊
-        const email= sessionStorage.getItem('email');
-        
-        if (email) {
-            // 如果存在用戶名，顯示歡迎信息
-        } else {
-            // 如果沒有登入資訊，重定向回登入頁面
-            window.location.href = 'https://reurl.cc/Y3Qnno';
-        }
-    </script>
+<script>
+    if (!sessionStorage.getItem('email')) {
+        window.location.href = 'https://reurl.cc/Y3Qnno';
+    }
+</script>>
   
 <!-- Top container -->
 <div class="w3-container w3-top w3-black w3-large w3-padding" style="z-index:4">
