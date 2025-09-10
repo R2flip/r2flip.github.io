@@ -171,30 +171,31 @@ document.getElementById("editForm").addEventListener("submit", function(e){
 
 
 // 刪除計畫
-function deleteProject(year, host) {
-  if (!confirm(`確定要刪除 ${year} 年度，由 ${host} 主持的計畫嗎？`)) return;
+// 刪除計畫
+async function deleteProject(year, host) {
+  if (!confirm(`確定要刪除「${year} / ${host}」這筆計畫嗎？`)) return;
 
-  fetch(apiUrl, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ 計畫年度: year, 主持人: host })
-  })
-  .then(res => res.json())
-  .then(data => {
+  try {
+    const res = await fetch(apiUrl, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ "計畫年度": year, "主持人": host })
+    });
+
+    const data = await res.json();
+
     if (data.status === "deleted") {
       alert("刪除成功！");
-      searchProjects(); // 重新刷新表格
+      searchProjects(); // 重新查詢更新畫面
     } else if (data.status === "not found") {
-      alert("找不到符合的計畫！");
+      alert("找不到這筆紀錄！");
     } else {
-      alert("刪除失敗：" + (data.message || JSON.stringify(data)));
+      alert("刪除失敗：" + data.message);
     }
-  })
-  .catch(err => {
-    alert("刪除發生錯誤：" + err.message);
-  });
+  } catch (err) {
+    alert("刪除失敗：" + err.message);
+  }
 }
-
 
  </script>
 
