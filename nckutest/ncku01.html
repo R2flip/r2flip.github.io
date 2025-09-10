@@ -32,36 +32,19 @@ pre { background:#f0f0f0; padding:10px; }
 <pre id="result"></pre>
 
 <script>
-document.addEventListener("DOMContentLoaded", function(){
-  const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec"; // 🔑 替換你的 Web App URL
+  const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec";
+// 新增
+    document.getElementById("projectForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const data = {};
+      formData.forEach((v, k) => data[k] = v);
 
-  document.getElementById("projectForm").addEventListener("submit", function(e){
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(this));
-    console.log("送出資料:", data);
-
-    fetch(apiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    })
-    .then(res => res.json())
-    .then(res => {
-      console.log(res);
-      if(res.status === "success"){
-        alert("新增成功！");
-        this.reset();
-        document.getElementById("result").textContent = JSON.stringify(res.data, null, 2);
-      } else {
-        alert("新增失敗：" + (res.message || res.status));
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      alert("新增失敗：" + err);
+      fetch(apiUrl, { method: "POST", body: JSON.stringify(data) })
+        .then(res => res.json())
+        .then(() => { alert("新增成功！"); this.reset(); searchProjects(); })
+        .catch(() => alert("新增失敗！"));
     });
-  });
-});
 </script>
 
 </body>
