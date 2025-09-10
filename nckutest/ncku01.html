@@ -2,76 +2,24 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<title>計畫管理系統 - 進階修改</title>
+<title>新增計畫測試</title>
 <style>
-  body { font-family: "Microsoft JhengHei", sans-serif; margin: 20px; }
-  h2 { color: #0066cc; }
-  form, table { margin-top: 20px; }
-  label { display: block; margin: 6px 0 2px; }
-  input { width: 300px; padding: 6px; }
-  button { margin-top: 8px; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; background: #0066cc; color: #fff; }
-  button:hover { background: #004999; }
-  table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-  th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
-  th { background: #f0f0f0; }
-  .btn-sm { padding: 4px 8px; font-size: 12px; }
-  /* Modal */
-  #editModal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content:center; align-items:center; }
-  #editModal .modal-content { background:#fff; padding:20px; border-radius:6px; width:400px; }
+body { font-family:"Microsoft JhengHei", sans-serif; margin:20px; }
+label { display:block; margin:6px 0 2px; }
+input { width:300px; padding:6px; }
+button { padding:6px 12px; margin-top:8px; background:#0066cc; color:#fff; border:none; border-radius:4px; cursor:pointer; }
+button:hover { background:#004999; }
+pre { background:#f0f0f0; padding:10px; }
 </style>
 </head>
 <body>
 
-
-
-<h2>查詢計畫資料</h2>
-<label>輸入年度 <input type="text" id="searchYear" placeholder="例如：115"></label>
-<button onclick="searchProjects()">查詢</button>
-
-<table id="results">
-  <thead>
-    <tr>
-      <th>計畫年度</th>
-      <th>經費來源</th>
-      <th>執行機構</th>
-      <th>執行學系</th>
-      <th>主持人</th>
-      <th>挹注方案</th>
-      <th>計畫期程</th>
-      <th>補助金額</th>
-      <th>CoPI</th>
-      <th>操作</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-
-<!-- Modal 修改表單 -->
-<div id="editModal">
-  <div class="modal-content">
-    <h3>修改計畫</h3>
-    <form id="editForm">
-      <label>計畫年度 <input type="text" name="計畫年度" required></label>
-      <label>經費來源 <input type="text" name="經費來源"></label>
-      <label>執行機構 <input type="text" name="執行機構"></label>
-      <label>執行學系 <input type="text" name="執行學系"></label>
-      <label>主持人 <input type="text" name="主持人" required></label>
-      <label>挹注方案 <input type="text" name="挹注方案"></label>
-      <label>計畫期程 <input type="text" name="計畫期程"></label>
-      <label>補助金額 <input type="number" name="補助金額"></label>
-      <label>CoPI <input type="text" name="CoPI"></label>
-      <button type="submit">儲存修改</button>
-      <button type="button" onclick="closeModal()" style="background:#ccc;color:#000;margin-left:10px;">取消</button>
-    </form>
-  </div>
-</div>
-
 <h2>新增計畫資料</h2>
 <form id="projectForm">
   <label>計畫年度 <input type="text" name="計畫年度" required></label>
-  <label>經費來源 <input type="text" name="經費來源" required></label>
-  <label>執行機構 <input type="text" name="執行機構" required></label>
-  <label>執行學系 <input type="text" name="執行學系" required></label>
+  <label>經費來源 <input type="text" name="經費來源"></label>
+  <label>執行機構 <input type="text" name="執行機構"></label>
+  <label>執行學系 <input type="text" name="執行學系"></label>
   <label>主持人 <input type="text" name="主持人" required></label>
   <label>挹注方案 <input type="text" name="挹注方案"></label>
   <label>計畫期程 <input type="text" name="計畫期程"></label>
@@ -79,16 +27,18 @@
   <label>CoPI <input type="text" name="CoPI"></label>
   <button type="submit">新增</button>
 </form>
-  
-<script>
 
-// 新增計畫 
+<h2>新增結果</h2>
+<pre id="result"></pre>
+
+<script>
 document.addEventListener("DOMContentLoaded", function(){
-  const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec"; // 🔑 替換成你的 Web App URL
+  const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec"; // 🔑 替換你的 Web App URL
 
   document.getElementById("projectForm").addEventListener("submit", function(e){
     e.preventDefault();
     const data = Object.fromEntries(new FormData(this));
+    console.log("送出資料:", data);
 
     fetch(apiUrl, {
       method: "POST",
@@ -112,111 +62,6 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   });
 });
-  
-</script>
-
-  
-<script>
-const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec";
-let editIndex = null;
-
-// 查詢計畫
-function searchProjects() {
-  const year = document.getElementById("searchYear").value.trim();
-  let url = apiUrl;
-  if (year) url += "?year=" + encodeURIComponent(year);
-
-  fetch(url)
-    .then(res => res.json())
-    .then(data => {
-      const tbody = document.querySelector("#results tbody");
-      tbody.innerHTML = "";
-      data.forEach((item, idx) => {
-        const tr = document.createElement("tr");
-        tr.dataset.item = JSON.stringify(item);
-        tr.innerHTML = `
-          <td>${item["計畫年度"] || ""}</td>
-          <td>${item["經費來源"] || ""}</td>
-          <td>${item["執行機構"] || ""}</td>
-          <td>${item["執行學系"] || ""}</td>
-          <td>${item["主持人"] || ""}</td>
-          <td>${item["挹注方案"] || ""}</td>
-          <td>${item["計畫期程"] || ""}</td>
-          <td>${item["補助金額"] || ""}</td>
-          <td>${item["CoPI"] || ""}</td>
-          <td>
-            <button class="btn-sm" onclick='openEditModal(${idx})'>修改</button>
-            <button class="btn-sm" onclick='deleteProject("${item["計畫年度"]}","${item["主持人"]}")'>刪除</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    })
-    .catch(() => alert("查詢失敗！"));
-}
-
-// 開啟 Modal 並填入資料
-function openEditModal(idx) {
-  editIndex = idx;
-  const tr = document.querySelectorAll("#results tbody tr")[idx];
-  const item = JSON.parse(tr.dataset.item);
-  const form = document.getElementById("editForm");
-  for(let key in item){
-    if(form.elements[key]) form.elements[key].value = item[key];
-  }
-  document.getElementById("editModal").style.display = "flex";
-}
-
-// 關閉 Modal
-function closeModal(){
-  document.getElementById("editModal").style.display = "none";
-}
-
-// 儲存修改
-document.getElementById("editForm").addEventListener("submit", function(e){
-  e.preventDefault();
-  const formData = new FormData(this);
-  const data = {};
-  formData.forEach((v,k)=> data[k] = v);
-
-  fetch(apiUrl, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  })
-  .then(res=>res.json())
-  .then(res=>{
-    if(res.status==="updated"){
-      alert("修改成功！");
-      closeModal();
-      searchProjects();
-    } else {
-      alert("修改失敗："+res.status);
-    }
-  })
-  .catch(()=>alert("修改失敗！"));
-});
-
-// 刪除計畫
-function deleteProject(year, host) {
-  if (!confirm(`確定要刪除 ${year} 年度 ${host} 的計畫嗎？`)) return;
-
-  fetch(apiUrl, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ "計畫年度": year, "主持人": host })
-  })
-    .then(res => res.json())
-    .then(res => {
-      if (res.status === "deleted") {
-        alert("刪除成功！");
-        searchProjects();
-      } else {
-        alert("刪除失敗：" + res.status);
-      }
-    })
-    .catch(() => alert("刪除失敗！"));
-}
 </script>
 
 </body>
