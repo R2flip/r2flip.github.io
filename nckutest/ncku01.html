@@ -28,30 +28,47 @@ pre { background:#f0f0f0; padding:10px; }
   <button type="submit">新增</button>
 </form>
 
-<h2>新增結果</h2>
-<pre id="result"></pre>
-
 <h2>查詢計畫資料</h2>
-  <label>輸入年度 <input type="text" id="searchYear" placeholder="例如：2025"></label>
-  <button onclick="searchProjects()">查詢</button>
+<label>輸入年度 <input type="text" id="searchYear" placeholder="例如：115"></label>
+<button onclick="searchProjects()">查詢</button>
 
-  <table id="results">
-    <thead>
-      <tr>
-        <th>計畫年度</th>
-        <th>經費來源</th>
-        <th>執行機構</th>
-        <th>執行學系</th>
-        <th>主持人</th>
-        <th>挹注方案</th>
-        <th>計畫期程</th>
-        <th>補助金額</th>
-        <th>CoPI</th>
-        <th>操作</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+<table id="results">
+  <thead>
+    <tr>
+      <th>計畫年度</th>
+      <th>經費來源</th>
+      <th>執行機構</th>
+      <th>執行學系</th>
+      <th>主持人</th>
+      <th>挹注方案</th>
+      <th>計畫期程</th>
+      <th>補助金額</th>
+      <th>CoPI</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<!-- Modal 修改表單 -->
+<div id="editModal">
+  <div class="modal-content">
+    <h3>修改計畫</h3>
+    <form id="editForm">
+      <label>計畫年度 <input type="text" name="計畫年度" required></label>
+      <label>經費來源 <input type="text" name="經費來源"></label>
+      <label>執行機構 <input type="text" name="執行機構"></label>
+      <label>執行學系 <input type="text" name="執行學系"></label>
+      <label>主持人 <input type="text" name="主持人" required></label>
+      <label>挹注方案 <input type="text" name="挹注方案"></label>
+      <label>計畫期程 <input type="text" name="計畫期程"></label>
+      <label>補助金額 <input type="number" name="補助金額"></label>
+      <label>CoPI <input type="text" name="CoPI"></label>
+      <button type="submit">儲存修改</button>
+      <button type="button" onclick="closeModal()" style="background:#ccc;color:#000;margin-left:10px;">取消</button>
+    </form>
+  </div>
+</div>
   
 <script>
   const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec";
