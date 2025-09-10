@@ -212,7 +212,6 @@ async function deleteProject(year, host) {
   if (confirm(`確定要刪除 ${year} 年度 ${host} 的計畫嗎？`)) return;
 
   deleting = true;
-  showLoading(true);
 
   try {
     const res = await  fetch(apiUrl, { method: "DELETE", body: JSON.stringify(data)
@@ -239,7 +238,6 @@ async function deleteProject(year, host) {
     showToast("刪除失敗，請稍後再試！", false);
   } finally {
     deleting = false;
-    showLoading(false);
   }
 }
   
