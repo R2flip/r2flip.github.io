@@ -178,7 +178,7 @@ async function deleteProject(year, host) {
     const res = await fetch(apiurl, {
        method: "DELETE",
        headers: { "Content-Type": "application/json" },
-       body: JSON.stringify({ "計畫年度": ${year}, "主持人": ${host}})
+       body: JSON.stringify({ "計畫年度": year, "主持人": host})
     });
 
     const data = await res.json();
