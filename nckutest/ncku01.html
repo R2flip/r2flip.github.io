@@ -105,17 +105,33 @@
         .catch(() => alert("查詢失敗！"));
     }
 
-    // 修改
-    function editProject(item) {
-      const newBudget = prompt("輸入新的補助金額", item["補助金額"]);
-      if (newBudget === null) return;
+// 修改
+function editProject(item) {
+  const newBudget = prompt("輸入新的補助金額", item["補助金額"]);
+  if (newBudget === null) return;
 
-      item["補助金額"] = newBudget;
-      fetch(apiUrl, { method: "PUT", body: JSON.stringify(item) })
-        .then(res => res.json())
-        .then(() => { alert("修改成功！"); searchProjects(); })
-        .catch(() => alert("修改失敗！"));
-    }
+  item["補助金額"] = newBudget;
+
+  fetch(apiUrl, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" }, // 🔑 必加
+    body: JSON.stringify(item)
+  })
+    .then(res => res.json())
+    .then(res => {
+      if (res.status === "updated") {
+        alert("修改成功！");
+        searchProjects(); // 重新讀取資料
+      } else {
+        alert("修改失敗：" + res.status);
+      }
+    })
+    .catch(err => {
+      console.error("錯誤：", err);
+      alert("修改失敗！");
+    });
+}
+
 
     // 刪除
     function deleteProject(year, host) {
