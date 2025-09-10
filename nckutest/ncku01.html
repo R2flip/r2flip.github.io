@@ -31,6 +31,28 @@ pre { background:#f0f0f0; padding:10px; }
 <h2>新增結果</h2>
 <pre id="result"></pre>
 
+<h2>查詢計畫資料</h2>
+  <label>輸入年度 <input type="text" id="searchYear" placeholder="例如：2025"></label>
+  <button onclick="searchProjects()">查詢</button>
+
+  <table id="results">
+    <thead>
+      <tr>
+        <th>計畫年度</th>
+        <th>經費來源</th>
+        <th>執行機構</th>
+        <th>執行學系</th>
+        <th>主持人</th>
+        <th>挹注方案</th>
+        <th>計畫期程</th>
+        <th>補助金額</th>
+        <th>CoPI</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  
 <script>
   const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec";
 // 新增
