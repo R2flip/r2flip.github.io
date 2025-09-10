@@ -193,7 +193,7 @@ async function deleteProject(year, host) {
 
   try {
     const res = await fetch(apiUrl, {
-      method: "GET",
+      method: "delete",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ 
         "計畫年度": String(year),
