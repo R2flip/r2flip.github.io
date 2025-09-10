@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <title>新增計畫</title>
@@ -7,24 +7,25 @@
   <style>
     body {
       font-family: 'Roboto', sans-serif;
-      background-color: #f5f5f5;
-      padding: 40px;
+      background-color: #f0f2f5;
       display: flex;
       justify-content: center;
+      padding: 50px;
     }
 
     form {
       background-color: #fff;
       padding: 30px 40px;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      width: 400px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      width: 450px;
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 25px;
       color: #333;
+      margin-bottom: 30px;
+      font-weight: 500;
     }
 
     label {
@@ -38,16 +39,23 @@
 
     select, input {
       width: 60%;
-      padding: 6px 10px;
+      padding: 7px 10px;
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 14px;
+      transition: all 0.2s;
     }
 
     select:focus, input:focus {
-      outline: none;
       border-color: #4CAF50;
       box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+      outline: none;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 25px;
     }
 
     button {
@@ -58,7 +66,7 @@
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: 0.3s;
     }
 
     button[type="submit"] {
@@ -77,12 +85,6 @@
 
     button[type="button"]:hover {
       background-color: #b3b3b3;
-    }
-
-    .button-group {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
     }
   </style>
 </head>
@@ -128,7 +130,7 @@
 
     <div class="button-group">
       <button type="submit">新增</button>
-      <button type="button" onclick="this.form.reset()">清空</button>
+      <button type="button" onclick="projectForm.reset()">清空</button>
     </div>
   </form>
 
@@ -173,25 +175,30 @@
     window.onload = initSelects;
 
     // 執行機構聯動學系
-    document.getElementById("orgSelect").addEventListener("change", function(){
+    document.getElementById("orgSelect").addEventListener("change", function() {
       const selectedOrg = this.value;
       populateSelect("deptSelect", optionsData.depts[selectedOrg]);
     });
 
-  const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec";
-   // 新增
+    const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec";
+
+    // 表單提交
     document.getElementById("projectForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      const formData = new FormData(this);
-      const data = {};
-      formData.forEach((v, k) => data[k] = v);
+      const formData = Object.fromEntries(new FormData(this).entries());
 
-      fetch(apiUrl, { method: "POST", body: JSON.stringify(data) })
-        .then(res => res.json())
-        .then(() => { alert("新增成功！"); this.reset(); searchProjects(); })
-        .catch(() => alert("新增失敗！"));
+      fetch(apiUrl, {
+        method: "POST",
+        body: JSON.stringify(formData)
+      })
+      .then(res => res.json())
+      .then(() => {
+        alert("新增成功！");
+        this.reset();
+        // 可呼叫 searchProjects() 更新列表
+      })
+      .catch(() => alert("新增失敗！"));
     });
   </script>
-  
 </body>
 </html>
