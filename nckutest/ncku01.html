@@ -19,28 +19,29 @@
   #editModal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content:center; align-items:center; }
   #editModal .modal-content { background:#fff; padding:20px; border-radius:6px; width:400px; }
 
-#loadingOverlay {
-  display: none;
+/* Toast 容器 */
+#toast {
+  visibility: hidden;
+  min-width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 12px;
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.3);
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  z-index: 10000;
+  right: 30px;
+  bottom: 30px;
+  font-size: 16px;
+  opacity: 0;
+  transition: opacity 0.5s, bottom 0.5s;
+}
+#toast.show {
+  visibility: visible;
+  opacity: 1;
+  bottom: 50px;
 }
 
-.loader {
-  border: 8px solid #f3f3f3;
-  border-top: 8px solid #3498db;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 </style>  
 </head>
 <body>
@@ -101,7 +102,7 @@
   </div>
 </div>
 
-
+<div id="toast"></div>
   
 <script>
   const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec";
@@ -196,12 +197,15 @@ document.getElementById("editForm").addEventListener("submit", function(e){
 });
 
 // 刪除計畫
+function showToast(message, isSuccess = true) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.style.backgroundColor = isSuccess ? "#28a745" : "#dc3545"; // 綠=成功, 紅=失敗
+  toast.className = "show";
+  setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+}
 
 let deleting = false;
-
-function showLoading(show) {
-  document.getElementById("loadingOverlay").style.display = show ? "flex" : "none";
-}
 
 async function deleteProject(year, host) {
   if (deleting) return;
@@ -222,16 +226,16 @@ async function deleteProject(year, host) {
     const result = await res.json();
 
     if (result.status === "deleted") {
-      alert(`刪除成功！刪除了第 ${result.rows.join(", ")} 行`);
+      showToast(`刪除成功！已刪除第 ${result.rows.join(", ")} 行`);
       searchProjects();
     } else if (result.status === "not found") {
-      alert("找不到符合的計畫！");
+      showToast("找不到符合的計畫！", false);
     } else {
-      alert(`刪除失敗：${result.message || "未知錯誤"}`);
+      showToast(`刪除失敗：${result.message || "未知錯誤"}`, false);
     }
   } catch (err) {
     console.error(err);
-    alert("刪除失敗，請稍後再試！");
+    showToast("刪除失敗，請稍後再試！", false);
   } finally {
     deleting = false;
     showLoading(false);
