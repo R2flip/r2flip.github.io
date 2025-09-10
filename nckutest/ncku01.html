@@ -152,7 +152,7 @@ document.getElementById("editForm").addEventListener("submit", function(e){
   formData.forEach((v,k)=> data[k] = v);
 
   fetch(apiUrl, {
-    method: "PUT",
+    method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
   })
