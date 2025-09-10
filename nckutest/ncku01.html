@@ -184,9 +184,7 @@ document.getElementById("editForm").addEventListener("submit", function(e){
 });
 
 // 刪除計畫
-
 let deleting = false;
-
 async function deleteProject(year, host) {
   if (deleting) return;
   if (!confirm(`確定要刪除 ${year} 年度 ${host} 的計畫嗎？`)) return;
@@ -195,7 +193,7 @@ async function deleteProject(year, host) {
 
   try {
     const res = await fetch(apiUrl, {
-      method: "POST",
+      method: "GET",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ 
         "計畫年度": String(year),
