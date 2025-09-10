@@ -186,5 +186,22 @@
       alert("表單已提交，請查看 console.log 確認資料。");
     });
   </script>
+  
+  <script>
+  const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec";
+   // 新增
+    document.getElementById("projectForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const data = {};
+      formData.forEach((v, k) => data[k] = v);
+
+      fetch(apiUrl, { method: "POST", body: JSON.stringify(data) })
+        .then(res => res.json())
+        .then(() => { alert("新增成功！"); this.reset(); searchProjects(); })
+        .catch(() => alert("新增失敗！"));
+    });
+  </script>
+  
 </body>
 </html>
