@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>新增計畫</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    select, input {
+      width: 60%;
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: #4CAF50;
+      box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+    }
+
+    button {
+      width: 48%;
+      padding: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    button[type="button"] {
+      background-color: #ccc;
+      color: #333;
+    }
+
+    button[type="button"]:hover {
+      background-color: #b3b3b3;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <form id="projectForm">
+    <h2>新增計畫</h2>
+
+    <label>計畫年度
+      <select name="計畫年度" id="yearSelect" required></select>
+    </label>
+
+    <label>經費來源
+      <select name="經費來源" id="sourceSelect"></select>
+    </label>
+
+    <label>執行機構
+      <select name="執行機構" id="orgSelect"></select>
+    </label>
+
+    <label>執行學系
+      <select name="執行學系" id="deptSelect"></select>
+    </label>
+
+    <label>主持人
+      <input type="text" name="主持人" required>
+    </label>
+
+    <label>挹注方案
+      <select name="挹注方案" id="planSelect"></select>
+    </label>
+
+    <label>計畫期程
+      <select name="計畫期程" id="durationSelect"></select>
+    </label>
+
+    <label>補助金額
+      <input type="number" name="補助金額">
+    </label>
+
+    <label>CoPI
+      <input type="text" name="CoPI">
+    </label>
+
+    <div class="button-group">
+      <button type="submit">新增</button>
+      <button type="button" onclick="this.form.reset()">清空</button>
+    </div>
+  </form>
+
+  <script>
+    // 下拉選單資料
+    const optionsData = {
+      years: ["2023", "2024", "2025"],
+      sources: ["校內經費", "校外經費"],
+      orgs: ["學院A", "學院B", "學院C"],
+      depts: {
+        "學院A": ["資訊系", "電機系"],
+        "學院B": ["機械系", "化學系"],
+        "學院C": ["土木系", "建築系"]
+      },
+      plans: ["方案A", "方案B", "方案C"],
+      durations: ["半年", "一年", "兩年"]
+    };
+
+    function populateSelect(id, arr) {
+      const sel = document.getElementById(id);
+      sel.innerHTML = "";
+      arr.forEach(item => {
+        const opt = document.createElement("option");
+        opt.value = item;
+        opt.textContent = item;
+        sel.appendChild(opt);
+      });
+    }
+
+    function initSelects() {
+      populateSelect("yearSelect", optionsData.years);
+      populateSelect("sourceSelect", optionsData.sources);
+      populateSelect("orgSelect", optionsData.orgs);
+      populateSelect("planSelect", optionsData.plans);
+      populateSelect("durationSelect", optionsData.durations);
+
+      // 預設選擇第一個執行機構
+      const firstOrg = optionsData.orgs[0];
+      populateSelect("deptSelect", optionsData.depts[firstOrg]);
+    }
+
+    window.onload = initSelects;
+
+    // 執行機構聯動學系
+    document.getElementById("orgSelect").addEventListener("change", function(){
+      const selectedOrg = this.value;
+      populateSelect("deptSelect", optionsData.depts[selectedOrg]);
+    });
+
+    // 表單提交
+    document.getElementById("projectForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const formData = Object.fromEntries(new FormData(this).entries());
+      console.log("表單資料:", formData);
+      alert("表單已提交，請查看 console.log 確認資料。");
+    });
+  </script>
+</body>
+</html>
