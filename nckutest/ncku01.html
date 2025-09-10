@@ -170,39 +170,28 @@ document.getElementById("editForm").addEventListener("submit", function(e){
 });
 
 // 刪除計畫
-let deleting = false;
   
-async function deleteProject(year, host) {
-  if (deleting) return;
-  if (!confirm(`確定要刪除 ${year} 年度 ${host} 的計畫嗎？`)) return;
+function deleteProject(year, host) {
+ document.getElementById("editForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-  deleting = true;
+      const year = document.getElementById("year").value.trim();
+      const host = document.getElementById("host").value.trim();
 
-  try {
-    const res = await fetch(apiUrl, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        "計畫年度": String(year),
-        "主持人": String(host)
-      })
+      try {
+        const res = await fetch(apiUrl, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ "計畫年度": year, "主持人": host })
+        });
+
+        const data = await res.json();
+        document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+
+      } catch (err) {
+        document.getElementById("result").textContent = "錯誤：" + err.message;
+      }
     });
-
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const result = await res.json();
-
-    if (result.status === "deleted") {
-      searchProjects(); // 刷新列表
-    } else if (result.status === "not found") {
-      showToast("找不到符合的計畫！", false);
-    } else {
-      showToast(`刪除失敗：${result.message || "未知錯誤"}`, false);
-    }
-  } catch (err) {
-    console.error(err);
-  } finally {
-    deleting = false;
-  }
 }
 
  </script>
