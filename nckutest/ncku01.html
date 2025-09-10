@@ -171,9 +171,8 @@ document.getElementById("editForm").addEventListener("submit", function(e){
 
 
 // 刪除計畫
-// 刪除計畫
 async function deleteProject(year, host) {
-  if (!confirm(`確定要刪除「${year} / ${host}」這筆計畫嗎？`)) return;
+  if (!confirm(`確定要刪除 ${year} 年度，由 ${host} 主持的計畫嗎？`)) return;
 
   try {
     const res = await fetch(apiUrl, {
@@ -190,10 +189,10 @@ async function deleteProject(year, host) {
     } else if (data.status === "not found") {
       alert("找不到這筆紀錄！");
     } else {
-      alert("刪除失敗：" + data.message);
+      alert("刪除失敗1：" + data.message);
     }
   } catch (err) {
-    alert("刪除失敗：" + err.message);
+    alert("刪除失敗2：" + err.message);
   }
 }
 
