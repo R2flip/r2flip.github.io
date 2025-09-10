@@ -179,7 +179,7 @@ async function deleteProject(year, host) {
   if (host) url += "?h0st=" + encodeURIComponent(host);
   
   try {
-    const res = await fetch(Url, {
+    const res = await fetch(url, {
       method: "DELETE"
       // method: "DELETE",
       // headers: { "Content-Type": "application/json" },
