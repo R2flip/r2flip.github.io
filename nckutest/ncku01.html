@@ -205,7 +205,6 @@ async function deleteProject(year, host) {
   if (!confirm(`確定要刪除 ${year} 年度 ${host} 的計畫嗎？`)) return;
 
   deleting = true;
-  showLoading(true);
 
   try {
     const res = await fetch(apiUrl, {
@@ -221,7 +220,6 @@ async function deleteProject(year, host) {
     const result = await res.json();
 
     if (result.status === "deleted") {
-      showToast(`刪除成功！已刪除第 ${result.rows.join(", ")} 行`);
       searchProjects(); // 刷新列表
     } else if (result.status === "not found") {
       showToast("找不到符合的計畫！", false);
@@ -230,36 +228,21 @@ async function deleteProject(year, host) {
     }
   } catch (err) {
     console.error(err);
-    showToast("刪除失敗，請稍後再試！", false);
   } finally {
     deleting = false;
-    showLoading(false);
   }
 }
 
-// 顯示 / 隱藏 Loading
-function showLoading(show) {
-  const loader = document.getElementById("loading");
-  if (loader) loader.style.display = show ? "block" : "none";
-}
-
+ 
 // 操作提示
 function showToast(msg, success = true) {
   alert(msg); // 可替換成美觀 toast UI
 }
-
-// 範例刷新列表函式
-function searchProjects() {
-  console.log("刷新計畫列表...");
-  // 這裡可以放你的查詢/渲染邏輯
-}
-
-
+ 
+  
 </script>
 
-<div id="loading" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:999;">
-  <img src="https://i.gifer.com/ZZ5H.gif" alt="Loading..." width="50">
-</div>
+
 
 <!-- 刪除按鈕示例 -->
 <button onclick="deleteProject('115', '111')">刪除 115 年度的計畫</button>
