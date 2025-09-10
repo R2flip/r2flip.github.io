@@ -89,10 +89,9 @@
   </div>
 </div>
 
-<div id="toast"></div>
-  
 <script>
   const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec";
+  
 // 新增
     document.getElementById("projectForm").addEventListener("submit", function(e) {
       e.preventDefault();
@@ -193,7 +192,7 @@ async function deleteProject(year, host) {
 
   try {
     const res = await fetch(apiUrl, {
-      method: "delete",
+      method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ 
         "計畫年度": String(year),
@@ -218,19 +217,11 @@ async function deleteProject(year, host) {
   }
 }
 
- 
-// 操作提示
-function showToast(msg, success = true) {
-  alert(msg); // 可替換成美觀 toast UI
-}
- 
-  
-</script>
-
+ </script>
 
 
 <!-- 刪除按鈕示例 -->
-<button onclick="deleteProject(115, 'ABC')">刪除 115 年度的計畫</button>
+<button onclick="deleteProject('115' , 'ABC')">刪除 115 年度的計畫</button>
 
   
 </body>
