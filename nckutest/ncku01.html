@@ -96,7 +96,7 @@ document.getElementById("projectForm").addEventListener("submit", function(e) {
   })
     .then(res => res.json())
     .then(res => {
-      if(res.status === "created" || res.status === "success"){
+      if( res.status === "success" ){
         alert("新增成功！");
         this.reset();
         searchProjects();
