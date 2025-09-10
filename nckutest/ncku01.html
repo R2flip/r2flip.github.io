@@ -92,19 +92,6 @@
 <script>
   const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec";
   
-// 新增
-    document.getElementById("projectForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const formData = new FormData(this);
-      const data = {};
-      formData.forEach((v, k) => data[k] = v);
-
-      fetch(apiUrl, { method: "POST", body: JSON.stringify(data) })
-        .then(res => res.json())
-        .then(() => { alert("新增成功！"); this.reset(); searchProjects(); })
-        .catch(() => alert("新增失敗！"));
-    });
-
  // 查詢計畫
 function searchProjects() {
   const year = document.getElementById("searchYear").value.trim();
@@ -184,6 +171,7 @@ document.getElementById("editForm").addEventListener("submit", function(e){
 
 // 刪除計畫
 let deleting = false;
+  
 async function deleteProject(year, host) {
   if (deleting) return;
   if (!confirm(`確定要刪除 ${year} 年度 ${host} 的計畫嗎？`)) return;
