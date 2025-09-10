@@ -169,30 +169,32 @@ document.getElementById("editForm").addEventListener("submit", function(e){
   .catch(()=>alert("修改失敗！"));
 });
 
+
 // 刪除計畫
-  
 function deleteProject(year, host) {
- document.getElementById("editForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
+  if (!confirm(`確定要刪除 ${year} 年度，由 ${host} 主持的計畫嗎？`)) return;
 
-      const year = document.getElementById("year").value.trim();
-      const host = document.getElementById("host").value.trim();
-
-      try {
-        const res = await fetch(apiUrl, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ "計畫年度": year, "主持人": host })
-        });
-
-        const data = await res.json();
-        document.getElementById("result").textContent = JSON.stringify(data, null, 2);
-
-      } catch (err) {
-        document.getElementById("result").textContent = "錯誤：" + err.message;
-      }
-    });
+  fetch(apiUrl, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ "計畫年度": year, "主持人": host })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === "deleted") {
+      alert("刪除成功！");
+      searchProjects(); // 重新刷新表格
+    } else if (data.status === "not found") {
+      alert("找不到符合的計畫！");
+    } else {
+      alert("刪除失敗：" + (data.message || JSON.stringify(data)));
+    }
+  })
+  .catch(err => {
+    alert("刪除發生錯誤：" + err.message);
+  });
 }
+
 
  </script>
 
