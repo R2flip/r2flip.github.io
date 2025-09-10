@@ -212,7 +212,7 @@
     </label>
 
     <label>計畫期程
-      <select name="計畫期程" id="durationSelect"></select>
+	  <input type="text" name="計畫期程" placeholder="例如 : 114.1.1-116.12.3" >
     </label>
 
     <label>補助金額
@@ -249,9 +249,9 @@
 	  "智慧半導體及永續製造學院": ["","晶片設計學位學程","半導體製程學位學程","半導體封測學位學程","關鍵材料學位學程","智慧與永續製造學位學程","半導體高階管理暨研發碩士在職專班"],
 	  "教務處": ["","師培中心","體育室"],
 	  "學務處": ["","心輔組"]
-      },
+      }
     //  plans: ["-- 請選擇 --","方案A", "方案B", "方案C"],
-      durations: ["-- 請選擇 --","114.1.1-116.12.31", "114.3.1-115.4.30"]
+    //  durations: ["-- 請選擇 --","114.1.1-116.12.31", "114.3.1-115.4.30"]   <select name="計畫期程" id="durationSelect"></select>
     };
 
     function populateSelect(id, arr) {
@@ -270,7 +270,7 @@
       populateSelect("sourceSelect", optionsData.sources);
       populateSelect("orgSelect", optionsData.orgs);
      // populateSelect("planSelect", optionsData.plans);
-      populateSelect("durationSelect", optionsData.durations);
+     //  populateSelect("durationSelect", optionsData.durations);
 
       // 預設選擇第一個執行機構
       const firstOrg = optionsData.orgs[0];
