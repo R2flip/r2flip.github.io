@@ -18,7 +18,30 @@
   /* Modal */
   #editModal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content:center; align-items:center; }
   #editModal .modal-content { background:#fff; padding:20px; border-radius:6px; width:400px; }
-</style>
+
+#loadingOverlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.3);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>  
 </head>
 <body>
 
@@ -76,6 +99,10 @@
       <button type="button" onclick="closeModal()" style="background:#ccc;color:#000;margin-left:10px;">取消</button>
     </form>
   </div>
+</div>
+
+<div id="loadingOverlay">
+  <div class="loader"></div>
 </div>
   
 <script>
@@ -192,13 +219,46 @@ function deleteProject(year, host) {
 }
 
     // 刪除
-    function deleteProject(year, host) {
-      if (!confirm(`確定要刪除 ${year} 年度 ${host} 的計畫嗎？`)) return;
-      fetch(apiUrl, { method: "DELETE", body: JSON.stringify({ "計畫年度": year, "主持人": host }) })
-        .then(res => res.json())
-        .then(() => { alert("刪除成功！"); searchProjects(); })
-        .catch(() => alert("刪除失敗！"));
+let deleting = false;
+
+function showLoading(show) {
+  document.getElementById("loadingOverlay").style.display = show ? "flex" : "none";
+}
+
+async function deleteProject(year, host) {
+  if (deleting) return;
+  if (!confirm(`確定要刪除 ${year} 年度 ${host} 的計畫嗎？`)) return;
+
+  deleting = true;
+  showLoading(true);
+
+  try {
+    const res = await fetch(apiUrl, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ "計畫年度": year, "主持人": host })
+    });
+
+    if (!res.ok) throw new Error("伺服器回傳錯誤");
+
+    const result = await res.json();
+
+    if (result.status === "deleted") {
+      alert(`刪除成功！刪除了第 ${result.rows.join(", ")} 行`);
+      searchProjects();
+    } else if (result.status === "not found") {
+      alert("找不到符合的計畫！");
+    } else {
+      alert(`刪除失敗：${result.message || "未知錯誤"}`);
     }
+  } catch (err) {
+    console.error(err);
+    alert("刪除失敗，請稍後再試！");
+  } finally {
+    deleting = false;
+    showLoading(false);
+  }
+}
   
 </script>
 
