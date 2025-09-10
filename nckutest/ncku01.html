@@ -79,18 +79,14 @@
 </div>
 
 <script>
-const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec";
-let editIndex = null;
 
-// 新增計畫
-document.addEventListener("DOMContentLoaded", function() {
-  const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec"; // 替換為你的 GAS URL
+// 新增計畫 
+document.addEventListener("DOMContentLoaded", function(){
+  const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec"; // 🔑 替換成你的 Web App URL
 
   document.getElementById("projectForm").addEventListener("submit", function(e){
     e.preventDefault();
-    const formData = new FormData(this);
-    const data = {};
-    formData.forEach((v,k) => data[k] = v);
+    const data = Object.fromEntries(new FormData(this));
 
     fetch(apiUrl, {
       method: "POST",
@@ -114,8 +110,14 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 });
+  
+</script>
 
   
+<script>
+const apiUrl = "https://script.google.com/macros/s/AKfycbzDBJ3X7whZCDO6Q8_gawauEYHN2o-Z89qpL9rSMUotzpD2OtE0Mlt07hAd8PwRBxbkRg/exec";
+let editIndex = null;
+
 // 查詢計畫
 function searchProjects() {
   const year = document.getElementById("searchYear").value.trim();
