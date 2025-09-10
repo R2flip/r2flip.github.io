@@ -197,50 +197,22 @@ document.getElementById("editForm").addEventListener("submit", function(e){
 });
 
 // 刪除計畫
-function showToast(message, isSuccess = true) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.style.backgroundColor = isSuccess ? "#28a745" : "#dc3545"; // 綠=成功, 紅=失敗
-  toast.className = "show";
-  setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
-}
-
-
-let deleting = false;
-
 async function deleteProject(year, host) {
-  if (deleting) return;
-  if (confirm(`確定要刪除 ${year} 年度 ${host} 的計畫嗎？`)) return;
-
-  deleting = true;
-
-try {
+  try {
     const res = await fetch(apiUrl, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ "計畫年度": year, "主持人": host })
     });
 
-    if (!res.ok) throw new Error("伺服器回傳錯誤");
-
+    if (!res.ok) throw new Error("HTTP " + res.status);
     const result = await res.json();
-
-    if (result.status === "deleted") {
-      showToast(`刪除成功！已刪除第 ${result.rows.join(", ")} 行`);
-      searchProjects();
-    } else if (result.status === "not found") {
-      showToast("找不到符合的計畫！", false);
-    } else {
-      showToast(`刪除失敗：${result.message || "未知錯誤"}`, false);
-    }
+    console.log(result);
   } catch (err) {
     console.error(err);
-    showToast("刪除失敗，請稍後再試！", false);
-  } finally {
-    deleting = false;
   }
 }
-  
+
 </script>
 
 </body>
