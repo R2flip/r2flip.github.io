@@ -93,51 +93,103 @@
         .catch(() => alert("新增失敗！"));
     });
 
- // 查詢
-    function searchProjects() {
-      const year = document.getElementById("searchYear").value.trim();
-      let url = apiUrl;
-      if (year) url += "?year=" + encodeURIComponent(year);
+ // 查詢計畫
+function searchProjects() {
+  const year = document.getElementById("searchYear").value.trim();
+  let url = apiUrl;
+  if (year) url += "?year=" + encodeURIComponent(year);
 
-      fetch(url)
-        .then(res => res.json())
-        .then(data => {
-          const tbody = document.querySelector("#results tbody");
-          tbody.innerHTML = "";
-          data.forEach(item => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td>${item["計畫年度"] || ""}</td>
-              <td>${item["經費來源"] || ""}</td>
-              <td>${item["執行機構"] || ""}</td>
-              <td>${item["執行學系"] || ""}</td>
-              <td>${item["主持人"] || ""}</td>
-              <td>${item["挹注方案"] || ""}</td>
-              <td>${item["計畫期程"] || ""}</td>
-              <td>${item["補助金額"] || ""}</td>
-              <td>${item["CoPI"] || ""}</td>
-              <td>
-                <button class="btn-sm" onclick='editProject(${JSON.stringify(item)})'>修改</button>
-                <button class="btn-sm" onclick='deleteProject("${item["計畫年度"]}","${item["主持人"]}")'>刪除</button>
-              </td>
-            `;
-            tbody.appendChild(tr);
-          });
-        })
-        .catch(() => alert("查詢失敗！"));
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.querySelector("#results tbody");
+      tbody.innerHTML = "";
+      data.forEach((item, idx) => {
+        const tr = document.createElement("tr");
+        tr.dataset.item = JSON.stringify(item);
+        tr.innerHTML = `
+          <td>${item["計畫年度"] || ""}</td>
+          <td>${item["經費來源"] || ""}</td>
+          <td>${item["執行機構"] || ""}</td>
+          <td>${item["執行學系"] || ""}</td>
+          <td>${item["主持人"] || ""}</td>
+          <td>${item["挹注方案"] || ""}</td>
+          <td>${item["計畫期程"] || ""}</td>
+          <td>${item["補助金額"] || ""}</td>
+          <td>${item["CoPI"] || ""}</td>
+          <td>
+            <button class="btn-sm" onclick='openEditModal(${idx})'>修改</button>
+            <button class="btn-sm" onclick='deleteProject("${item["計畫年度"]}","${item["主持人"]}")'>刪除</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch(() => alert("查詢失敗！"));
+}
+
+// 開啟 Modal 並填入資料
+function openEditModal(idx) {
+  editIndex = idx;
+  const tr = document.querySelectorAll("#results tbody tr")[idx];
+  const item = JSON.parse(tr.dataset.item);
+  const form = document.getElementById("editForm");
+  for(let key in item){
+    if(form.elements[key]) form.elements[key].value = item[key];
+  }
+  document.getElementById("editModal").style.display = "flex";
+}
+
+// 關閉 Modal
+function closeModal(){
+  document.getElementById("editModal").style.display = "none";
+}
+
+// 儲存修改
+document.getElementById("editForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const formData = new FormData(this);
+  const data = {};
+  formData.forEach((v,k)=> data[k] = v);
+
+  fetch(apiUrl, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+  .then(res=>res.json())
+  .then(res=>{
+    if(res.status==="updated"){
+      alert("修改成功！");
+      closeModal();
+      searchProjects();
+    } else {
+      alert("修改失敗："+res.status);
     }
+  })
+  .catch(()=>alert("修改失敗！"));
+});
 
-    // 修改
-    function editProject(item) {
-      const newBudget = prompt("輸入新的補助金額", item["補助金額"]);
-      if (newBudget === null) return;
+// 刪除計畫
+function deleteProject(year, host) {
+  if (!confirm(`確定要刪除 ${year} 年度 ${host} 的計畫嗎？`)) return;
 
-      item["補助金額"] = newBudget;
-      fetch(apiUrl, { method: "PUT", body: JSON.stringify(item) })
-        .then(res => res.json())
-        .then(() => { alert("修改成功！"); searchProjects(); })
-        .catch(() => alert("修改失敗！"));
-    }
+  fetch(apiUrl, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ "計畫年度": year, "主持人": host })
+  })
+    .then(res => res.json())
+    .then(res => {
+      if (res.status === "deleted") {
+        alert("刪除成功！");
+        searchProjects();
+      } else {
+        alert("刪除失敗：" + res.status);
+      }
+    })
+    .catch(() => alert("刪除失敗！"));
+}
 
     // 刪除
     function deleteProject(year, host) {
