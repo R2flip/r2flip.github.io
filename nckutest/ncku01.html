@@ -208,8 +208,8 @@ function showToast(message, isSuccess = true) {
 let deleting = false;
 
 async function deleteProject(year, host) {
-  if (deleting) return;
-  if (confirm(`確定要刪除 ${year} 年度 ${host} 的計畫嗎？`)) return;
+//  if (deleting) return;
+//  if (confirm(`確定要刪除 ${year} 年度 ${host} 的計畫嗎？`)) return;
 
   deleting = true;
   showLoading(true);
