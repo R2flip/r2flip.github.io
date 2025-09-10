@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>計畫管理系統</title>
+  <style>
+    body { font-family: "Microsoft JhengHei", sans-serif; margin: 20px; }
+    h2 { color: #0066cc; }
+    form, table { margin-top: 20px; }
+    label { display: block; margin: 8px 0 4px; }
+    input, select { width: 300px; padding: 6px; }
+    button { margin-top: 12px; padding: 6px 12px; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #004999; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
+    th { background: #f0f0f0; }
+    .btn-sm { padding: 4px 8px; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+  <h2>新增計畫資料</h2>
+  <form id="projectForm">
+    <label>計畫年度 <input type="text" name="計畫年度" required></label>
+    <label>經費來源 <input type="text" name="經費來源" required></label>
+    <label>執行機構 <input type="text" name="執行機構" required></label>
+    <label>執行學系 <input type="text" name="執行學系" required></label>
+    <label>主持人 <input type="text" name="主持人" required></label>
+    <label>挹注方案 <input type="text" name="挹注方案"></label>
+    <label>計畫期程 <input type="text" name="計畫期程"></label>
+    <label>補助金額 <input type="number" name="補助金額"></label>
+    <label>CoPI <input type="text" name="CoPI"></label>
+    <button type="submit">新增</button>
+  </form>
+
+  <h2>查詢計畫資料</h2>
+  <label>輸入年度 <input type="text" id="searchYear" placeholder="例如：2025"></label>
+  <button onclick="searchProjects()">查詢</button>
+
+  <table id="results">
+    <thead>
+      <tr>
+        <th>計畫年度</th>
+        <th>經費來源</th>
+        <th>執行機構</th>
+        <th>執行學系</th>
+        <th>主持人</th>
+        <th>挹注方案</th>
+        <th>計畫期程</th>
+        <th>補助金額</th>
+        <th>CoPI</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const apiUrl = "👉請換成你的 GAS 部署網址👈";
+
+    // 新增
+    document.getElementById("projectForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const data = {};
+      formData.forEach((v, k) => data[k] = v);
+
+      fetch(apiUrl, { method: "POST", body: JSON.stringify(data) })
+        .then(res => res.json())
+        .then(() => { alert("新增成功！"); this.reset(); searchProjects(); })
+        .catch(() => alert("新增失敗！"));
+    });
+
+    // 查詢
+    function searchProjects() {
+      const year = document.getElementById("searchYear").value.trim();
+      let url = apiUrl;
+      if (year) url += "?year=" + encodeURIComponent(year);
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector("#results tbody");
+          tbody.innerHTML = "";
+          data.forEach(item => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${item["計畫年度"] || ""}</td>
+              <td>${item["經費來源"] || ""}</td>
+              <td>${item["執行機構"] || ""}</td>
+              <td>${item["執行學系"] || ""}</td>
+              <td>${item["主持人"] || ""}</td>
+              <td>${item["挹注方案"] || ""}</td>
+              <td>${item["計畫期程"] || ""}</td>
+              <td>${item["補助金額"] || ""}</td>
+              <td>${item["CoPI"] || ""}</td>
+              <td>
+                <button class="btn-sm" onclick='editProject(${JSON.stringify(item)})'>修改</button>
+                <button class="btn-sm" onclick='deleteProject("${item["計畫年度"]}","${item["主持人"]}")'>刪除</button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        })
+        .catch(() => alert("查詢失敗！"));
+    }
+
+    // 修改
+    function editProject(item) {
+      const newBudget = prompt("輸入新的補助金額", item["補助金額"]);
+      if (newBudget === null) return;
+
+      item["補助金額"] = newBudget;
+      fetch(apiUrl, { method: "PUT", body: JSON.stringify(item) })
+        .then(res => res.json())
+        .then(() => { alert("修改成功！"); searchProjects(); })
+        .catch(() => alert("修改失敗！"));
+    }
+
+    // 刪除
+    function deleteProject(year, host) {
+      if (!confirm(`確定要刪除 ${year} 年度 ${host} 的計畫嗎？`)) return;
+      fetch(apiUrl, { method: "DELETE", body: JSON.stringify({ "計畫年度": year, "主持人": host }) })
+        .then(res => res.json())
+        .then(() => { alert("刪除成功！"); searchProjects(); })
+        .catch(() => alert("刪除失敗！"));
+    }
+  </script>
+</body>
+</html>
