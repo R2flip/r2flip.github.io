@@ -107,11 +107,11 @@ function searchProjects() {
         const tr = document.createElement("tr");
         tr.dataset.item = JSON.stringify(item);
         tr.innerHTML = `
-          <td><input type="text" value="${item[""計畫年度"] || ""}" readonly></td>
+          <td>${item["計畫年度"] || ""}</td>
           <td>${item["經費來源"] || ""}</td>
           <td>${item["執行機構"] || ""}</td>
           <td>${item["執行學系"] || ""}</td>
-          <td><input type="text" value="${item["主持人"] || ""}" readonly></td>
+          <td>${item["主持人"] || ""}</td>
           <td>${item["挹注方案"] || ""}</td>
           <td>${item["計畫期程"] || ""}</td>
           <td>${item["補助金額"] || ""}</td>
