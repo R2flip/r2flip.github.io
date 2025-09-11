@@ -154,7 +154,9 @@ document.getElementById("editForm").addEventListener("submit", function(e){
   fetch(apiUrl, {
     method: "POST",
     //headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({action: "update", data})
+    body: JSON.stringify({action: "update", 
+                         ...data
+                         })
   })
   .then(res=>res.json())
   .then(res=>{
