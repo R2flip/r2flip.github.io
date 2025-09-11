@@ -114,7 +114,12 @@ function searchProjects() {
           <td>${item["主持人"] || "" }</td>
           <td>${item["挹注方案"] || ""}</td>
           <td>${item["計畫期程"] || ""}</td>
-          <td>${item["補助金額"] || ""}</td>
+          //<td>${item["補助金額"] || ""}</td>
+          <td>${
+               item["補助金額"]
+                ? Number(item["補助金額"]).toLocaleString()
+                : ""
+          }</td>
           <td>${item["CoPI"] || ""}</td>
           <td>
             <button class="btn-sm" onclick='openEditModal(${idx})'>修改</button>
