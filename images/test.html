@@ -24,6 +24,30 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">	
+
+<script>
+    let pageviewUrl = location.pathname;
+    // 從 Google Apps Script 取得計數
+    let apiUrl = "https://script.google.com/macros/s/AKfycbycPAPD3JRzL2TLfT5u8doN1g_3j8s5HdCOidvSuJ8WIrM1VLFChyMHVfWFYgdfJkQ/exec";
+
+    $.ajax({
+      url: apiUrl + "?url=" + encodeURIComponent(pageviewUrl),
+      type: "GET",
+      dataType: "json",
+      success: function (res) {
+        for (let i of res) {
+          if (i[0] === pageviewUrl) {
+            $("#pageviewUrl").text(pageviewUrl);
+            $("#pv").text(i[1]);
+          }
+        }
+      },
+      error: function () {
+        console.log("讀取失敗");
+      }
+    });
+</script>	
+	
 </head>	
 	
 <body>
@@ -381,27 +405,5 @@ typeEffect("order_status", " ... 查   詢  中 ...", 200);
     }
 </script>
 	
-<script>
-    let pageviewUrl = location.pathname;
-    // 從 Google Apps Script 取得計數
-    let apiUrl = "https://script.google.com/macros/s/AKfycbycPAPD3JRzL2TLfT5u8doN1g_3j8s5HdCOidvSuJ8WIrM1VLFChyMHVfWFYgdfJkQ/exec";
-
-    $.ajax({
-      url: apiUrl + "?url=" + encodeURIComponent(pageviewUrl),
-      type: "GET",
-      dataType: "json",
-      success: function (res) {
-        for (let i of res) {
-          if (i[0] === pageviewUrl) {
-            $("#pageviewUrl").text(pageviewUrl);
-            $("#pv").text(i[1]);
-          }
-        }
-      },
-      error: function () {
-        console.log("讀取失敗");
-      }
-    });
-    </script>	
 </body>
 </html>         
