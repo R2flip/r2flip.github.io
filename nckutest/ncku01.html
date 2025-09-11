@@ -136,6 +136,9 @@ function openEditModal(idx) {
   for(let key in item){
     if(form.elements[key]) form.elements[key].value = item[key];
   }
+   // 設定主持人為唯讀
+  if(form.elements["計畫年度"]) form.elements["計畫年度"].readOnly = true;
+  if(form.elements["主持人"]) form.elements["主持人"].readOnly = true;
   document.getElementById("editModal").style.display = "flex";
 }
 
