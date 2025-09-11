@@ -28,7 +28,7 @@
 	
 <body>
 <h2><b><i class="fa fa-handshake-o"></i>成大教師資源挹注查詢系統 </b></h2>
-
+<form id="projectForm">
 <!-- 【選擇性修改】修改提示文字 -->
 計畫年度　：
   <select  id="Lyear">
@@ -213,9 +213,12 @@
 <br>  
 主持人姓名：                                 
              <input type="text" maxlength="10" id="uname" />
-  
+    <div class="button-group">
              <button  value="查詢" onclick="showList(document.getElementById('uid').value, document.getElementById('uname').value, document.getElementById('Lyear').value, document.getElementById('Uyear').value, document.getElementById('sclass').value, document.getElementById('scase').value, document.getElementById('source').value);"> 查詢 </button>
-<br><br>
+             <button type="button" onclick="projectForm.reset()">清空</button>
+	</div>
+	</form>
+	<br><br>
 
 <!-- 顯示查詢結果的區域 -->
 <span id="order_status">請選擇查詢條件後，點擊查詢按鈕</span>
