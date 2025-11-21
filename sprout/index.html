@@ -276,6 +276,34 @@
   }
 </style>
 
+<script src="https://code.jquery.com/jquery-3.6.1.min.js"
+        integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous">
+</script>
+	
+<script>
+    let pageviewUrl = location.pathname;
+    // 從 Google Apps Script 取得計數
+    let apiUrl = "https://script.google.com/macros/s/AKfycbycPAPD3JRzL2TLfT5u8doN1g_3j8s5HdCOidvSuJ8WIrM1VLFChyMHVfWFYgdfJkQ/exec";
+
+    $.ajax({
+      url: apiUrl + "?url=" + encodeURIComponent(pageviewUrl),
+      type: "GET",
+      dataType: "json",
+      success: function (res) {
+        for (let i of res) {
+          if (i[0] === pageviewUrl) {
+            $("#pageviewUrl").text(pageviewUrl);
+            $("#pv").text(i[1]);
+          }
+        }
+      },
+      error: function () {
+        console.log("讀取失敗");
+      }
+    });
+</script>	
+
+  
 </head>
 
 <body>
@@ -541,28 +569,7 @@
   });
 </script>
 
-<script>
-    let pageviewUrl = location.pathname;
-    // 從 Google Apps Script 取得計數
-    let apiUrl = "https://script.google.com/macros/s/AKfycbycPAPD3JRzL2TLfT5u8doN1g_3j8s5HdCOidvSuJ8WIrM1VLFChyMHVfWFYgdfJkQ/exec";
-
-    $.ajax({
-      url: apiUrl + "?url=" + encodeURIComponent(pageviewUrl),
-      type: "GET",
-      dataType: "json",
-      success: function (res) {
-        for (let i of res) {
-          if (i[0] === pageviewUrl) {
-            $("#pageviewUrl").text(pageviewUrl);
-            $("#pv").text(i[1]);
-          }
-        }
-      },
-      error: function () {
-        console.log("讀取失敗");
-      }
-    });
-    </script>
 </body>
 </html>
+
 
