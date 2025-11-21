@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>GAINcku 圖片輪播（兩行字幕＋點圖暫停）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style type="text/css">
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    /* 上深下淺的冷色系背景 */
+    background: linear-gradient(
+      180deg,
+      #1f2937 0%,
+      #e5ecff 55%,
+      #f9fbff 100%
+    );
+    color: #0f172a;
+  }
+
+  /* ===== 整體左右框架 ===== */
+  .layout {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+  }
+
+  /* 左側：輪播區（比較寬） */
+  .left-pane {
+    flex: 2.5;                /* 左 60% */
+    min-width: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  /* 右側：Sprout 亮點 + iframe（白底冷色系） */
+  .right-pane {
+    flex: 2.5;
+    min-width: 360px;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid rgba(148,163,184,0.35);
+    background: #f8fafc;  /* 淺冷色系 */
+  }
+
+  .sprout-header {
+    padding: 16px 20px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(148,163,184,0.35);
+    background: linear-gradient(90deg, #2563eb, #38bdf8);
+    color: #ffffff;
+  }
+
+  .iframe-container {
+    flex: 1;
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  .sprout-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* ===== 輪播區 ===== */
+  .slider-wrapper {
+    width: 100%;
+    max-width: 960px;
+    padding: 16px;
+    margin: 0 auto;
+  }
+
+  .slider {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 18px 40px rgba(15,23,42,0.35);
+  }
+
+  /* 1280x720 → 16:9 圖片框 */
+  .slides {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-top: 56.25%;
+    background: #000;
+    cursor: pointer; /* 提示可點擊暫停 */
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+  }
+
+  .slide.active {
+    opacity: 1;
+    z-index: 2;
+  }
+
+  .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+    display: block;
+  }
+
+  /* 字幕區：改為白／冷色調 */
+  .caption-area {
+    width: 100%;
+    background: #f8fafc;
+    padding: 12px 18px 16px;
+    border-top: 1px solid #e2e8f0;
+    color: #0f172a;
+  }
+
+  .caption-inner {
+    max-width: 90%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .caption-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+    color: #0f172a;
+  }
+
+  .caption-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #475569;
+  }
+
+  /* 上一張 / 下一張 */
+  .nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(15,23,42,0.9);
+    color: #e5e7eb;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    box-shadow: 0 8px 18px rgba(15,23,42,0.6);
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .nav-arrow:hover {
+    background: rgba(59,130,246,0.95);
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  .nav-arrow.prev { left: 10px; }
+  .nav-arrow.next { right: 10px; }
+
+  /* 點點指示器 */
+  .dots {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    z-index: 9;
+  }
+
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: rgba(148,163,184,0.55);
+    cursor: pointer;
+    transition: width 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .dot.active {
+    width: 26px;
+    background: linear-gradient(90deg, #38bdf8, #818cf8);
+    box-shadow: 0 0 10px rgba(129,140,248,0.85);
+  }
+
+  /* 框外左下角的小文字連結容器 */
+  .caption-toggle-row {
+    margin-top: 4px;
+    padding: 0 4px;
+    display: flex;
+    justify-content: flex-start; /* 靠左 */
+  }
+
+  /* 小小文字連結：顯示 / 隱藏字幕 */
+  .caption-toggle {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font-size: 0.8rem;
+    color: #64748b;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .caption-toggle:hover {
+    color: #1e293b;
+  }
+
+  /* 手機：改成上下堆疊，底色仍維持冷色系 */
+  @media (max-width: 900px) {
+    .layout {
+      flex-direction: column;
+      height: auto;
+      min-height: 100vh;
+    }
+    .left-pane, .right-pane {
+      min-width: 100%;
+    }
+    .left-pane {
+      padding: 16px;
+      order: 1;
+    }
+    .right-pane {
+      order: 2;
+      height: 50vh;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .slider-wrapper { padding: 10px; }
+
+    .caption-inner {
+      max-width: 96%;
+    }
+
+    .caption-title {
+      font-size: 1rem;
+    }
+
+    .caption-text {
+      font-size: 0.82rem;
+    }
+
+    .nav-arrow {
+      width: 32px;
+      height: 32px;
+      font-size: 18px;
+    }
+  }
+</style>
+
+</head>
+
+<body>
+  <div class="layout">
+    <!-- 左側：輪播 -->
+    <div class="left-pane">
+      <div class="slider-wrapper">
+        <div class="slider" id="slider">
+          <!-- 上方：圖片輪播框（16:9） -->
+          <div class="slides" id="slides"></div>
+
+          <!-- 上方圖片上的左右箭頭與點點 -->
+          <button class="nav-arrow prev" id="prevBtn" type="button">❮</button>
+          <button class="nav-arrow next" id="nextBtn" type="button">❯</button>
+
+          <div class="dots" id="dots"></div>
+
+          <!-- 下方：在框外的兩行字幕區 -->
+          <div class="caption-area" id="captionArea">
+            <div class="caption-inner">
+              <div class="caption-title" id="captionTitle"></div>
+              <div class="caption-text" id="captionText"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 左下角小文字連結：顯示 / 隱藏字幕 -->
+        <div class="caption-toggle-row">
+          <button class="caption-toggle" id="captionToggle" type="button">顯示字幕</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右側：Sprout 亮點 + iframe -->
+    <div class="right-pane">
+      <div class="sprout-header">
+        Sprout 亮點
+      </div>
+      <div class="iframe-container">
+        <iframe
+          class="sprout-iframe"
+          src="https://script.google.com/a/macros/gs.ncku.edu.tw/s/AKfycbzhGFjxVWPXfcjOr_ZOs5_RVX-FZxKGm-x58r6M6Yh-mhn23WrRxKJ3xnpU56UC1V3H/exec">
+        </iframe>
+      </div>
+    </div>
+  </div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // ================================
+    // DOM 取得
+    // ================================
+    const slider = document.getElementById("slider");
+    const slidesContainer = document.getElementById("slides");
+    const dotsContainer = document.getElementById("dots");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const captionToggleBtn = document.getElementById("captionToggle");
+    const captionTitleEl = document.getElementById("captionTitle");
+    const captionTextEl = document.getElementById("captionText");
+    const captionArea = document.getElementById("captionArea");
+
+    // ================================
+    // 狀態變數
+    // ================================
+    let slidesData = [];       // 🔸 改成由試算表載入
+    let currentIndex = 0;
+    let autoPlayTimer = null;
+    const intervalMs = 6000;
+
+    // 🔻 預設字幕開啟
+    let captionsVisible = true;
+    let pausedByClick = false; // 是否被「點擊圖片」暫停
+
+    // ================================
+    // 從 GAS Web App 抓資料
+    // ================================
+    function loadSlidesFromSheet() {
+      // ⬇️ 請把這裡換成你剛剛部署 Web App 的網址
+      const apiUrl = "https://script.googleusercontent.com/a/macros/gs.ncku.edu.tw/echo?user_content_key=AehSKLhum0p4L5Y61agcf71-fJ_Na0cNn2FaPSqencVE-FUDSXShRNCIsOZvG8YrQZrJJnBydTng9kPae1l-CHl2cp52WKhum-9iHA27VvPtbxqO7_20e2O2w8QZcVte02dpgupF1sP3eoP-t_SyOWc0XHvfJHNSBQU67g6cZCf9Ni5jibhIq2Cm79vvNZYrgtcfTqO167R39nsGmGA2fMRek-oh1SiairHVlG1Q8nhY76DhOz0XmyiesB4ebeDgGaA7VbiNwmc2JurOLvkLZXmZd8VhN_mFlAMU70WpB-AZbXQ8AUkDCZhCxtpPzHC5hA&lib=MnhiRxy21wa4SPoBevD6-9kbrEVN5BNya";
+
+      fetch(apiUrl)
+        .then(function (res) {
+          if (!res.ok) {
+            throw new Error("HTTP " + res.status);
+          }
+          return res.json();
+        })
+        .then(function (data) {
+          // data 應該是 [{image, title, text}, ...]
+          if (!Array.isArray(data) || data.length === 0) {
+            console.warn("slidesData 為空，請檢查試算表資料");
+            return;
+          }
+          slidesData = data;
+          initSlider();
+        })
+        .catch(function (err) {
+          console.error("載入 slides 失敗：", err);
+        });
+    }
+
+    // ================================
+    // 初始化輪播
+    // ================================
+    function initSlider() {
+      // 清空舊的
+      slidesContainer.innerHTML = "";
+      dotsContainer.innerHTML = "";
+      currentIndex = 0;
+      pausedByClick = false;
+
+      createSlides();
+      updateCaptionToggleLabel();
+      applyCaptionVisibility();
+      startAutoPlay();
+    }
+
+    // 建立 slides + dots
+    function createSlides() {
+      slidesData.forEach((item, idx) => {
+        const slide = document.createElement("div");
+        slide.className = "slide" + (idx === 0 ? " active" : "");
+        slide.dataset.index = idx;
+
+        const img = document.createElement("img");
+        img.src = item.image;
+        img.alt = item.title || ("slide " + (idx + 1));
+        slide.appendChild(img);
+
+        slidesContainer.appendChild(slide);
+
+        const dot = document.createElement("div");
+        dot.className = "dot" + (idx === 0 ? " active" : "");
+        dot.dataset.index = idx;
+        dot.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          goToSlide(idx);
+          restartAutoPlay();
+        });
+        dotsContainer.appendChild(dot);
+      });
+
+      // 初始化字幕內容
+      updateCaptionContent(0);
+    }
+
+    // 更新字幕
+    function updateCaptionContent(index) {
+      const data = slidesData[index];
+      captionTitleEl.textContent = data ? (data.title || "") : "";
+      captionTextEl.textContent = data ? (data.text || "") : "";
+    }
+
+    // 輪播切換
+    function updateActiveSlide() {
+      const slides = document.querySelectorAll(".slide");
+      const dots = document.querySelectorAll(".dot");
+
+      slides.forEach((s, i) => s.classList.toggle("active", i === currentIndex));
+      dots.forEach((d, i) => d.classList.toggle("active", i === currentIndex));
+
+      updateCaptionContent(currentIndex);
+    }
+
+    function goToSlide(idx) {
+      const total = slidesData.length || 1;
+      currentIndex = (idx + total) % total;
+      updateActiveSlide();
+    }
+
+    function nextSlide() {
+      goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      goToSlide(currentIndex - 1);
+    }
+
+    // 自動播放
+    function startAutoPlay() {
+      if (autoPlayTimer) return;
+      autoPlayTimer = setInterval(nextSlide, intervalMs);
+    }
+
+    function stopAutoPlay() {
+      if (autoPlayTimer) {
+        clearInterval(autoPlayTimer);
+        autoPlayTimer = null;
+      }
+    }
+
+    function restartAutoPlay() {
+      if (pausedByClick) return; // 若是使用者點擊暫停，不要自動重啟
+      stopAutoPlay();
+      startAutoPlay();
+    }
+
+    // 上一張 / 下一張按鈕
+    if (prevBtn) {
+      prevBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        prevSlide();
+        restartAutoPlay();
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        nextSlide();
+        restartAutoPlay();
+      });
+    }
+
+    // 滑鼠移入：暫停；移出：若不是點擊暫停，就恢復
+    if (slider) {
+      slider.addEventListener("mouseenter", () => {
+        if (!pausedByClick) stopAutoPlay();
+      });
+
+      slider.addEventListener("mouseleave", () => {
+        if (!pausedByClick) startAutoPlay();
+      });
+    }
+
+    // 點選圖片：切換 暫停 / 繼續
+    if (slidesContainer) {
+      slidesContainer.addEventListener("click", () => {
+        if (pausedByClick) {
+          pausedByClick = false;
+          startAutoPlay();
+        } else {
+          pausedByClick = true;
+          stopAutoPlay();
+        }
+      });
+    }
+
+    // 字幕顯示 / 隱藏（整區一起）
+    function updateCaptionToggleLabel() {
+      captionToggleBtn.textContent = captionsVisible ? '隱藏字幕' : '顯示字幕';
+    }
+
+    function applyCaptionVisibility() {
+      captionArea.style.display = captionsVisible ? "block" : "none";
+    }
+
+    if (captionToggleBtn) {
+      captionToggleBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        captionsVisible = !captionsVisible;
+        applyCaptionVisibility();
+        updateCaptionToggleLabel();
+      });
+    }
+
+    // ✅ 一開始就從試算表載入資料
+    loadSlidesFromSheet();
+  });
+</script>
+
+
+</body>
+</html>
