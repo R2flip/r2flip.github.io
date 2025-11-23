@@ -344,8 +344,8 @@
 
     // 載入台灣縣市 GeoJSON
     // 載入台灣縣市 TopoJSON，轉成 GeoJSON 給 ECharts 使用
-    //fetch('twCounty2010.topo.json')
-fetch('taiwan_counties')  
+    fetch('twCounty2010.topo.json')
+//fetch('taiwan_counties')  
   .then(res => res.json())
   .then(topoData => {
     // 看看有哪些 objects，可以在 Console 檢查
@@ -519,4 +519,5 @@ fetch('taiwan_counties')
   </script>
 </body>
 </html>
+
 
