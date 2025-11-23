@@ -1,0 +1,570 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>台灣各縣市氣候焦慮熱力圖儀表板</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- ECharts CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at top, #e0f2fe 0, #f3f4f6 45%, #e5e7eb 100%);
+      color: #111827;
+    }
+
+    header {
+      padding: 16px 24px;
+      background: linear-gradient(90deg, #0f172a, #0ea5e9);
+      color: #f9fafb;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.6);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    header .subtitle {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .layout {
+      flex: 1;
+      display: flex;
+      padding: 16px 20px 20px;
+      gap: 16px;
+      align-items: stretch; /* 讓左右欄高度一致 */
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+      padding: 14px 14px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* 左地圖右控制：維持 75:25 */
+    .map-panel {
+      flex: 3;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .control-panel {
+      flex: 1;
+      min-width: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* 右欄第一張卡高度依內容，第二張卡撐滿剩餘高度 */
+    .control-panel .card:first-of-type .card-body {
+      flex: 0;
+    }
+    .control-panel .card:last-of-type {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .control-panel .card:last-of-type .card-body {
+      flex: 1;
+      min-height: 0;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0 4px;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    .card-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* 地圖容器高度改為自適應＋最小高度，維持原本視覺大小 */
+    #mapContainer {
+      width: 100%;
+      flex: 1;
+      min-height: 520px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #e5f3ff;
+    }
+
+    #barContainer {
+      width: 100%;
+      flex: 1;
+      min-height: 180px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 4px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .control-label {
+      font-size: 0.8rem;
+      color: #4b5563;
+    }
+
+    select {
+      padding: 6px 8px;
+      font-size: 0.9rem;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      outline: none;
+      background: #f9fafb;
+    }
+
+    select:focus {
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.4);
+    }
+
+    .stat-summary {
+      display: flex;
+      gap: 10px;
+      padding: 0 4px;
+      margin-top: 4px;
+    }
+
+    .stat-pill {
+      flex: 1;
+      border-radius: 999px;
+      padding: 8px 10px;
+      background: #ecfeff;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border: 1px solid #cffafe;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+
+    .stat-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #0f766e;
+    }
+
+    .legend-note {
+      font-size: 0.78rem;
+      color: #6b7280;
+      padding: 0 4px 6px;
+    }
+
+    .small-tag {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    @media (max-width: 960px) {
+      .layout { 
+        flex-direction: column; 
+      }
+      .control-panel {
+        min-width: 0;
+      }
+      #mapContainer { 
+        min-height: 420px; 
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>台灣各縣市氣候焦慮熱力圖儀表板</h1>
+      <div class="subtitle">視覺化比較不同縣市的氣候變遷焦慮程度分布狀況（TCCAS 指標）</div>
+    </div>
+    <div class="subtitle">
+      資料來源：TCCAS 校園調查、線上問卷
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- 左側：地圖 -->
+    <section class="card map-panel">
+      <div class="card-header">
+        <div class="card-title">
+          各縣市平均氣候焦慮熱力圖
+          <span class="small-tag">TCCAS 指數（0–100 分）</span>
+        </div>
+        <div class="card-subtitle" id="currentMeta">
+          年度：2024　｜　指標：氣候焦慮平均分數
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="mapContainer"></div>
+        <div class="legend-note">
+          說明：顏色越深代表氣候焦慮程度越高。滑鼠移到縣市可查看詳細分數，右側顯示全國平均與 Top 5 縣市。
+        </div>
+      </div>
+    </section>
+
+    <!-- 右側：控制面板 + 條圖 -->
+    <aside class="control-panel">
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">分析條件</div>
+          <div class="card-subtitle">選擇年度與氣候焦慮指標</div>
+        </div>
+        <div class="card-body">
+          <div class="controls">
+            <div class="control-group">
+              <label for="yearSelect" class="control-label">年度</label>
+              <select id="yearSelect">
+                <option value="2024" selected>2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="metricSelect" class="control-label">指標類型</label>
+              <select id="metricSelect">
+                <option value="mean_score" selected>平均 TCCAS 分數（0–100）</option>
+                <option value="high_risk_pct">高風險族群比例（%）</option>
+                <option value="severe_score">嚴重焦慮平均分數（0–100）</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="stat-summary">
+            <div class="stat-pill">
+              <div class="stat-label">全國平均</div>
+              <div class="stat-value" id="statAvg">—</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-label">最高縣市</div>
+              <div class="stat-value" id="statMax">—</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">Top 5 縣市氣候焦慮比較</div>
+          <div class="card-subtitle" id="barTitle">2024 年平均 TCCAS 分數前 5 名</div>
+        </div>
+        <div class="card-body">
+          <div id="barContainer"></div>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <script>
+    // ====== 1. 模擬資料結構：TCCAS / 氣候焦慮指數（0–100 分） ======
+    const climateAnxietyData = {
+      "2024": {
+        // 0–100 分：數字愈高代表氣候焦慮愈高
+        "mean_score": [
+          { name: "台北市", value: 78 },
+          { name: "新北市", value: 72 },  // 原本的新北市
+          { name: "桃園市", value: 70 },  // 原本的桃園市
+          { name: "台中市", value: 69 },
+          { name: "台南市", value: 65 },
+          { name: "高雄市", value: 75 },
+          { name: "基隆市", value: 68 },
+          { name: "新竹市", value: 80 },
+          { name: "嘉義市", value: 66 },
+          { name: "新竹縣", value: 77 },
+          { name: "苗栗縣", value: 62 },
+          { name: "彰化縣", value: 60 },
+          { name: "南投縣", value: 63 },
+          { name: "雲林縣", value: 58 },
+          { name: "嘉義縣", value: 59 },
+          { name: "屏東縣", value: 67 },
+          { name: "宜蘭縣", value: 71 },
+          { name: "花蓮縣", value: 69 },
+          { name: "台東縣", value: 68 },
+          { name: "澎湖縣", value: 61 },
+          { name: "金門縣", value: 55 },
+          { name: "連江縣", value: 52 }
+        ],
+
+        // 高風險族群比例（%）：例如 TCCAS ≥ 某臨界值的人口比例
+        "high_risk_pct": [
+          { name: "台北市", value: 26 },
+          { name: "台北縣", value: 22 }, // 新北市
+          { name: "高雄市", value: 24 },
+          { name: "新竹市", value: 28 },
+          { name: "新竹縣", value: 25 },
+          { name: "台中市", value: 21 },
+          { name: "屏東縣", value: 20 },
+          { name: "宜蘭縣", value: 23 },
+          { name: "花蓮縣", value: 22 },
+          { name: "台東縣", value: 21 },
+          { name: "台南市", value: 19 },
+          { name: "嘉義市", value: 18 }
+        ],
+
+        // 嚴重焦慮平均分數（0–100 分）：只在高風險族群中計算
+        "severe_score": [
+          { name: "台北市", value: 84 },
+          { name: "新北市", value: 81 }, // 新北市
+          { name: "桃園市", value: 79 },
+          { name: "台中市", value: 78 },
+          { name: "高雄市", value: 85 },
+          { name: "新竹市", value: 86 },
+          { name: "新竹縣", value: 83 },
+          { name: "屏東縣", value: 80 },
+          { name: "宜蘭縣", value: 82 },
+          { name: "花蓮縣", value: 81 },
+          { name: "台東縣", value: 80 }
+        ]
+      },
+      "2023": {
+        "mean_score": [],
+        "high_risk_pct": [],
+        "severe_score": []
+      },
+      "2022": {
+        "mean_score": [],
+        "high_risk_pct": [],
+        "severe_score": []
+      }
+    };
+
+    // ====== 2. 初始化圖表 ======
+    const mapChart = echarts.init(document.getElementById('mapContainer'));
+    const barChart = echarts.init(document.getElementById('barContainer'));
+
+    const yearSelect = document.getElementById('yearSelect');
+    const metricSelect = document.getElementById('metricSelect');
+    const currentMeta = document.getElementById('currentMeta');
+    const barTitle = document.getElementById('barTitle');
+    const statAvg = document.getElementById('statAvg');
+    const statMax = document.getElementById('statMax');
+
+    // 載入台灣縣市 TopoJSON，轉成 GeoJSON 給 ECharts 使用
+    fetch('twCounty_22counties_topo.json')
+      .then(res => res.json())
+      .then(topoData => {
+        const geoJson = topojson.feature(topoData, topoData.objects.layer1);
+        echarts.registerMap('taiwan', geoJson);
+        updateCharts(); // 首次繪圖
+      })
+      .catch(err => {
+        console.error('載入台灣 TopoJSON 失敗：', err);
+        alert('請確認 twCounty_22counties_topo.json 路徑與格式是否正確。');
+      });
+
+    yearSelect.addEventListener('change', updateCharts);
+    metricSelect.addEventListener('change', updateCharts);
+
+    // ====== 3. 更新圖表主函式 ======
+    function updateCharts() {
+      const year = yearSelect.value;
+      const metric = metricSelect.value;
+
+      const metricTextMap = {
+        "mean_score": "平均 TCCAS 分數（0–100）",
+        "high_risk_pct": "高風險族群比例（%）",
+        "severe_score": "嚴重焦慮平均分數（0–100）"
+      };
+      const metricText = metricTextMap[metric] || metric;
+
+      const data = climateAnxietyData[year] && climateAnxietyData[year][metric]
+        ? climateAnxietyData[year][metric]
+        : [];
+
+      currentMeta.textContent = `年度：${year}　｜　指標：${metricText}`;
+      barTitle.textContent = `${year} 年 ${metricText} 前 5 名`;
+
+      if (!data || data.length === 0) {
+        mapChart.clear();
+        barChart.clear();
+        statAvg.textContent = '無資料';
+        statMax.textContent = '無資料';
+        return;
+      }
+
+      const values = data.map(d => d.value);
+      const avg = values.reduce((a, b) => a + b, 0) / values.length;
+      const maxVal = Math.max(...values);
+      const maxItem = data.find(d => d.value === maxVal);
+
+      const isPercentMetric = metric === 'high_risk_pct';
+
+      statAvg.textContent = isPercentMetric
+        ? `${avg.toFixed(1)} %`
+        : `${avg.toFixed(1)} 分`;
+      statMax.textContent = isPercentMetric
+        ? `${maxItem.name}：${maxItem.value.toFixed(1)} %`
+        : `${maxItem.name}：${maxItem.value.toFixed(1)} 分`;
+
+      const top5 = [...data].sort((a, b) => b.value - a.value).slice(0, 5).reverse();
+
+      // ====== 3-1. 地圖設定：放大＋居中＋修正寬扁比例 ======
+      const mapOption = {
+        tooltip: {
+          trigger: 'item',
+          formatter: params => {
+            const v = params.value;
+            if (v == null || v === '') return `${params.name}<br/>無資料`;
+            const valStr = isPercentMetric
+              ? `${v.toFixed(1)} %`
+              : `${v.toFixed(1)} 分`;
+            return `${params.name}<br/>${metricText}：${valStr}`;
+          }
+        },
+        visualMap: {
+          min: Math.min(...values),
+          max: maxVal,
+          left: '2%',
+          bottom: '5%',
+          calculable: true,
+          inRange: {
+            color: ['#e0f7fa', '#26c6da', '#00838f', '#004d40']
+          },
+          text: ['高', '低'],
+          textStyle: {
+            color: '#374151',
+            fontSize: 11
+          }
+        },
+        series: [
+          {
+            name: metricText,
+            type: 'map',
+            map: 'taiwan',
+            roam: true,
+            layoutCenter: ['50%', '50%'],
+            layoutSize: '110%',
+            zoom: 1.1,
+            aspectScale: 0.8,
+            nameProperty: 'COUNTYNAME',
+            emphasis: {
+              label: {
+                show: true,
+                color: '#111827'
+              },
+              itemStyle: {
+                borderColor: '#111827',
+                borderWidth: 1.2
+              }
+            },
+            itemStyle: {
+              borderColor: '#e5e7eb',
+              borderWidth: 0.6
+            },
+            data
+          }
+        ]
+      };
+      mapChart.setOption(mapOption);
+
+      // ====== 3-2. Top 5 條圖 ======
+      const barOption = {
+        grid: { left: 80, right: 20, top: 20, bottom: 30 },
+        xAxis: {
+          type: 'value',
+          axisLabel: {
+            formatter: val => isPercentMetric ? `${val}%` : val
+          }
+        },
+        yAxis: {
+          type: 'category',
+          data: top5.map(d => d.name),
+          axisLabel: { fontSize: 11 }
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' },
+          formatter: params => {
+            const p = params[0];
+            const v = p.value;
+            const valStr = isPercentMetric
+              ? `${v.toFixed(1)} %`
+              : `${v.toFixed(1)} 分`;
+            return `${p.name}<br/>${metricText}：${valStr}`;
+          }
+        },
+        series: [
+          {
+            type: 'bar',
+            data: top5.map(d => d.value),
+            barWidth: 16,
+            label: {
+              show: true,
+              position: 'right',
+              formatter: val => isPercentMetric
+                ? `${val.value.toFixed(1)} %`
+                : `${val.value.toFixed(1)}`,
+              fontSize: 10
+            },
+            itemStyle: {
+              borderRadius: [0, 8, 8, 0]
+            }
+          }
+        ]
+      };
+      barChart.setOption(barOption);
+    }
+
+    window.addEventListener('resize', () => {
+      mapChart.resize();
+      barChart.resize();
+    });
+  </script>
+</body>
+</html>
+
+
