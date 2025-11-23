@@ -59,7 +59,7 @@
       gap: 8px;
     }
 
-    /* 放大地圖：左側空間加大，右側控制面板略縮小 */
+    /* 左地圖右控制：放大地圖區域 */
     .map-panel {
       flex: 3;
       min-width: 0;
@@ -98,7 +98,7 @@
       gap: 10px;
     }
 
-    /* 地圖容器高度加大，讓台灣更大更清楚 */
+    /* 地圖容器高度放大 */
     #mapContainer {
       width: 100%;
       height: 640px;
@@ -200,7 +200,7 @@
       <div class="subtitle">視覺化比較不同縣市的氣候變遷焦慮程度分布狀況（TCCAS 指標）</div>
     </div>
     <div class="subtitle">
-      資料來源：TCCAS 校園調查、線上問卷
+      資料來源：請填入（例如：TCCAS 校園調查、線上問卷）
     </div>
   </header>
 
@@ -210,7 +210,7 @@
       <div class="card-header">
         <div class="card-title">
           各縣市平均氣候焦慮熱力圖
-          <span class="small-tag">TCCAS 平均分數</span>
+          <span class="small-tag">TCCAS 指數（0–100 分）</span>
         </div>
         <div class="card-subtitle" id="currentMeta">
           年度：2024　｜　指標：氣候焦慮平均分數
@@ -245,9 +245,9 @@
             <div class="control-group">
               <label for="metricSelect" class="control-label">指標類型</label>
               <select id="metricSelect">
-                <option value="mean_score" selected>平均 TCCAS 分數</option>
+                <option value="mean_score" selected>平均 TCCAS 分數（0–100）</option>
                 <option value="high_risk_pct">高風險族群比例（%）</option>
-                <option value="severe_score">嚴重焦慮平均分數</option>
+                <option value="severe_score">嚴重焦慮平均分數（0–100）</option>
               </select>
             </div>
           </div>
@@ -282,49 +282,76 @@
   </main>
 
   <script>
-    // ====== 1. 模擬資料結構：請換成你自己的 TCCAS / 氣候焦慮資料 ======
+    // ====== 1. 模擬資料結構：TCCAS / 氣候焦慮指數（0–100 分） ======
     const climateAnxietyData = {
       "2024": {
+        // 0–100 分：數字愈高代表氣候焦慮愈高
         "mean_score": [
-          { name: "台北市", value: 3.6 },
-          { name: "新北市", value: 3.2 },
-          { name: "桃園市", value: 3.4 },
-          { name: "台中市", value: 3.3 },
-          { name: "台南市", value: 3.1 },
-          { name: "高雄市", value: 3.5 },
-          { name: "基隆市", value: 3.0 },
-          { name: "新竹市", value: 3.7 },
-          { name: "嘉義市", value: 3.2 },
-          { name: "新竹縣", value: 3.6 },
-          { name: "苗栗縣", value: 3.0 },
-          { name: "彰化縣", value: 2.9 },
-          { name: "南投縣", value: 3.1 },
-          { name: "雲林縣", value: 2.8 },
-          { name: "嘉義縣", value: 3.0 },
-          { name: "屏東縣", value: 3.3 },
-          { name: "宜蘭縣", value: 3.4 },
-          { name: "花蓮縣", value: 3.2 },
-          { name: "台東縣", value: 3.3 },
-          { name: "澎湖縣", value: 3.1 },
-          { name: "金門縣", value: 2.7 },
-          { name: "連江縣", value: 2.6 }
+          { name: "台北市", value: 78 },
+          { name: "新北市", value: 72 },
+          { name: "桃園市", value: 70 },
+          { name: "台中市", value: 69 },
+          { name: "台南市", value: 65 },
+          { name: "高雄市", value: 75 },
+          { name: "基隆市", value: 68 },
+          { name: "新竹市", value: 80 },
+          { name: "嘉義市", value: 66 },
+          { name: "新竹縣", value: 77 },
+          { name: "苗栗縣", value: 62 },
+          { name: "彰化縣", value: 60 },
+          { name: "南投縣", value: 63 },
+          { name: "雲林縣", value: 58 },
+          { name: "嘉義縣", value: 59 },
+          { name: "屏東縣", value: 67 },
+          { name: "宜蘭縣", value: 71 },
+          { name: "花蓮縣", value: 69 },
+          { name: "台東縣", value: 68 },
+          { name: "澎湖縣", value: 61 },
+          { name: "金門縣", value: 55 },
+          { name: "連江縣", value: 52 }
         ],
+
+        // 高風險族群比例（%）：例如 TCCAS ≥ 某臨界值的人口比例
         "high_risk_pct": [
-          { name: "台北市", value: 18 },
-          { name: "新北市", value: 15 },
-          { name: "高雄市", value: 17 },
-          { name: "新竹市", value: 19 },
-          { name: "新竹縣", value: 16 },
-          { name: "台中市", value: 14 },
-          { name: "屏東縣", value: 13 },
-          { name: "宜蘭縣", value: 15 },
-          { name: "花蓮縣", value: 14 },
-          { name: "台東縣", value: 13 }
+          { name: "台北市", value: 26 },
+          { name: "新北市", value: 22 },
+          { name: "高雄市", value: 24 },
+          { name: "新竹市", value: 28 },
+          { name: "新竹縣", value: 25 },
+          { name: "台中市", value: 21 },
+          { name: "屏東縣", value: 20 },
+          { name: "宜蘭縣", value: 23 },
+          { name: "花蓮縣", value: 22 },
+          { name: "台東縣", value: 21 },
+          { name: "台南市", value: 19 },
+          { name: "嘉義市", value: 18 }
         ],
+
+        // 嚴重焦慮平均分數（0–100 分）：只在高風險族群中計算
+        "severe_score": [
+          { name: "台北市", value: 84 },
+          { name: "新北市", value: 81 },
+          { name: "桃園市", value: 79 },
+          { name: "台中市", value: 78 },
+          { name: "高雄市", value: 85 },
+          { name: "新竹市", value: 86 },
+          { name: "新竹縣", value: 83 },
+          { name: "屏東縣", value: 80 },
+          { name: "宜蘭縣", value: 82 },
+          { name: "花蓮縣", value: 81 },
+          { name: "台東縣", value: 80 }
+        ]
+      },
+      "2023": {
+        "mean_score": [],
+        "high_risk_pct": [],
         "severe_score": []
       },
-      "2023": { "mean_score": [], "high_risk_pct": [], "severe_score": [] },
-      "2022": { "mean_score": [], "high_risk_pct": [], "severe_score": [] }
+      "2022": {
+        "mean_score": [],
+        "high_risk_pct": [],
+        "severe_score": []
+      }
     };
 
     // ====== 2. 初始化圖表 ======
@@ -360,9 +387,9 @@
       const metric = metricSelect.value;
 
       const metricTextMap = {
-        "mean_score": "平均 TCCAS 分數",
+        "mean_score": "平均 TCCAS 分數（0–100）",
         "high_risk_pct": "高風險族群比例（%）",
-        "severe_score": "嚴重焦慮平均分數"
+        "severe_score": "嚴重焦慮平均分數（0–100）"
       };
       const metricText = metricTextMap[metric] || metric;
 
@@ -390,14 +417,14 @@
 
       statAvg.textContent = isPercentMetric
         ? `${avg.toFixed(1)} %`
-        : `${avg.toFixed(2)} 分`;
+        : `${avg.toFixed(1)} 分`;
       statMax.textContent = isPercentMetric
         ? `${maxItem.name}：${maxItem.value.toFixed(1)} %`
-        : `${maxItem.name}：${maxItem.value.toFixed(2)} 分`;
+        : `${maxItem.name}：${maxItem.value.toFixed(1)} 分`;
 
       const top5 = [...data].sort((a, b) => b.value - a.value).slice(0, 5).reverse();
 
-      // ====== 3-1. 地圖設定：放大＋居中 ======
+      // ====== 3-1. 地圖設定：放大＋居中＋修正寬扁比例 ======
       const mapOption = {
         tooltip: {
           trigger: 'item',
@@ -406,7 +433,7 @@
             if (v == null || v === '') return `${params.name}<br/>無資料`;
             const valStr = isPercentMetric
               ? `${v.toFixed(1)} %`
-              : `${v.toFixed(2)} 分`;
+              : `${v.toFixed(1)} 分`;
             return `${params.name}<br/>${metricText}：${valStr}`;
           }
         },
@@ -431,10 +458,10 @@
             type: 'map',
             map: 'taiwan',
             roam: true,
-            /* 關鍵：讓台灣地圖居中且放大 */
             layoutCenter: ['50%', '50%'],
             layoutSize: '110%',
             zoom: 1.1,
+            aspectScale: 0.8, // 讓台灣不要看起來太寬
             emphasis: {
               label: {
                 show: true,
@@ -477,7 +504,7 @@
             const v = p.value;
             const valStr = isPercentMetric
               ? `${v.toFixed(1)} %`
-              : `${v.toFixed(2)} 分`;
+              : `${v.toFixed(1)} 分`;
             return `${p.name}<br/>${metricText}：${valStr}`;
           }
         },
@@ -491,7 +518,7 @@
               position: 'right',
               formatter: val => isPercentMetric
                 ? `${val.value.toFixed(1)} %`
-                : `${val.value.toFixed(2)}`,
+                : `${val.value.toFixed(1)}`,
               fontSize: 10
             },
             itemStyle: {
@@ -510,4 +537,3 @@
   </script>
 </body>
 </html>
-
