@@ -367,7 +367,7 @@
     const statMax = document.getElementById('statMax');
 
     // 載入台灣縣市 TopoJSON，轉成 GeoJSON 給 ECharts 使用
-    fetch('twCounty2010.topo.json')
+    fetch('twCounty_22counties_topo.json')
       .then(res => res.json())
       .then(topoData => {
         const geoJson = topojson.feature(topoData, topoData.objects.layer1);
@@ -376,7 +376,7 @@
       })
       .catch(err => {
         console.error('載入台灣 TopoJSON 失敗：', err);
-        alert('請確認 twCounty2010.topo.json 路徑與格式是否正確。');
+        alert('請確認 twCounty_22counties_topo.json 路徑與格式是否正確。');
       });
 
     yearSelect.addEventListener('change', updateCharts);
@@ -540,5 +540,6 @@
   </script>
 </body>
 </html>
+
 
 
