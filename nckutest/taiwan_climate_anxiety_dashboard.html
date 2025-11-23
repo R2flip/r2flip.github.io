@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -288,8 +289,8 @@
         // 0–100 分：數字愈高代表氣候焦慮愈高
         "mean_score": [
           { name: "台北市", value: 78 },
-          { name: "新北市", value: 72 },
-          { name: "桃園市", value: 70 },
+          { name: "台北縣", value: 72 },  // 原本的新北市
+          { name: "桃園縣", value: 70 },  // 原本的桃園市
           { name: "台中市", value: 69 },
           { name: "台南市", value: 65 },
           { name: "高雄市", value: 75 },
@@ -314,7 +315,7 @@
         // 高風險族群比例（%）：例如 TCCAS ≥ 某臨界值的人口比例
         "high_risk_pct": [
           { name: "台北市", value: 26 },
-          { name: "新北市", value: 22 },
+          { name: "台北縣", value: 22 }, // 新北市
           { name: "高雄市", value: 24 },
           { name: "新竹市", value: 28 },
           { name: "新竹縣", value: 25 },
@@ -330,8 +331,8 @@
         // 嚴重焦慮平均分數（0–100 分）：只在高風險族群中計算
         "severe_score": [
           { name: "台北市", value: 84 },
-          { name: "新北市", value: 81 },
-          { name: "桃園市", value: 79 },
+          { name: "台北縣", value: 81 }, // 新北市
+          { name: "桃園縣", value: 79 },
           { name: "台中市", value: 78 },
           { name: "高雄市", value: 85 },
           { name: "新竹市", value: 86 },
@@ -462,6 +463,8 @@
             layoutSize: '110%',
             zoom: 1.1,
             aspectScale: 0.8, // 讓台灣不要看起來太寬
+            // ★ 關鍵：告訴 ECharts 用 COUNTYNAME 當名稱，才能和上面的 name 對到
+            nameProperty: 'COUNTYNAME',
             emphasis: {
               label: {
                 show: true,
