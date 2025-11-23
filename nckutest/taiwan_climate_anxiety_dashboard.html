@@ -7,8 +7,7 @@
 
   <!-- ECharts CDN -->
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -60,13 +59,14 @@
       gap: 8px;
     }
 
+    /* 放大地圖：左側空間加大，右側控制面板略縮小 */
     .map-panel {
-      flex: 2.2;
+      flex: 3;
       min-width: 0;
     }
 
     .control-panel {
-      flex: 1.2;
+      flex: 1;
       min-width: 260px;
       display: flex;
       flex-direction: column;
@@ -98,9 +98,10 @@
       gap: 10px;
     }
 
+    /* 地圖容器高度加大，讓台灣更大更清楚 */
     #mapContainer {
       width: 100%;
-      height: 480px;
+      height: 640px;
       border-radius: 14px;
       overflow: hidden;
     }
@@ -188,7 +189,7 @@
 
     @media (max-width: 960px) {
       .layout { flex-direction: column; }
-      #mapContainer { height: 380px; }
+      #mapContainer { height: 420px; }
     }
   </style>
 </head>
@@ -282,7 +283,6 @@
 
   <script>
     // ====== 1. 模擬資料結構：請換成你自己的 TCCAS / 氣候焦慮資料 ======
-    // climateAnxietyData[year][metric] = [{ name: '台北市', value: 3.8 }, ...]
     const climateAnxietyData = {
       "2024": {
         "mean_score": [
@@ -321,14 +321,10 @@
           { name: "花蓮縣", value: 14 },
           { name: "台東縣", value: 13 }
         ],
-        "severe_score": []  // 之後可再填入
+        "severe_score": []
       },
-      "2023": {
-        "mean_score": [], "high_risk_pct": [], "severe_score": []
-      },
-      "2022": {
-        "mean_score": [], "high_risk_pct": [], "severe_score": []
-      }
+      "2023": { "mean_score": [], "high_risk_pct": [], "severe_score": [] },
+      "2022": { "mean_score": [], "high_risk_pct": [], "severe_score": [] }
     };
 
     // ====== 2. 初始化圖表 ======
@@ -342,27 +338,18 @@
     const statAvg = document.getElementById('statAvg');
     const statMax = document.getElementById('statMax');
 
-    // 載入台灣縣市 GeoJSON
     // 載入台灣縣市 TopoJSON，轉成 GeoJSON 給 ECharts 使用
     fetch('twCounty2010.topo.json')
-//fetch('taiwan_counties')  
-  .then(res => res.json())
-  .then(topoData => {
-    // 看看有哪些 objects，可以在 Console 檢查
-    console.log('objects keys:', Object.keys(topoData.objects));
-
-    // 你的檔案裡是 layer1，不是 map
-    const geoJson = topojson.feature(topoData, topoData.objects.layer1);
-
-    echarts.registerMap('taiwan', geoJson);
-    updateCharts(); // 首次繪圖
-  })
-  .catch(err => {
-    console.error('載入台灣 TopoJSON 失敗：', err);
-    alert('請確認 twCounty2010.topo.json 路徑與格式是否正確。');
-  });
-
-
+      .then(res => res.json())
+      .then(topoData => {
+        const geoJson = topojson.feature(topoData, topoData.objects.layer1);
+        echarts.registerMap('taiwan', geoJson);
+        updateCharts(); // 首次繪圖
+      })
+      .catch(err => {
+        console.error('載入台灣 TopoJSON 失敗：', err);
+        alert('請確認 twCounty2010.topo.json 路徑與格式是否正確。');
+      });
 
     yearSelect.addEventListener('change', updateCharts);
     metricSelect.addEventListener('change', updateCharts);
@@ -410,7 +397,7 @@
 
       const top5 = [...data].sort((a, b) => b.value - a.value).slice(0, 5).reverse();
 
-      // ====== 3-1. 地圖設定（以綠藍色系呈現焦慮程度） ======
+      // ====== 3-1. 地圖設定：放大＋居中 ======
       const mapOption = {
         tooltip: {
           trigger: 'item',
@@ -444,6 +431,10 @@
             type: 'map',
             map: 'taiwan',
             roam: true,
+            /* 關鍵：讓台灣地圖居中且放大 */
+            layoutCenter: ['50%', '50%'],
+            layoutSize: '110%',
+            zoom: 1.1,
             emphasis: {
               label: {
                 show: true,
@@ -519,5 +510,3 @@
   </script>
 </body>
 </html>
-
-
