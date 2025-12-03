@@ -533,7 +533,8 @@
           type: 'value',
           axisLabel: {
             formatter: val => isPercentMetric ? `${val}%` : val,
-            color: '#4b5563'
+            color: '#4b5563',
+            fontSize: 12   
           },
           splitLine: {
             show: true,
@@ -543,7 +544,7 @@
         yAxis: {
           type: 'category',
           data: top10.map(d => d.name),
-          axisLabel: { fontSize: 11, color: '#4b5563' }
+          axisLabel: { fontSize: 14, color: '#4b5563' }
         },
         tooltip: {
           trigger: 'axis',
