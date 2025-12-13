@@ -839,20 +839,29 @@ zoom: 1.15,                    // 放大一點但仍能完整呈現
 
 visualMap: {
   type: 'continuous',
+  show: true,
+
+  // ✅ 只控制第 0 個 series（你的 map series）
+  seriesIndex: 0,
+  dimension: 0,
 
   min: Math.min(...values),
   max: Math.max(...values),
 
-  // ✅ 水平 & 置中上方
+  // ✅ 強制水平 + 置中上方
   orient: 'horizontal',
   left: 'center',
-  top: 14,
+  top: 10,
 
-  // ✅ 真正的水平長條尺寸
-  itemWidth: 260,   // 長度（水平）
-  itemHeight: 12,   // 厚度
+  // ✅ 加長滑條（越大越長）
+  itemWidth: 360,     // ← 這裡加長（可調 320~520）
+  itemHeight: 12,     // 厚度
 
-  // ✅ 顯示左右（低/高）
+  // ✅ 左右滑動
+  calculable: true,
+  realtime: true,
+
+  // ✅ 左右文字
   text: ['高', '低'],
   textGap: 8,
   textStyle: {
@@ -861,17 +870,11 @@ visualMap: {
     fontSize: 12
   },
 
-  // ✅ 左右滑動（拖曳手把）
-  calculable: true,
-  realtime: true,
-
-  // ✅ 手把樣式（避免太細看不到）
+  // ✅ 手把（讓拖曳更明顯）
   handleSize: 18,
-  handleIcon:
-    'path://M8.2,0.5h3.6c0.6,0,1,0.4,1,1v13c0,0.6-0.4,1-1,1H8.2c-0.6,0-1-0.4-1-1v-13C7.2,0.9,7.6,0.5,8.2,0.5z',
   handleStyle: {
-    color: '#0f172a',
-    borderColor: 'rgba(51,65,85,.8)',
+    color: '#334155',
+    borderColor: '#0f172a',
     borderWidth: 1
   },
 
@@ -880,15 +883,10 @@ visualMap: {
     color: ['#bfdbfe', '#60a5fa', '#fb7185', '#b91c1c']
   },
 
-  // ✅ 背景膠囊（美觀、也避免壓在地圖上不好讀）
-  backgroundColor: 'rgba(255,255,255,0.88)',
-  borderColor: 'rgba(148,163,184,0.35)',
-  borderWidth: 1,
-  padding: [8, 14, 8, 14],
-  borderRadius: 999,
-
-  // ✅ 不要讓它跑去側邊
-  align: 'auto'
+  // ✅ 取消白柱：背景透明、不要 padding/邊框
+  backgroundColor: 'transparent',
+  borderWidth: 0,
+  padding: 0
 },
 
 
