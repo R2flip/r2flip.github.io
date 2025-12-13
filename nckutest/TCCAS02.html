@@ -833,20 +833,55 @@ zoom: 1.15,                    // 放大一點但仍能完整呈現
           }
         },
 
-        visualMap: {
-          min: Math.min(...values),
-          max: Math.max(...values),
-          left: 14,
-          bottom: 14,
-          calculable: true,
-          itemWidth: 12,
-          itemHeight: 90,
-          text: ['高', '低'],
-          textStyle: { color: '#334155', fontWeight: 700 },
-          inRange: {
-            color: ['#bfdbfe', '#60a5fa', '#fb7185', '#b91c1c']
-          }
-        },
+visualMap: {
+  type: 'continuous',
+  min: Math.min(...values),
+  max: Math.max(...values),
+
+  // ★ 位置：圖形上方、置中
+  orient: 'horizontal',
+  left: 'center',
+  top: 12,
+
+  // ★ 尺寸：水平長條
+  itemWidth: 180,
+  itemHeight: 10,
+
+  calculable: true,
+
+  // ★ 標示文字
+  text: ['高', '低'],
+  textGap: 6,
+  textStyle: {
+    color: '#334155',
+    fontWeight: 800,
+    fontSize: 12
+  },
+
+  // ★ 滑桿樣式（更現代）
+  handleSize: 14,
+  handleStyle: {
+    color: '#0f172a',
+    borderColor: '#334155',
+    borderWidth: 1
+  },
+
+  // ★ 色階
+  inRange: {
+    color: [
+      '#bfdbfe', // 低
+      '#60a5fa',
+      '#fb7185',
+      '#b91c1c'  // 高
+    ]
+  },
+
+  // ★ 背景（可選）
+  backgroundColor: 'rgba(255,255,255,0.85)',
+  borderRadius: 10,
+  padding: [6, 12]
+},
+
 
         series: [
           // 熱力層：用 value 上色
