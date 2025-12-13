@@ -777,12 +777,12 @@ if (metric === "severe_score") {
       const mapOption = {
         backgroundColor: 'transparent',
         geo: {
-          map: 'taiwan',
-          roam: true,
-  top: 44,          // ★ 給 visualMap 預留高度
+  top: 44,
   bottom: 10,
   left: 10,
-  right: 10,
+  right: 46,  // ★ 預留給右側 visualMap
+          map: 'taiwan',
+          roam: true,
 
 layoutCenter: ['50%', '55%'],  // 稍微往下，視覺上更居中
 layoutSize: '98%',             // 讓全圖更容易完整收進容器
@@ -841,27 +841,28 @@ visualMap: {
   type: 'continuous',
   show: true,
 
-  // ✅ 只控制第 0 個 series（你的 map series）
+  // ✅ 只控制 map series（避免 scatter 也被套用）
   seriesIndex: 0,
   dimension: 0,
 
   min: Math.min(...values),
   max: Math.max(...values),
 
-  // ✅ 強制水平 + 置中上方
-  orient: 'horizontal',
-  left: 'center',
-  top: 10,
+  // ✅ 右側直向
+  orient: 'vertical',
+  right: 12,
+  top: 70,       // 避開上方標題區
+  bottom: 18,    // 留一點底部空間
 
-  // ✅ 加長滑條（越大越長）
-  itemWidth: 360,     // ← 這裡加長（可調 320~520）
-  itemHeight: 12,     // 厚度
+  // ✅ 直向長條：高度拉長、寬度當厚度
+  itemWidth: 12,     // 厚度
+  itemHeight: 240,   // 長度（上下方向，可調 200~360）
 
-  // ✅ 左右滑動
+  // ✅ 上下拖曳
   calculable: true,
   realtime: true,
 
-  // ✅ 左右文字
+  // ✅ 文字
   text: ['高', '低'],
   textGap: 8,
   textStyle: {
@@ -870,7 +871,7 @@ visualMap: {
     fontSize: 12
   },
 
-  // ✅ 手把（讓拖曳更明顯）
+  // ✅ 手把更明顯
   handleSize: 18,
   handleStyle: {
     color: '#334155',
@@ -883,11 +884,12 @@ visualMap: {
     color: ['#bfdbfe', '#60a5fa', '#fb7185', '#b91c1c']
   },
 
-  // ✅ 取消白柱：背景透明、不要 padding/邊框
+  // ✅ 不要白柱框：背景透明、無 padding/邊框
   backgroundColor: 'transparent',
   borderWidth: 0,
   padding: 0
 },
+
 
 
         series: [
