@@ -9,565 +9,330 @@
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    :root{
-      --bg1:#0b1220;
-      --bg2:#0f172a;
-      --card: rgba(255,255,255,0.92);
-      --text:#0f172a;
-      --muted:#6b7280;
+/* =========================================================
+   Base & Theme
+========================================================= */
+*{ box-sizing:border-box; margin:0; padding:0; }
 
-      /* ✅ 預警系統配色 */
-      --green:#22c55e;
-      --yellow:#fbbf24;
-      --red:#ef4444;
+:root{
+  --bg1:#0b1220;
+  --bg2:#0f172a;
 
-      --shadow: 0 12px 30px rgba(2,6,23,.18);
-      --shadow2: 0 10px 24px rgba(2,6,23,.14);
-      --ring: 0 0 0 3px rgba(59,130,246,.2);
-      --radius: 18px;
-    }
+  --card: rgba(255,255,255,.92);
+  --text:#0f172a;
+  --muted:#6b7280;
 
-    body{
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      min-height: 100vh;
-      background:
-        radial-gradient(1200px 600px at 10% -10%, rgba(37,99,235,.35), transparent 55%),
-        radial-gradient(1000px 550px at 100% 0%, rgba(236,72,153,.25), transparent 55%),
-        radial-gradient(900px 500px at 50% 110%, rgba(34,197,94,.18), transparent 55%),
-        linear-gradient(180deg, #0b1020, #0b1220 40%, #0b1220);
-      color: #e5e7eb;
-      display:flex;
-      flex-direction:column;
-    }
+  /* 預警燈號 */
+  --green:#22c55e;
+  --yellow:#fbbf24;
+  --red:#ef4444;
 
-    header{
-      padding: 18px 22px;
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap: 18px;
-      border-bottom: 1px solid rgba(148,163,184,.16);
-      background: linear-gradient(90deg, rgba(15,23,42,.7), rgba(37,99,235,.25), rgba(236,72,153,.18));
-      backdrop-filter: blur(10px);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    .hgroup{ display:flex; flex-direction:column; gap: 6px; }
-    header h1{
-      font-size: 1.25rem;
-      letter-spacing: .06em;
-      font-weight: 780;
-      line-height: 1.25;
-    }
-    header .subtitle{
-      font-size:.92rem;
-      opacity:.9;
-      color: rgba(226,232,240,.9);
-    }
-    .meta-right{
-      text-align:right;
-      font-size:.9rem;
-      color: rgba(226,232,240,.85);
-      display:flex;
-      flex-direction:column;
-      gap: 6px;
-      align-items:flex-end;
-    }
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(148,163,184,.18);
-      box-shadow: 0 8px 22px rgba(2,6,23,.15);
-      color: rgba(226,232,240,.95);
-      font-weight: 650;
-      letter-spacing: .02em;
-      white-space: nowrap;
-    }
-    .dot{
-      width:9px;height:9px;border-radius:50%;
-      background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.25));
-      box-shadow: 0 0 0 2px rgba(255,255,255,.10);
-    }
-
-    /* ===== ✅ Dashboard Layout（優化卡片配置） ===== */
-    main.layout{
-      flex: 1;
-      display: grid;
-      grid-template-columns: minmax(640px, 1fr) 360px; /* 左主視覺 / 右側資訊欄 */
-      gap: 16px;
-      padding: 16px 18px 18px;
-      align-items: start;
-    }
-
-    .card{
-      background: var(--card);
-      color: var(--text);
-      border-radius: var(--radius);
-      border: 1px solid rgba(148,163,184,.22);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position:relative;
-    }
-
-    .card::before{
-      content:"";
-      position:absolute; inset:0;
-      background:
-        radial-gradient(500px 300px at 15% 0%, rgba(37,99,235,.10), transparent 60%),
-        radial-gradient(450px 260px at 100% 0%, rgba(236,72,153,.08), transparent 60%);
-      pointer-events:none;
-    }
-
-    .card-header{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap: 12px;
-      padding: 12px 14px 10px;
-      border-bottom: 1px solid rgba(148,163,184,.18);
-      position:relative;
-      z-index: 1;
-    }
-
-    .card-title{
-      font-size: 1.02rem;
-      font-weight: 900;
-      color: #0b1220;
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      letter-spacing: .02em;
-    }
-
-    .tag{
-      font-size: .72rem;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, rgba(37,99,235,.12), rgba(236,72,153,.12));
-      border: 1px solid rgba(148,163,184,.25);
-      color: #0f172a;
-      font-weight: 800;
-      white-space:nowrap;
-    }
-
-    .card-subtitle{
-      font-size: .88rem;
-      color: var(--muted);
-      text-align:right;
-      line-height: 1.3;
-      max-width: 58%;
-    }
-
-    .card-body{
-      padding: 12px 14px 14px;
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-      min-height: 0;
-      position:relative;
-      z-index: 1;
-    }
-
-    /* 左側主視覺卡：全高 */
-    .map-panel{
-      min-width: 0;
-      display:flex;
-      flex-direction:column;
-    }
-
-    #mapContainer{
-      width: 100%;
-      flex: 1;
-      min-height: 560px;
-      border-radius: 14px;
-      overflow:hidden;
-      background: linear-gradient(180deg, rgba(219,234,254,.9), rgba(243,244,246,.9));
-      border: 1px solid rgba(148,163,184,.25);
-    }
-
-    .legend-note{
-      font-size: .82rem;
-      color: #475569;
-      line-height: 1.45;
-    }
-
-    /* 右側欄：固定寬、可捲動（成熟儀表板常見做法） */
-    .control-panel{
-      min-width: 0;
-      display:flex;
-      flex-direction:column;
-      gap: 12px;
-      position: sticky;
-      top: 92px; /* 避開 header */
-      max-height: calc(100vh - 110px);
-      overflow: auto;
-      padding-right: 4px;
-    }
-    .control-panel .card{ box-shadow: var(--shadow2); }
-
-    /* Controls */
-    .controls{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .control-group{ display:flex; flex-direction:column; gap: 6px; }
-    .control-label{
-      font-size: .78rem;
-      color: #475569;
-      font-weight: 800;
-      letter-spacing: .02em;
-    }
-    select{
-      padding: 9px 12px;
-      font-size: .92rem;
-      border-radius: 14px;
-      border: 1px solid rgba(148,163,184,.35);
-      background: rgba(255,255,255,.92);
-      outline:none;
-      transition: .15s ease;
-    }
-    select:focus{
-      border-color: rgba(37,99,235,.8);
-      box-shadow: var(--ring);
-      transform: translateY(-1px);
-    }
-
-    /* Threshold pills */
-    .thresholds{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      padding-top: 6px;
-    }
-    .pill{
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(15,23,42,.04);
-      border: 1px solid rgba(148,163,184,.22);
-      display:flex;
-      flex-direction:column;
-      gap: 4px;
-    }
-    .pill .p-title{
-      font-size: .78rem;
-      color: #0f172a;
-      font-weight: 900;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:8px;
-    }
-    .pill .p-desc{
-      font-size: .75rem;
-      color: #64748b;
-      line-height: 1.35;
-    }
-    .light-chip{
-      font-size: .72rem;
-      padding: 3px 9px;
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,.25);
-      background: rgba(255,255,255,.65);
-      font-weight: 950;
-      white-space: nowrap;
-    }
-    .chip-green{ color: var(--green); }
-    .chip-yellow{ color: var(--yellow); }
-    .chip-red{ color: var(--red); }
-
-    /* Stats */
-    .stat-grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .stat-grid.three{ grid-template-columns: 1fr 1fr 1fr; }
-    .stat{
-      border-radius: 14px;
-      padding: 10px 12px;
-      background: linear-gradient(90deg, rgba(224,242,254,.9), rgba(254,252,232,.7));
-      border: 1px solid rgba(148,163,184,.25);
-      display:flex;
-      flex-direction:column;
-      gap: 3px;
-    }
-    .stat .label{
-      font-size: .74rem;
-      color: #475569;
-      font-weight: 850;
-    }
-    .stat .value{
-      font-size: .98rem;
-      color: #0f172a;
-      font-weight: 950;
-      letter-spacing: .02em;
-    }
-
-    /* Top10 */
-    #barContainer{
-      width: 100%;
-      height: 240px; /* 固定高度，避免右欄卡互相擠壓 */
-      border-radius: 14px;
-      overflow:hidden;
-      background: rgba(249,250,251,.95);
-      border: 1px solid rgba(148,163,184,.25);
-    }
-
-    /* Buttons */
-    .btn{
-      padding: 7px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,.35);
-      background: rgba(255,255,255,.85);
-      color: #0f172a;
-      font-weight: 950;
-      cursor: pointer;
-      transition: .15s ease;
-      white-space: nowrap;
-    }
-    .btn:hover{ transform: translateY(-1px); box-shadow: 0 10px 25px rgba(2,6,23,.12); }
-    .btn.red{
-      background: rgba(239,68,68,.12);
-      border-color: rgba(239,68,68,.25);
-      color: #991b1b;
-    }
-    .btn.copy{
-      background: rgba(37,99,235,.10);
-      border-color: rgba(37,99,235,.25);
-      color: #1d4ed8;
-    }
-
-    /* Selected summary */
-    .sel-grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .sel-pill{
-      border-radius: 14px;
-      padding: 10px 12px;
-      background: rgba(15,23,42,.04);
-      border: 1px solid rgba(148,163,184,.22);
-      display:flex;
-      flex-direction:column;
-      gap: 4px;
-    }
-    .sel-pill .k{
-      font-size: .76rem;
-      color: #475569;
-      font-weight: 900;
-    }
-    .sel-pill .v{
-      font-size: .98rem;
-      color: #0b1220;
-      font-weight: 950;
-    }
-    .sel-line{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap: 10px;
-    }
-    .sel-badge{
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.92);
-      border: 1px solid rgba(148,163,184,.25);
-      font-weight: 950;
-      white-space: nowrap;
-    }
-
-    /* Red list */
-    #redList{
-      list-style:none;
-      padding:0;
-      margin:0;
-      display:flex;
-      flex-direction:column;
-      gap: 8px;
-
-      max-height: 220px;    /* ✅ 內部可捲動 */
-      overflow:auto;
-      padding-right: 4px;
-    }
-    .red-item{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding: 9px 10px;
-      border-radius: 14px;
-      background: rgba(239,68,68,.10);
-      border: 1px solid rgba(239,68,68,.22);
-      font-weight: 950;
-      color: #7f1d1d;
-      cursor: pointer;
-      transition: .12s ease;
-    }
-    .red-item:hover{ transform: translateY(-1px); }
-    .red-item.active{
-      outline: 3px solid rgba(239,68,68,.35);
-      box-shadow: 0 14px 30px rgba(239,68,68,.18);
-    }
-    .ok-item{
-      padding: 10px 10px;
-      border-radius: 14px;
-      background: rgba(34,197,94,.10);
-      border: 1px solid rgba(34,197,94,.20);
-      font-weight: 950;
-      color: #166534;
-    }
-
-    .footer-hint{
-      margin-top: 2px;
-      font-size: .78rem;
-      color: #64748b;
-    }
-
-    /* Mobile */
-    @media (max-width: 1100px){
-      main.layout{ grid-template-columns: 1fr; }
-      .control-panel{
-        position: static;
-        max-height: none;
-        overflow: visible;
-        padding-right: 0;
-      }
-      #mapContainer{ min-height: 460px; }
-      #barContainer{ height: 260px; }
-      #redList{ max-height: 260px; }
-    }
-
-    /* ===== Right Panel Card System (override) ===== */
-.control-panel{
-  gap: 12px;
+  --radius:18px;
+  --shadow:0 12px 30px rgba(2,6,23,.18);
+  --shadow-soft:0 10px 24px rgba(2,6,23,.14);
+  --ring:0 0 0 3px rgba(59,130,246,.2);
 }
 
-.control-panel .card{
-  border-radius: 20px;
-  box-shadow: 0 10px 28px rgba(2,6,23,.16);
-  border: 1px solid rgba(148,163,184,.20);
+body{
+  font-family: system-ui,-apple-system,"Segoe UI",sans-serif;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  color:#e5e7eb;
+
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(37,99,235,.35), transparent 55%),
+    radial-gradient(1000px 550px at 100% 0%, rgba(236,72,153,.25), transparent 55%),
+    radial-gradient(900px 500px at 50% 110%, rgba(34,197,94,.18), transparent 55%),
+    linear-gradient(180deg,#0b1020,#0b1220 40%,#0b1220);
 }
 
-.control-panel .card-header{
-  padding: 12px 14px;
-  border-bottom: 1px solid rgba(148,163,184,.16);
-  align-items: center;
+/* =========================================================
+   Header
+========================================================= */
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
+
+  padding:18px 22px;
+  border-bottom:1px solid rgba(148,163,184,.16);
+  backdrop-filter: blur(10px);
+
+  background: linear-gradient(
+    90deg,
+    rgba(15,23,42,.7),
+    rgba(37,99,235,.25),
+    rgba(236,72,153,.18)
+  );
 }
 
-.control-panel .card-title{
-  font-size: 1.0rem;
-  font-weight: 950;
+header h1{
+  font-size:1.25rem;
+  font-weight:800;
+  letter-spacing:.06em;
+}
+
+header .subtitle{
+  font-size:.92rem;
+  color:rgba(226,232,240,.9);
+}
+
+.meta-right{
+  text-align:right;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-size:.9rem;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(148,163,184,.18);
+  box-shadow:0 8px 22px rgba(2,6,23,.15);
+}
+
+/* =========================================================
+   Layout
+========================================================= */
+main.layout{
+  flex:1;
+  display:grid;
+  grid-template-columns:minmax(640px,1fr) 360px;
+  gap:16px;
+  padding:16px 18px 18px;
+  align-items:start;
+}
+
+/* =========================================================
+   Card System
+========================================================= */
+.card{
+  position:relative;
+  background:var(--card);
+  color:var(--text);
+  border-radius:var(--radius);
+  border:1px solid rgba(148,163,184,.22);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(500px 300px at 15% 0%, rgba(37,99,235,.10), transparent 60%),
+    radial-gradient(450px 260px at 100% 0%, rgba(236,72,153,.08), transparent 60%);
+  pointer-events:none;
+}
+
+.card-header{
+  padding:12px 14px;
+  border-bottom:1px solid rgba(148,163,184,.16);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:relative;
+  z-index:1;
+}
+
+.card-title{
   display:flex;
   align-items:center;
   gap:10px;
-}
-
-.card-icon{
-  width: 28px;
-  height: 28px;
-  border-radius: 10px;
-  display:grid;
-  place-items:center;
-  background: rgba(37,99,235,.10);
-  border: 1px solid rgba(37,99,235,.18);
-  color: #1d4ed8;
-  font-weight: 950;
-}
-
-.card-actions{
-  display:flex;
-  gap: 8px;
-  align-items:center;
+  font-size:1rem;
+  font-weight:900;
 }
 
 .card-body{
-  padding: 12px 14px 14px;
+  padding:12px 14px 14px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  position:relative;
+  z-index:1;
 }
 
-/* 更緊湊的表單區 */
+/* =========================================================
+   Map Panel
+========================================================= */
+.map-panel{
+  display:flex;
+  flex-direction:column;
+}
+
+#mapContainer{
+  flex:1;
+  min-height:560px;
+  border-radius:14px;
+  border:1px solid rgba(148,163,184,.25);
+  background:linear-gradient(180deg,rgba(219,234,254,.9),rgba(243,244,246,.9));
+}
+
+/* =========================================================
+   Right Control Panel (Single Scroll Source)
+========================================================= */
+.control-panel{
+  position:sticky;
+  top:92px;
+
+  height:calc(100dvh - 110px);
+  overflow-y:auto;
+  overflow-x:hidden;
+
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  padding-right:8px;
+
+  overscroll-behavior:contain;
+}
+
+.control-panel > .card{
+  flex:0 0 auto;
+  box-shadow:var(--shadow-soft);
+}
+
+/* =========================================================
+   Controls
+========================================================= */
 .controls{
-  grid-template-columns: 1fr;
-}
-@media (min-width: 980px){
-  .controls{ grid-template-columns: 1fr 1fr; }
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
 }
 
-/* KPI chips（取代原本大片 stat 方塊） */
+.control-group{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.control-label{
+  font-size:.78rem;
+  font-weight:800;
+  color:#475569;
+}
+
+select{
+  padding:9px 12px;
+  border-radius:14px;
+  border:1px solid rgba(148,163,184,.35);
+  background:rgba(255,255,255,.92);
+  font-size:.92rem;
+}
+
+select:focus{
+  border-color:rgba(37,99,235,.8);
+  box-shadow:var(--ring);
+}
+
+/* =========================================================
+   KPI / Threshold
+========================================================= */
+.thresholds{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.pill,.kpi{
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(255,255,255,.8);
+  border:1px solid rgba(148,163,184,.22);
+}
+
 .kpi-row{
   display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 10px;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
 }
-.kpi{
-  border-radius: 16px;
-  padding: 10px 12px;
-  background: rgba(15,23,42,.04);
-  border: 1px solid rgba(148,163,184,.20);
-}
-.kpi .k{ font-size:.74rem; color:#475569; font-weight:900; }
-.kpi .v{ margin-top:2px; font-size:1.05rem; color:#0b1220; font-weight:950; }
+
 .kpi3{
   display:grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns:1fr 1fr 1fr;
   gap:10px;
-  margin-top: 10px;
-}
-.kpi.badge-green .v{ color: #166534; }
-.kpi.badge-yellow .v{ color: #92400e; }
-.kpi.badge-red .v{ color: #991b1b; }
-
-/* 門檻：更像儀表板說明列 */
-.thresholds{
-  grid-template-columns: 1fr;
-}
-@media (min-width: 980px){
-  .thresholds{ grid-template-columns: 1fr 1fr; }
-}
-.pill{
-  background: rgba(255,255,255,.75);
 }
 
-/* 選取摘要：更清楚的資訊層 */
-.sel-pill{
-  background: rgba(255,255,255,.78);
-}
-.sel-badge{
-  font-weight: 950;
+.kpi .k{
+  font-size:.74rem;
+  font-weight:900;
+  color:#475569;
 }
 
-/* Top10：固定高度更一致 */
+.kpi .v{
+  font-size:1.05rem;
+  font-weight:950;
+  color:#0b1220;
+}
+
+/* =========================================================
+   Top10 Chart
+========================================================= */
 #barContainer{
-  height: 220px;
+  width:100%;
+  height:240px;
+  min-height:240px;
+  border-radius:14px;
+  background:rgba(249,250,251,.95);
+  border:1px solid rgba(148,163,184,.25);
 }
 
-/* 紅燈清單：不做卡片內捲動（交給右欄整體捲動） */
+/* =========================================================
+   Red List (No Inner Scroll)
+========================================================= */
 #redList{
-  max-height: none;
-  overflow: visible;
-  padding-right: 0;
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
 
-/* 紅燈條目更像清單列 */
 .red-item{
-  background: rgba(239,68,68,.08);
-  border: 1px solid rgba(239,68,68,.18);
-  border-radius: 16px;
-}
-.red-item span:last-child{
-  font-variant-numeric: tabular-nums;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:9px 12px;
+  border-radius:16px;
+  background:rgba(239,68,68,.08);
+  border:1px solid rgba(239,68,68,.18);
+  font-weight:900;
+  color:#7f1d1d;
 }
 
-  </style>
+/* =========================================================
+   Mobile
+========================================================= */
+@media (max-width:1100px){
+  main.layout{ grid-template-columns:1fr; }
+
+  .control-panel{
+    position:static;
+    height:auto;
+    overflow:visible;
+    padding-right:0;
+  }
+
+  #mapContainer{ min-height:460px; }
+  #barContainer{ height:260px; min-height:260px; }
+}
+
+
+
+
+  
 </head>
 
 <body>
