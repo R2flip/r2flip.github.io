@@ -779,6 +779,10 @@ if (metric === "severe_score") {
         geo: {
           map: 'taiwan',
           roam: true,
+  top: 44,          // ★ 給 visualMap 預留高度
+  bottom: 10,
+  left: 10,
+  right: 10,
 
 layoutCenter: ['50%', '55%'],  // 稍微往下，視覺上更居中
 layoutSize: '98%',             // 讓全圖更容易完整收進容器
@@ -835,51 +839,56 @@ zoom: 1.15,                    // 放大一點但仍能完整呈現
 
 visualMap: {
   type: 'continuous',
+
   min: Math.min(...values),
   max: Math.max(...values),
 
-  // ★ 位置：圖形上方、置中
+  // ✅ 水平 & 置中上方
   orient: 'horizontal',
   left: 'center',
-  top: 12,
+  top: 14,
 
-  // ★ 尺寸：水平長條
-  itemWidth: 180,
-  itemHeight: 10,
+  // ✅ 真正的水平長條尺寸
+  itemWidth: 260,   // 長度（水平）
+  itemHeight: 12,   // 厚度
 
-  calculable: true,
-
-  // ★ 標示文字
+  // ✅ 顯示左右（低/高）
   text: ['高', '低'],
-  textGap: 6,
+  textGap: 8,
   textStyle: {
     color: '#334155',
     fontWeight: 800,
     fontSize: 12
   },
 
-  // ★ 滑桿樣式（更現代）
-  handleSize: 14,
+  // ✅ 左右滑動（拖曳手把）
+  calculable: true,
+  realtime: true,
+
+  // ✅ 手把樣式（避免太細看不到）
+  handleSize: 18,
+  handleIcon:
+    'path://M8.2,0.5h3.6c0.6,0,1,0.4,1,1v13c0,0.6-0.4,1-1,1H8.2c-0.6,0-1-0.4-1-1v-13C7.2,0.9,7.6,0.5,8.2,0.5z',
   handleStyle: {
     color: '#0f172a',
-    borderColor: '#334155',
+    borderColor: 'rgba(51,65,85,.8)',
     borderWidth: 1
   },
 
-  // ★ 色階
+  // ✅ 色階
   inRange: {
-    color: [
-      '#bfdbfe', // 低
-      '#60a5fa',
-      '#fb7185',
-      '#b91c1c'  // 高
-    ]
+    color: ['#bfdbfe', '#60a5fa', '#fb7185', '#b91c1c']
   },
 
-  // ★ 背景（可選）
-  backgroundColor: 'rgba(255,255,255,0.85)',
-  borderRadius: 10,
-  padding: [6, 12]
+  // ✅ 背景膠囊（美觀、也避免壓在地圖上不好讀）
+  backgroundColor: 'rgba(255,255,255,0.88)',
+  borderColor: 'rgba(148,163,184,0.35)',
+  borderWidth: 1,
+  padding: [8, 14, 8, 14],
+  borderRadius: 999,
+
+  // ✅ 不要讓它跑去側邊
+  align: 'auto'
 },
 
 
