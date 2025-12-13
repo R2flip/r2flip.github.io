@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>臺灣各縣市氣候焦慮熱力圖儀表板（含預警燈號）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- ECharts + TopoJSON -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root{
+      --bg1:#0b1220;
+      --bg2:#0f172a;
+      --card: rgba(255,255,255,0.92);
+      --text:#0f172a;
+      --muted:#6b7280;
+
+      /* ✅ 預警系統配色 */
+      --green:#22c55e;
+      --yellow:#fbbf24;
+      --red:#ef4444;
+
+      --shadow: 0 12px 30px rgba(2,6,23,.18);
+      --shadow2: 0 10px 24px rgba(2,6,23,.14);
+      --ring: 0 0 0 3px rgba(59,130,246,.2);
+      --radius: 18px;
+    }
+
+    body{
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(37,99,235,.35), transparent 55%),
+        radial-gradient(1000px 550px at 100% 0%, rgba(236,72,153,.25), transparent 55%),
+        radial-gradient(900px 500px at 50% 110%, rgba(34,197,94,.18), transparent 55%),
+        linear-gradient(180deg, #0b1020, #0b1220 40%, #0b1220);
+      color: #e5e7eb;
+      display:flex;
+      flex-direction:column;
+    }
+
+    header{
+      padding: 18px 22px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap: 18px;
+      border-bottom: 1px solid rgba(148,163,184,.16);
+      background: linear-gradient(90deg, rgba(15,23,42,.7), rgba(37,99,235,.25), rgba(236,72,153,.18));
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .hgroup{ display:flex; flex-direction:column; gap: 6px; }
+    header h1{
+      font-size: 1.25rem;
+      letter-spacing: .06em;
+      font-weight: 780;
+      line-height: 1.25;
+    }
+    header .subtitle{
+      font-size:.92rem;
+      opacity:.9;
+      color: rgba(226,232,240,.9);
+    }
+    .meta-right{
+      text-align:right;
+      font-size:.9rem;
+      color: rgba(226,232,240,.85);
+      display:flex;
+      flex-direction:column;
+      gap: 6px;
+      align-items:flex-end;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(148,163,184,.18);
+      box-shadow: 0 8px 22px rgba(2,6,23,.15);
+      color: rgba(226,232,240,.95);
+      font-weight: 650;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+    .dot{
+      width:9px;height:9px;border-radius:50%;
+      background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.25));
+      box-shadow: 0 0 0 2px rgba(255,255,255,.10);
+    }
+
+    /* ===== ✅ Dashboard Layout（優化卡片配置） ===== */
+    main.layout{
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(640px, 1fr) 360px; /* 左主視覺 / 右側資訊欄 */
+      gap: 16px;
+      padding: 16px 18px 18px;
+      align-items: start;
+    }
+
+    .card{
+      background: var(--card);
+      color: var(--text);
+      border-radius: var(--radius);
+      border: 1px solid rgba(148,163,184,.22);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(500px 300px at 15% 0%, rgba(37,99,235,.10), transparent 60%),
+        radial-gradient(450px 260px at 100% 0%, rgba(236,72,153,.08), transparent 60%);
+      pointer-events:none;
+    }
+
+    .card-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap: 12px;
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid rgba(148,163,184,.18);
+      position:relative;
+      z-index: 1;
+    }
+
+    .card-title{
+      font-size: 1.02rem;
+      font-weight: 900;
+      color: #0b1220;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      letter-spacing: .02em;
+    }
+
+    .tag{
+      font-size: .72rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(37,99,235,.12), rgba(236,72,153,.12));
+      border: 1px solid rgba(148,163,184,.25);
+      color: #0f172a;
+      font-weight: 800;
+      white-space:nowrap;
+    }
+
+    .card-subtitle{
+      font-size: .88rem;
+      color: var(--muted);
+      text-align:right;
+      line-height: 1.3;
+      max-width: 58%;
+    }
+
+    .card-body{
+      padding: 12px 14px 14px;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      min-height: 0;
+      position:relative;
+      z-index: 1;
+    }
+
+    /* 左側主視覺卡：全高 */
+    .map-panel{
+      min-width: 0;
+      display:flex;
+      flex-direction:column;
+    }
+
+    #mapContainer{
+      width: 100%;
+      flex: 1;
+      min-height: 560px;
+      border-radius: 14px;
+      overflow:hidden;
+      background: linear-gradient(180deg, rgba(219,234,254,.9), rgba(243,244,246,.9));
+      border: 1px solid rgba(148,163,184,.25);
+    }
+
+    .legend-note{
+      font-size: .82rem;
+      color: #475569;
+      line-height: 1.45;
+    }
+
+    /* 右側欄：固定寬、可捲動（成熟儀表板常見做法） */
+    .control-panel{
+      min-width: 0;
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+      position: sticky;
+      top: 92px; /* 避開 header */
+      max-height: calc(100vh - 110px);
+      overflow: auto;
+      padding-right: 4px;
+    }
+    .control-panel .card{ box-shadow: var(--shadow2); }
+
+    /* Controls */
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .control-group{ display:flex; flex-direction:column; gap: 6px; }
+    .control-label{
+      font-size: .78rem;
+      color: #475569;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+    select{
+      padding: 9px 12px;
+      font-size: .92rem;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,.35);
+      background: rgba(255,255,255,.92);
+      outline:none;
+      transition: .15s ease;
+    }
+    select:focus{
+      border-color: rgba(37,99,235,.8);
+      box-shadow: var(--ring);
+      transform: translateY(-1px);
+    }
+
+    /* Threshold pills */
+    .thresholds{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding-top: 6px;
+    }
+    .pill{
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(15,23,42,.04);
+      border: 1px solid rgba(148,163,184,.22);
+      display:flex;
+      flex-direction:column;
+      gap: 4px;
+    }
+    .pill .p-title{
+      font-size: .78rem;
+      color: #0f172a;
+      font-weight: 900;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+    }
+    .pill .p-desc{
+      font-size: .75rem;
+      color: #64748b;
+      line-height: 1.35;
+    }
+    .light-chip{
+      font-size: .72rem;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,.25);
+      background: rgba(255,255,255,.65);
+      font-weight: 950;
+      white-space: nowrap;
+    }
+    .chip-green{ color: var(--green); }
+    .chip-yellow{ color: var(--yellow); }
+    .chip-red{ color: var(--red); }
+
+    /* Stats */
+    .stat-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .stat-grid.three{ grid-template-columns: 1fr 1fr 1fr; }
+    .stat{
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: linear-gradient(90deg, rgba(224,242,254,.9), rgba(254,252,232,.7));
+      border: 1px solid rgba(148,163,184,.25);
+      display:flex;
+      flex-direction:column;
+      gap: 3px;
+    }
+    .stat .label{
+      font-size: .74rem;
+      color: #475569;
+      font-weight: 850;
+    }
+    .stat .value{
+      font-size: .98rem;
+      color: #0f172a;
+      font-weight: 950;
+      letter-spacing: .02em;
+    }
+
+    /* Top10 */
+    #barContainer{
+      width: 100%;
+      height: 240px; /* 固定高度，避免右欄卡互相擠壓 */
+      border-radius: 14px;
+      overflow:hidden;
+      background: rgba(249,250,251,.95);
+      border: 1px solid rgba(148,163,184,.25);
+    }
+
+    /* Buttons */
+    .btn{
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,.35);
+      background: rgba(255,255,255,.85);
+      color: #0f172a;
+      font-weight: 950;
+      cursor: pointer;
+      transition: .15s ease;
+      white-space: nowrap;
+    }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 10px 25px rgba(2,6,23,.12); }
+    .btn.red{
+      background: rgba(239,68,68,.12);
+      border-color: rgba(239,68,68,.25);
+      color: #991b1b;
+    }
+    .btn.copy{
+      background: rgba(37,99,235,.10);
+      border-color: rgba(37,99,235,.25);
+      color: #1d4ed8;
+    }
+
+    /* Selected summary */
+    .sel-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .sel-pill{
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(15,23,42,.04);
+      border: 1px solid rgba(148,163,184,.22);
+      display:flex;
+      flex-direction:column;
+      gap: 4px;
+    }
+    .sel-pill .k{
+      font-size: .76rem;
+      color: #475569;
+      font-weight: 900;
+    }
+    .sel-pill .v{
+      font-size: .98rem;
+      color: #0b1220;
+      font-weight: 950;
+    }
+    .sel-line{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 10px;
+    }
+    .sel-badge{
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(148,163,184,.25);
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    /* Red list */
+    #redList{
+      list-style:none;
+      padding:0;
+      margin:0;
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+
+      max-height: 220px;    /* ✅ 內部可捲動 */
+      overflow:auto;
+      padding-right: 4px;
+    }
+    .red-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding: 9px 10px;
+      border-radius: 14px;
+      background: rgba(239,68,68,.10);
+      border: 1px solid rgba(239,68,68,.22);
+      font-weight: 950;
+      color: #7f1d1d;
+      cursor: pointer;
+      transition: .12s ease;
+    }
+    .red-item:hover{ transform: translateY(-1px); }
+    .red-item.active{
+      outline: 3px solid rgba(239,68,68,.35);
+      box-shadow: 0 14px 30px rgba(239,68,68,.18);
+    }
+    .ok-item{
+      padding: 10px 10px;
+      border-radius: 14px;
+      background: rgba(34,197,94,.10);
+      border: 1px solid rgba(34,197,94,.20);
+      font-weight: 950;
+      color: #166534;
+    }
+
+    .footer-hint{
+      margin-top: 2px;
+      font-size: .78rem;
+      color: #64748b;
+    }
+
+    /* Mobile */
+    @media (max-width: 1100px){
+      main.layout{ grid-template-columns: 1fr; }
+      .control-panel{
+        position: static;
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
+      }
+      #mapContainer{ min-height: 460px; }
+      #barContainer{ height: 260px; }
+      #redList{ max-height: 260px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="hgroup">
+      <h1>臺灣各縣市氣候焦慮熱力圖儀表板（含預警燈號）</h1>
+      <div class="subtitle">資訊分層：主視覺地圖 → 右欄決策摘要（條件/摘要/Top10/紅燈清單）</div>
+    </div>
+    <div class="meta-right">
+      <div class="badge"><span class="dot"></span>資料來源：TCCAS 校園調查、線上問卷（示範資料）</div>
+      <div class="subtitle" id="currentMeta">年度：—　｜　指標：—</div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- 左側：主視覺地圖卡 -->
+    <section class="card map-panel">
+      <div class="card-header">
+        <div class="card-title">
+          各縣市熱力圖 & 預警燈號
+          <span class="tag">綠 / 黃 / 紅</span>
+        </div>
+        <div class="card-subtitle" id="mapSubtitle">
+          熱力圖：指標分數（value）<br/>
+          圓點：預警燈號（warn）
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div id="mapContainer"></div>
+        <div class="legend-note">
+          說明：熱力圖顏色表示<strong>指標分數</strong>（中性色階避免與紅黃綠混淆）；圓點顏色表示<strong>預警燈號</strong>。點擊縣市可在右欄自動生成摘要並定位紅燈清單。
+        </div>
+      </div>
+    </section>
+
+    <!-- 右側：固定資訊欄（可捲動） -->
+    <aside class="control-panel">
+      <!-- 1) 分析條件 -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">分析條件</div>
+          <div class="card-subtitle">年度 / 指標 / 門檻</div>
+        </div>
+        <div class="card-body">
+          <div class="controls">
+            <div class="control-group">
+              <label for="yearSelect" class="control-label">年度</label>
+              <select id="yearSelect">
+                <option value="2024" selected>2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="metricSelect" class="control-label">指標類型</label>
+              <select id="metricSelect">
+                <option value="mean_score" selected>平均 TCCAS 分數（0–100）</option>
+                <option value="high_risk_pct">社群貼文情緒分數（0–100）</option>
+                <option value="severe_score">平均心理韌性分數（0–100）</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="thresholds">
+            <div class="pill">
+              <div class="p-title">
+                綠燈門檻
+                <span class="light-chip chip-green">綠</span>
+              </div>
+              <div class="p-desc" id="thGreen">—</div>
+            </div>
+            <div class="pill">
+              <div class="p-title">
+                黃燈門檻
+                <span class="light-chip chip-yellow">黃</span>
+              </div>
+              <div class="p-desc" id="thYellow">—</div>
+            </div>
+          </div>
+
+          <div class="pill">
+            <div class="p-title">
+              紅燈條件
+              <span class="light-chip chip-red">紅</span>
+            </div>
+            <div class="p-desc" id="thRed">—</div>
+            <div class="footer-hint">※ 心理韌性為反向燈號（高分→綠）</div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat">
+              <div class="label">全國平均（指標）</div>
+              <div class="value" id="statAvg">—</div>
+            </div>
+            <div class="stat">
+              <div class="label">最高縣市（指標）</div>
+              <div class="value" id="statMax">—</div>
+            </div>
+          </div>
+
+          <div class="stat-grid three">
+            <div class="stat">
+              <div class="label">綠燈數</div>
+              <div class="value" id="statGreen">—</div>
+            </div>
+            <div class="stat">
+              <div class="label">黃燈數</div>
+              <div class="value" id="statYellow">—</div>
+            </div>
+            <div class="stat">
+              <div class="label">紅燈數</div>
+              <div class="value" id="statRed">—</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2) ✅ 選取縣市摘要（放在更上面，互動回饋更即時） -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">📌 選取縣市摘要</div>
+          <button id="copySummary" class="btn copy">複製摘要</button>
+        </div>
+        <div class="card-body">
+          <div class="sel-pill">
+            <div class="sel-line">
+              <div class="k">縣市</div>
+              <div class="sel-badge" id="selLight">—</div>
+            </div>
+            <div class="v" id="selName">尚未選取（點地圖或點紅燈清單）</div>
+          </div>
+
+          <div class="sel-grid">
+            <div class="sel-pill">
+              <div class="k">指標分數（value）</div>
+              <div class="v" id="selValue">—</div>
+            </div>
+            <div class="sel-pill">
+              <div class="k">預警分數（warn）</div>
+              <div class="v" id="selWarn">—</div>
+            </div>
+          </div>
+
+          <div class="sel-pill">
+            <div class="k">政策摘要句（可直接貼報告）</div>
+            <div class="v" id="selSentence" style="font-size:.9rem; line-height:1.35; font-weight:900; color:#0f172a;">—</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3) Top10 -->
+      <section class="card" data-card="top10">
+        <div class="card-header">
+          <div class="card-title">Top 10 縣市比較</div>
+          <div class="card-subtitle" id="barTitle">—</div>
+        </div>
+        <div class="card-body">
+          <div id="barContainer"></div>
+          <div class="legend-note">
+            條圖顏色依「預警燈號」著色：綠／黃／紅（以預警分數判斷）。
+          </div>
+        </div>
+      </section>
+
+      <!-- 4) 紅燈清單 + CSV -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">🔴 紅燈縣市清單</div>
+          <button id="downloadCSV" class="btn red">下載 CSV</button>
+        </div>
+        <div class="card-body">
+          <ul id="redList"></ul>
+          <div class="legend-note">※ 依「預警分數」與燈號門檻判定（心理韌性為反向燈號）</div>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <script>
+    // =========================
+    // 0) 檔案設定
+    // =========================
+    const TOPO_URL = 'twCounty_22counties_topo.json';
+
+    // =========================
+    // 1) 模擬資料（示範）
+    // =========================
+    const climateAnxietyData = {
+      "2024": {
+        "mean_score": [
+          { name: "台北市", value: 78, warn: 80 },
+          { name: "新北市", value: 72, warn: 73 },
+          { name: "桃園市", value: 70, warn: 69 },
+          { name: "台中市", value: 69, warn: 68 },
+          { name: "台南市", value: 65, warn: 64 },
+          { name: "高雄市", value: 75, warn: 77 },
+          { name: "基隆市", value: 68, warn: 70 },
+          { name: "新竹市", value: 80, warn: 83 },
+          { name: "嘉義市", value: 66, warn: 65 },
+          { name: "新竹縣", value: 77, warn: 79 },
+          { name: "苗栗縣", value: 62, warn: 60 },
+          { name: "彰化縣", value: 60, warn: 59 },
+          { name: "南投縣", value: 63, warn: 61 },
+          { name: "雲林縣", value: 58, warn: 57 },
+          { name: "嘉義縣", value: 59, warn: 58 },
+          { name: "屏東縣", value: 67, warn: 66 },
+          { name: "宜蘭縣", value: 71, warn: 72 },
+          { name: "花蓮縣", value: 69, warn: 70 },
+          { name: "台東縣", value: 68, warn: 69 },
+          { name: "澎湖縣", value: 61, warn: 60 },
+          { name: "金門縣", value: 55, warn: 54 },
+          { name: "連江縣", value: 52, warn: 51 }
+        ],
+        "high_risk_pct": [
+          { name: "台北市", value: 26, warn: 27 },
+          { name: "新北市", value: 22, warn: 23 },
+          { name: "高雄市", value: 24, warn: 25 },
+          { name: "新竹市", value: 28, warn: 29 },
+          { name: "新竹縣", value: 25, warn: 26 },
+          { name: "台中市", value: 21, warn: 21 },
+          { name: "屏東縣", value: 20, warn: 20 },
+          { name: "宜蘭縣", value: 23, warn: 24 },
+          { name: "花蓮縣", value: 22, warn: 22 },
+          { name: "台東縣", value: 21, warn: 21 },
+          { name: "台南市", value: 19, warn: 19 },
+          { name: "嘉義市", value: 18, warn: 18 }
+        ],
+        "severe_score": [
+          { name: "台北市", value: 84, warn: 82 },
+          { name: "新北市", value: 81, warn: 79 },
+          { name: "桃園市", value: 79, warn: 77 },
+          { name: "台中市", value: 78, warn: 76 },
+          { name: "高雄市", value: 85, warn: 83 },
+          { name: "新竹市", value: 86, warn: 84 },
+          { name: "新竹縣", value: 83, warn: 81 },
+          { name: "屏東縣", value: 80, warn: 78 },
+          { name: "宜蘭縣", value: 82, warn: 80 },
+          { name: "花蓮縣", value: 81, warn: 79 },
+          { name: "台東縣", value: 80, warn: 78 }
+        ]
+      },
+      "2023": { "mean_score": [], "high_risk_pct": [], "severe_score": [] },
+      "2022": { "mean_score": [], "high_risk_pct": [], "severe_score": [] }
+    };
+
+    // =========================
+    // 2) 預警門檻（心理韌性反向）
+    // =========================
+    const warnThresholds = {
+      mean_score:    { greenMax: 65, yellowMax: 75 },
+      high_risk_pct: { greenMax: 20, yellowMax: 25 },
+      severe_score:  { greenMax: 72, yellowMax: 82 }
+    };
+
+    function getLight(metric, warnScore){
+      const t = warnThresholds[metric] || { greenMax: 60, yellowMax: 75 };
+      if (metric === "severe_score") {
+        if (warnScore >= t.yellowMax) return "green";
+        if (warnScore >= t.greenMax) return "yellow";
+        return "red";
+      }
+      if (warnScore <= t.greenMax) return "green";
+      if (warnScore <= t.yellowMax) return "yellow";
+      return "red";
+    }
+    function lightText(light){
+      return light === "green" ? "綠燈" : light === "yellow" ? "黃燈" : "紅燈";
+    }
+    function lightColor(light){
+      return light === "green" ? "#22c55e" : light === "yellow" ? "#fbbf24" : "#ef4444";
+    }
+    function metricLabel(metric){
+      return ({
+        mean_score: "平均 TCCAS 分數（0–100）",
+        high_risk_pct: "社群貼文情緒分數（0–100）",
+        severe_score: "平均心理韌性分數（0–100）"
+      })[metric] || metric;
+    }
+
+    // =========================
+    // 3) DOM + 圖表
+    // =========================
+    const mapChart = echarts.init(document.getElementById('mapContainer'));
+    const barChart = echarts.init(document.getElementById('barContainer'));
+
+    const yearSelect = document.getElementById('yearSelect');
+    const metricSelect = document.getElementById('metricSelect');
+
+    const currentMeta = document.getElementById('currentMeta');
+    const barTitle = document.getElementById('barTitle');
+
+    const statAvg = document.getElementById('statAvg');
+    const statMax = document.getElementById('statMax');
+    const statGreen = document.getElementById('statGreen');
+    const statYellow = document.getElementById('statYellow');
+    const statRed = document.getElementById('statRed');
+
+    const thGreen = document.getElementById('thGreen');
+    const thYellow = document.getElementById('thYellow');
+    const thRed = document.getElementById('thRed');
+
+    const redList = document.getElementById('redList');
+    const downloadCSV = document.getElementById('downloadCSV');
+
+    const selName = document.getElementById('selName');
+    const selLight = document.getElementById('selLight');
+    const selValue = document.getElementById('selValue');
+    const selWarn = document.getElementById('selWarn');
+    const selSentence = document.getElementById('selSentence');
+    const copySummary = document.getElementById('copySummary');
+
+    let countyCentroid = new Map();
+    let MAIN_ISLAND_BBOX = null;
+
+    // ✅ 選取狀態
+    let selectedCounty = null;
+    let lastEnriched = [];
+
+    // =========================
+    // 4) 幾何：centroid + 本島 bbox（自動 fit）
+    // =========================
+    function centroidOfPolygon(coords){
+      const ring = coords?.[0];
+      if (!ring || ring.length < 3) return null;
+      let area = 0, cx = 0, cy = 0;
+      for (let i = 0; i < ring.length - 1; i++){
+        const [x1,y1] = ring[i];
+        const [x2,y2] = ring[i+1];
+        const a = x1*y2 - x2*y1;
+        area += a;
+        cx += (x1 + x2) * a;
+        cy += (y1 + y2) * a;
+      }
+      area *= 0.5;
+      if (Math.abs(area) < 1e-10) return ring[0];
+      cx /= (6*area);
+      cy /= (6*area);
+      return [cx, cy];
+    }
+
+    function centroidOfGeometry(geom){
+      if (!geom) return null;
+      if (geom.type === "Polygon") return centroidOfPolygon(geom.coordinates);
+      if (geom.type === "MultiPolygon"){
+        let best = null, bestArea = -Infinity;
+        for (const poly of geom.coordinates){
+          const ring = poly?.[0];
+          if (!ring || ring.length < 3) continue;
+          let area = 0;
+          for (let i=0;i<ring.length-1;i++){
+            const [x1,y1]=ring[i], [x2,y2]=ring[i+1];
+            area += (x1*y2 - x2*y1);
+          }
+          const absA = Math.abs(area * 0.5);
+          if (absA > bestArea){
+            bestArea = absA;
+            best = centroidOfPolygon(poly);
+          }
+        }
+        return best;
+      }
+      return null;
+    }
+
+    function buildCentroids(geoJson){
+      countyCentroid.clear();
+      for (const f of geoJson.features || []){
+        const name = f.properties?.COUNTYNAME || f.properties?.name;
+        const c = centroidOfGeometry(f.geometry);
+        if (name && c) countyCentroid.set(name, c);
+      }
+    }
+    function getCountyCoord(name){ return countyCentroid.get(name) || null; }
+
+    const EXCLUDE_COUNTIES = new Set(["澎湖縣", "金門縣", "連江縣"]);
+
+    function expandBbox(b, x, y) {
+      if (!b) return { minX: x, minY: y, maxX: x, maxY: y };
+      return {
+        minX: Math.min(b.minX, x),
+        minY: Math.min(b.minY, y),
+        maxX: Math.max(b.maxX, x),
+        maxY: Math.max(b.maxY, y)
+      };
+    }
+    function bboxOfCoords(coords, bbox) {
+      if (!coords) return bbox;
+      if (typeof coords[0] === "number") return expandBbox(bbox, coords[0], coords[1]);
+      for (const c of coords) bbox = bboxOfCoords(c, bbox);
+      return bbox;
+    }
+    function computeMainIslandBoundingCoords(geoJson) {
+      let bbox = null;
+      for (const f of (geoJson.features || [])) {
+        const name = f.properties?.COUNTYNAME || f.properties?.name;
+        if (EXCLUDE_COUNTIES.has(name)) continue;
+        bbox = bboxOfCoords(f.geometry?.coordinates, bbox);
+      }
+      if (!bbox) return null;
+      return [[bbox.minX, bbox.minY], [bbox.maxX, bbox.maxY]];
+    }
+
+    // =========================
+    // 5) 選取互動：地圖高亮 + 清單定位 + 摘要更新
+    // =========================
+    function highlightOnMap(name){
+      try{
+        if (selectedCounty) {
+          mapChart.dispatchAction({ type: 'downplay', seriesIndex: 0, name: selectedCounty });
+        }
+        mapChart.dispatchAction({ type: 'highlight', seriesIndex: 0, name });
+        mapChart.dispatchAction({ type: 'showTip', seriesIndex: 0, name });
+      }catch(e){}
+    }
+
+    function highlightRedList(name){
+      const el = redList.querySelector(`li[data-county="${name}"]`);
+      redList.querySelectorAll('.red-item.active').forEach(x => x.classList.remove('active'));
+      if (el){
+        el.classList.add('active');
+        el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }
+
+    function makePolicySentence({year, metricText, county, value, warnScore, light}){
+      const lt = lightText(light);
+      if (metricSelect.value === "severe_score"){
+        if (light === "red"){
+          return `${year}年 ${county}「${metricText}」指標分數 ${value.toFixed(1)}、預警分數 ${warnScore.toFixed(1)}（${lt}），顯示心理韌性偏低，建議優先配置心理支持與韌性強化資源。`;
+        }
+        if (light === "yellow"){
+          return `${year}年 ${county}「${metricText}」指標分數 ${value.toFixed(1)}、預警分數 ${warnScore.toFixed(1)}（${lt}），心理韌性中等，建議持續監測並加強社區/校園韌性介入。`;
+        }
+        return `${year}年 ${county}「${metricText}」指標分數 ${value.toFixed(1)}、預警分數 ${warnScore.toFixed(1)}（${lt}），心理韌性表現良好，可作為推廣韌性策略之參考。`;
+      } else {
+        if (light === "red"){
+          return `${year}年 ${county}「${metricText}」指標分數 ${value.toFixed(1)}、預警分數 ${warnScore.toFixed(1)}（${lt}），風險偏高，建議列入優先關注與政策介入縣市。`;
+        }
+        if (light === "yellow"){
+          return `${year}年 ${county}「${metricText}」指標分數 ${value.toFixed(1)}、預警分數 ${warnScore.toFixed(1)}（${lt}），呈現警戒徵兆，建議加強宣導與預防性支持。`;
+        }
+        return `${year}年 ${county}「${metricText}」指標分數 ${value.toFixed(1)}、預警分數 ${warnScore.toFixed(1)}（${lt}），整體風險較低，建議維持既有支持機制並持續追蹤。`;
+      }
+    }
+
+    function updateSelectedSummary(item){
+      if (!item){
+        selName.textContent = "尚未選取（點地圖或點紅燈清單）";
+        selLight.textContent = "—";
+        selLight.style.color = "#0f172a";
+        selValue.textContent = "—";
+        selWarn.textContent = "—";
+        selSentence.textContent = "—";
+        return;
+      }
+
+      const year = yearSelect.value;
+      const metricText = metricLabel(metricSelect.value);
+
+      selName.textContent = item.name;
+      selValue.textContent = `${Number(item.value).toFixed(1)} 分`;
+      selWarn.textContent = `${Number(item.warnScore).toFixed(1)} 分`;
+
+      selLight.textContent = lightText(item.light);
+      selLight.style.color = lightColor(item.light);
+
+      selSentence.textContent = makePolicySentence({
+        year,
+        metricText,
+        county: item.name,
+        value: Number(item.value),
+        warnScore: Number(item.warnScore),
+        light: item.light
+      });
+    }
+
+    function selectCounty(name){
+      selectedCounty = name;
+      highlightOnMap(name);
+      highlightRedList(name);
+
+      const item = lastEnriched.find(x => x.name === name) || null;
+      updateSelectedSummary(item);
+    }
+
+    copySummary.addEventListener('click', async () => {
+      const text = selSentence.textContent?.trim();
+      if (!text || text === "—") return;
+      try{
+        await navigator.clipboard.writeText(text);
+        copySummary.textContent = "已複製";
+        setTimeout(()=> copySummary.textContent = "複製摘要", 900);
+      }catch(e){
+        alert("瀏覽器未允許剪貼簿存取，請手動複製摘要文字。");
+      }
+    });
+
+    // =========================
+    // 6) CSV 下載（紅燈縣市）
+    // =========================
+    downloadCSV.addEventListener('click', () => {
+      const year = yearSelect.value;
+      const metric = metricSelect.value;
+      const metricText = metricLabel(metric);
+
+      const rows = [["年度","縣市","指標類型","指標分數","預警分數","燈號"]];
+      const raw = climateAnxietyData[year]?.[metric] || [];
+
+      raw.forEach(d => {
+        const warnScore = d.warn ?? d.value;
+        const light = getLight(metric, warnScore);
+        if (light === "red") rows.push([year, d.name, metricText, d.value, warnScore, "紅燈"]);
+      });
+
+      const csv = rows.map(r => r.join(",")).join("\n");
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${year}_${metric}_紅燈縣市清單.csv`;
+      a.click();
+
+      URL.revokeObjectURL(url);
+    });
+
+    // =========================
+    // 7) 載入地圖 + 首次繪製
+    // =========================
+    fetch(TOPO_URL)
+      .then(res => res.json())
+      .then(topoData => {
+        const objKey = topoData.objects && (topoData.objects.layer1 ? "layer1" : Object.keys(topoData.objects)[0]);
+        const geo = topojson.feature(topoData, topoData.objects[objKey]);
+
+        buildCentroids(geo);
+        MAIN_ISLAND_BBOX = computeMainIslandBoundingCoords(geo);
+
+        echarts.registerMap('taiwan', geo);
+        updateCharts();
+      })
+      .catch(err => {
+        console.error('載入 TopoJSON 失敗：', err);
+        alert('請確認 twCounty_22counties_topo.json 路徑正確，且用本機伺服器開啟。');
+      });
+
+    yearSelect.addEventListener('change', updateCharts);
+    metricSelect.addEventListener('change', updateCharts);
+
+    // ✅ 點地圖：高亮/tooltip/摘要/清單定位
+    mapChart.on('click', (params) => {
+      if (!params || !params.name) return;
+      selectCounty(params.name);
+    });
+
+    // =========================
+    // 8) 更新主函式
+    // =========================
+    function updateCharts(){
+      const year = yearSelect.value;
+      const metric = metricSelect.value;
+
+      const metricText = metricLabel(metric);
+      currentMeta.textContent = `年度：${year}　｜　指標：${metricText}`;
+      barTitle.textContent = `${year} 年 ${metricText} Top 10（燈號依預警分數）`;
+
+      const t = warnThresholds[metric] || { greenMax: 60, yellowMax: 75 };
+      if (metric === "severe_score") {
+        thGreen.textContent  = `預警分數 ≥ ${t.yellowMax} → 綠燈（韌性高）`;
+        thYellow.textContent = `預警分數 ${t.greenMax} ～ ${t.yellowMax - 0.1} → 黃燈（中等）`;
+        thRed.textContent    = `預警分數 < ${t.greenMax} → 紅燈（韌性不足）`;
+      } else {
+        thGreen.textContent  = `預警分數 ≤ ${t.greenMax} → 綠燈（低風險）`;
+        thYellow.textContent = `預警分數 ${t.greenMax + 0.1} ～ ${t.yellowMax} → 黃燈（注意）`;
+        thRed.textContent    = `預警分數 > ${t.yellowMax} → 紅燈（高風險）`;
+      }
+
+      const raw = climateAnxietyData[year]?.[metric] || [];
+      if (!raw.length){
+        mapChart.clear();
+        barChart.clear();
+        statAvg.textContent = '無資料';
+        statMax.textContent = '無資料';
+        statGreen.textContent = '—';
+        statYellow.textContent = '—';
+        statRed.textContent = '—';
+        redList.innerHTML = `<li class="ok-item">目前無資料</li>`;
+        lastEnriched = [];
+        updateSelectedSummary(null);
+        return;
+      }
+
+      const enriched = raw.map(d => {
+        const warnScore = (d.warn ?? d.value);
+        const light = getLight(metric, warnScore);
+        return { ...d, warnScore, light };
+      });
+      lastEnriched = enriched;
+
+      const values = enriched.map(d => d.value);
+      const avg = values.reduce((a,b)=>a+b,0) / values.length;
+      const maxVal = Math.max(...values);
+      const maxItem = enriched.find(d => d.value === maxVal);
+
+      statAvg.textContent = `${avg.toFixed(1)} 分`;
+      statMax.textContent = `${maxItem.name}：${maxItem.value.toFixed(1)} 分`;
+
+      const greenCount = enriched.filter(d => d.light === "green").length;
+      const yellowCount = enriched.filter(d => d.light === "yellow").length;
+      const redCount = enriched.filter(d => d.light === "red").length;
+
+      statGreen.textContent = `${greenCount}`;
+      statYellow.textContent = `${yellowCount}`;
+      statRed.textContent = `${redCount}`;
+
+      const top10 = [...enriched].sort((a,b)=>b.value-a.value).slice(0,10).reverse();
+
+      const lightPoints = enriched
+        .filter(d => !EXCLUDE_COUNTIES.has(d.name))
+        .map(d => {
+          const coord = getCountyCoord(d.name);
+          if (!coord) return null;
+          return {
+            name: d.name,
+            value: [coord[0], coord[1], d.warnScore],
+            light: d.light,
+            metricValue: d.value,
+            warnScore: d.warnScore
+          };
+        })
+        .filter(Boolean);
+
+      // ✅ 紅燈清單
+      const redItems = enriched.filter(d => d.light === "red").sort((a,b)=> b.warnScore - a.warnScore);
+      redList.innerHTML = "";
+      if (!redItems.length) {
+        redList.innerHTML = `<li class="ok-item">目前無紅燈縣市</li>`;
+      } else {
+        redItems.forEach(d => {
+          const li = document.createElement('li');
+          li.className = "red-item" + (d.name === selectedCounty ? " active" : "");
+          li.setAttribute("data-county", d.name);
+          li.innerHTML = `<span>${d.name}</span><span>${d.warnScore.toFixed(1)}</span>`;
+          li.addEventListener('click', () => selectCounty(d.name));
+          redList.appendChild(li);
+        });
+      }
+
+      const mapOption = {
+        backgroundColor: 'transparent',
+        geo: {
+          map: 'taiwan',
+          roam: true,
+
+          // ✅ 自動 fit 台灣本島 bbox（排除離島）
+          boundingCoords: MAIN_ISLAND_BBOX || null,
+          layoutCenter: ['50%', '54%'],
+          layoutSize: '98%',
+
+          // ✅ 右側留 visualMap
+          top: 44,
+          bottom: 10,
+          left: 10,
+          right: 64,
+
+          aspectScale: 0.8,
+          nameProperty: 'COUNTYNAME',
+          itemStyle: { borderColor: 'rgba(148,163,184,.55)', borderWidth: 0.8 },
+          emphasis: {
+            label: { show: true, color: '#0b1220', fontWeight: 800 },
+            itemStyle: { borderColor: '#0b1220', borderWidth: 1.5, shadowColor: 'rgba(2,6,23,.35)', shadowBlur: 14 }
+          }
+        },
+
+        tooltip: {
+          trigger: 'item',
+          extraCssText: 'border-radius:14px; box-shadow:0 18px 45px rgba(2,6,23,.25);',
+          formatter: (params) => {
+            const countyName = params.name;
+            const item = enriched.find(x => x.name === countyName);
+            if (!item) return `<div style="font-weight:800">${countyName}</div><div>無資料</div>`;
+
+            const lt = lightText(item.light);
+            const lc = lightColor(item.light);
+
+            return `
+              <div style="min-width:220px">
+                <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:6px;">
+                  <div style="font-weight:900;color:#0b1220;font-size:14px">${countyName}</div>
+                  <div style="font-weight:900;color:${lc};background:rgba(255,255,255,.90);border:1px solid rgba(148,163,184,.35);padding:3px 10px;border-radius:999px;">
+                    ${lt}
+                  </div>
+                </div>
+                <div style="color:#334155;line-height:1.45;font-size:12px">
+                  <div>指標分數：<b>${Number(item.value).toFixed(1)}</b> 分</div>
+                  <div>預警分數：<b>${Number(item.warnScore).toFixed(1)}</b> 分</div>
+                  <div style="margin-top:6px;color:#64748b;">提示：熱力圖=指標分數；燈號=預警分數</div>
+                </div>
+              </div>
+            `;
+          }
+        },
+
+        visualMap: {
+          type: 'continuous',
+          show: true,
+          seriesIndex: 0,
+          dimension: 0,
+          min: Math.min(...values),
+          max: Math.max(...values),
+
+          orient: 'vertical',
+          right: 12,
+          top: 74,
+          bottom: 18,
+
+          itemWidth: 12,
+          itemHeight: 280,
+
+          calculable: true,
+          realtime: true,
+
+          text: ['高', '低'],
+          textGap: 8,
+          textStyle: { color: '#334155', fontWeight: 800, fontSize: 12 },
+
+          handleSize: 18,
+          handleStyle: { color: '#334155', borderColor: '#0f172a', borderWidth: 1 },
+
+          /* ✅ 中性色階：避免跟紅黃綠燈混淆 */
+          inRange: { color: ['#eef2ff', '#c7d2fe', '#818cf8', '#312e81'] },
+
+          backgroundColor: 'transparent',
+          borderWidth: 0,
+          padding: 0
+        },
+
+        series: [
+          {
+            name: metricText,
+            type: 'map',
+            geoIndex: 0,
+            map: 'taiwan',
+            roam: false,
+            nameProperty: 'COUNTYNAME',
+            data: enriched.map(d => ({ name: d.name, value: d.value }))
+          },
+          {
+            name: '預警燈號',
+            type: 'scatter',
+            coordinateSystem: 'geo',
+            zlevel: 3,
+            symbol: 'circle',
+            symbolSize: 12,
+            data: lightPoints,
+            tooltip: { show: false },
+            itemStyle: {
+              color: (p) => lightColor(p.data.light),
+              borderColor: 'rgba(15,23,42,.92)',
+              borderWidth: 1.2,
+              shadowBlur: 12,
+              shadowColor: 'rgba(2,6,23,.25)',
+              opacity: 0.95
+            },
+            emphasis: { scale: true }
+          }
+        ]
+      };
+      mapChart.setOption(mapOption, true);
+
+      const barOption = {
+        backgroundColor: 'transparent',
+        grid: { left: 110, right: 18, top: 18, bottom: 24 },
+        xAxis: {
+          type: 'value',
+          axisLabel: { color: '#475569', fontWeight: 700 },
+          splitLine: { show: true, lineStyle: { type: 'dashed', color: 'rgba(148,163,184,.45)' } }
+        },
+        yAxis: {
+          type: 'category',
+          data: top10.map(d => d.name),
+          axisLabel: { color: '#334155', fontWeight: 900, fontSize: 12 }
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' },
+          extraCssText: 'border-radius:14px; box-shadow:0 18px 45px rgba(2,6,23,.25);',
+          formatter: (params) => {
+            const p = params[0];
+            const item = top10.find(d => d.name === p.name);
+            if (!item) return '';
+            const lt = lightText(item.light);
+            const lc = lightColor(item.light);
+            return `
+              <div style="min-width:220px">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px">
+                  <div style="font-weight:900;color:#0b1220">${item.name}</div>
+                  <div style="font-weight:900;color:${lc};background:rgba(255,255,255,.90);border:1px solid rgba(148,163,184,.35);padding:3px 10px;border-radius:999px;">
+                    ${lt}
+                  </div>
+                </div>
+                <div style="color:#334155;font-size:12px;line-height:1.45">
+                  <div>指標分數：<b>${item.value.toFixed(1)}</b> 分</div>
+                  <div>預警分數：<b>${item.warnScore.toFixed(1)}</b> 分</div>
+                </div>
+              </div>
+            `;
+          }
+        },
+        series: [
+          {
+            type: 'bar',
+            barWidth: 16,
+            data: top10.map(d => ({
+              value: d.value,
+              itemStyle: { color: lightColor(d.light), borderRadius: [0, 10, 10, 0] }
+            })),
+            label: {
+              show: true,
+              position: 'right',
+              color: '#0b1220',
+              fontWeight: 950,
+              formatter: (p) => Number(p.value).toFixed(1)
+            }
+          }
+        ]
+      };
+      barChart.setOption(barOption, true);
+
+      // ✅ 保留選取（若仍存在）
+      if (selectedCounty) {
+        const exists = enriched.some(d => d.name === selectedCounty);
+        if (exists) {
+          highlightOnMap(selectedCounty);
+          highlightRedList(selectedCounty);
+          updateSelectedSummary(enriched.find(d => d.name === selectedCounty));
+        } else {
+          selectedCounty = null;
+          updateSelectedSummary(null);
+        }
+      } else {
+        updateSelectedSummary(null);
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      mapChart.resize();
+      barChart.resize();
+    });
+  </script>
+</body>
+</html>
