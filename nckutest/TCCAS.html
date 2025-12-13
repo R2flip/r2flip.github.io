@@ -450,10 +450,10 @@
       const isPercentMetric = metric === 'high_risk_pct';
 
       statAvg.textContent = isPercentMetric
-        ? `${avg.toFixed(1)} %`
+        ? `${avg.toFixed(1)} 分`
         : `${avg.toFixed(1)} 分`;
       statMax.textContent = isPercentMetric
-        ? `${maxItem.name}：${maxItem.value.toFixed(1)} %`
+        ? `${maxItem.name}：${maxItem.value.toFixed(1)} 分`
         : `${maxItem.name}：${maxItem.value.toFixed(1)} 分`;
 
       // Top 10
