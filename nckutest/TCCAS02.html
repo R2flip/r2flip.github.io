@@ -550,12 +550,22 @@
       severe_score:  { greenMax: 72, yellowMax: 82 } // 先用「分數越高越紅」規則
     };
 
-    function getLight(metric, warnScore){
-      const t = warnThresholds[metric] || { greenMax: 60, yellowMax: 75 };
-      if (warnScore <= t.greenMax) return "green";
-      if (warnScore <= t.yellowMax) return "yellow";
-      return "red";
-    }
+function getLight(metric, warnScore){
+  const t = warnThresholds[metric] || { greenMax: 60, yellowMax: 75 };
+
+  // ★ 心理韌性：分數越高越好（反向燈號）
+  if (metric === "severe_score") {
+    if (warnScore >= t.yellowMax) return "green";   // 高韌性 → 綠燈
+    if (warnScore >= t.greenMax) return "yellow";   // 中等 → 黃燈
+    return "red";                                   // 低韌性 → 紅燈
+  }
+
+  // 其他指標（氣候焦慮、社群情緒）：分數越高越危險
+  if (warnScore <= t.greenMax) return "green";
+  if (warnScore <= t.yellowMax) return "yellow";
+  return "red";
+}
+
     function lightText(light){
       return light === "green" ? "綠燈" : light === "yellow" ? "黃燈" : "紅燈";
     }
@@ -697,9 +707,16 @@
 
       // 門檻顯示
       const t = warnThresholds[metric] || { greenMax: 60, yellowMax: 75 };
-      thGreen.textContent = `預警分數 ≤ ${t.greenMax} 為 綠燈（低風險）`;
-      thYellow.textContent = `預警分數 ${t.greenMax + 0.1} ～ ${t.yellowMax} 為 黃燈（注意）`;
-      thRed.textContent = `預警分數 > ${t.yellowMax} 為 紅燈（高風險）`;
+
+if (metric === "severe_score") {
+  thGreen.textContent  = `預警分數 ≥ ${t.yellowMax} 為 綠燈（心理韌性高）`;
+  thYellow.textContent = `預警分數 ${t.greenMax} ～ ${t.yellowMax - 0.1} 為 黃燈（中等韌性）`;
+  thRed.textContent    = `預警分數 < ${t.greenMax} 為 紅燈（心理韌性不足）`;
+} else {
+  thGreen.textContent  = `預警分數 ≤ ${t.greenMax} 為 綠燈（低風險）`;
+  thYellow.textContent = `預警分數 ${t.greenMax + 0.1} ～ ${t.yellowMax} 為 黃燈（注意）`;
+  thRed.textContent    = `預警分數 > ${t.yellowMax} 為 紅燈（高風險）`;
+}
 
       const raw = climateAnxietyData[year]?.[metric] || [];
       if (!raw.length){
