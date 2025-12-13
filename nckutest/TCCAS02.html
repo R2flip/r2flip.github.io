@@ -777,34 +777,41 @@ if (metric === "severe_score") {
       const mapOption = {
         backgroundColor: 'transparent',
         geo: {
+  map: 'taiwan',
+  roam: true,
+
+  // ★ 只用地理座標定位
+  center: [121.0, 23.8],
+  zoom: 1.08,
+
+  // ★ 為 visualMap / UI 預留空間
   top: 44,
   bottom: 10,
   left: 10,
-  right: 46,  // ★ 預留給右側 visualMap
-          map: 'taiwan',
-          roam: true,
+  right: 46,
 
+  aspectScale: 0.8,
+  nameProperty: 'COUNTYNAME',
 
-center: [121.0, 23.7],         // 直接指定台灣中心（含離島也較均衡）
-zoom: 1.08,                    // 放大一點但仍能完整呈現
+  itemStyle: {
+    borderColor: 'rgba(148,163,184,.55)',
+    borderWidth: 0.8
+  },
+  emphasis: {
+    label: {
+      show: true,
+      color: '#0b1220',
+      fontWeight: 800
+    },
+    itemStyle: {
+      borderColor: '#0b1220',
+      borderWidth: 1.5,
+      shadowColor: 'rgba(2,6,23,.35)',
+      shadowBlur: 14
+    }
+  }
+},
 
-          
-          aspectScale: 0.8,
-          nameProperty: 'COUNTYNAME',
-          itemStyle: {
-            borderColor: 'rgba(148,163,184,.55)',
-            borderWidth: 0.8
-          },
-          emphasis: {
-            label: { show: true, color: '#0b1220', fontWeight: 800 },
-            itemStyle: {
-              borderColor: '#0b1220',
-              borderWidth: 1.5,
-              shadowColor: 'rgba(2,6,23,.35)',
-              shadowBlur: 14
-            }
-          }
-        },
 
         tooltip: {
           trigger: 'item',
