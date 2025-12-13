@@ -8,9 +8,8 @@
   <!-- ECharts + TopoJSON -->
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
-<style>
 /* =========================================================
-   Base & Theme
+   RESET & TOKENS
 ========================================================= */
 *{ box-sizing:border-box; margin:0; padding:0; }
 
@@ -18,21 +17,35 @@
   --bg1:#0b1220;
   --bg2:#0f172a;
 
-  --card: rgba(255,255,255,.92);
-  --text:#0f172a;
-  --muted:#6b7280;
+  --card: rgba(255,255,255,.94);
+  --card-soft: rgba(255,255,255,.90);
 
-  /* 預警燈號 */
+  --text:#0f172a;
+  --muted:#64748b;
+
+  /* 預警燈號（更穩重、適合政府/研究面板） */
   --green:#22c55e;
-  --yellow:#fbbf24;
+  --yellow:#f59e0b;
   --red:#ef4444;
 
+  /* 強調色（用在選取、重點框線） */
+  --accent:#2563eb;
+  --accent-2:#7c3aed;
+
   --radius:18px;
-  --shadow:0 12px 30px rgba(2,6,23,.18);
+  --radius-lg:20px;
+
+  --shadow:0 14px 40px rgba(2,6,23,.18);
   --shadow-soft:0 10px 24px rgba(2,6,23,.14);
-  --ring:0 0 0 3px rgba(59,130,246,.2);
+  --ring:0 0 0 3px rgba(37,99,235,.22);
+
+  --stroke: rgba(148,163,184,.22);
+  --stroke-strong: rgba(148,163,184,.30);
 }
 
+/* =========================================================
+   PAGE BASE
+========================================================= */
 body{
   font-family: system-ui,-apple-system,"Segoe UI",sans-serif;
   min-height:100vh;
@@ -42,13 +55,13 @@ body{
 
   background:
     radial-gradient(1200px 600px at 10% -10%, rgba(37,99,235,.35), transparent 55%),
-    radial-gradient(1000px 550px at 100% 0%, rgba(236,72,153,.25), transparent 55%),
-    radial-gradient(900px 500px at 50% 110%, rgba(34,197,94,.18), transparent 55%),
+    radial-gradient(1000px 550px at 100% 0%, rgba(124,58,237,.18), transparent 55%),
+    radial-gradient(900px 500px at 50% 110%, rgba(34,197,94,.14), transparent 55%),
     linear-gradient(180deg,#0b1020,#0b1220 40%,#0b1220);
 }
 
 /* =========================================================
-   Header
+   HEADER
 ========================================================= */
 header{
   position:sticky;
@@ -66,44 +79,49 @@ header{
 
   background: linear-gradient(
     90deg,
-    rgba(15,23,42,.7),
-    rgba(37,99,235,.25),
-    rgba(236,72,153,.18)
+    rgba(15,23,42,.72),
+    rgba(37,99,235,.22),
+    rgba(124,58,237,.16)
   );
 }
 
 header h1{
   font-size:1.25rem;
-  font-weight:800;
-  letter-spacing:.06em;
+  font-weight:900;
+  letter-spacing:.05em;
+  line-height:1.25;
 }
 
 header .subtitle{
+  margin-top:6px;
   font-size:.92rem;
-  color:rgba(226,232,240,.9);
+  color:rgba(226,232,240,.92);
+  line-height:1.35;
 }
 
 .meta-right{
   text-align:right;
   display:flex;
   flex-direction:column;
-  gap:6px;
+  gap:8px;
   font-size:.9rem;
+  color:rgba(226,232,240,.88);
 }
 
 .badge{
   display:inline-flex;
   align-items:center;
   gap:8px;
-  padding:6px 12px;
+  padding:7px 12px;
   border-radius:999px;
   background:rgba(255,255,255,.08);
   border:1px solid rgba(148,163,184,.18);
-  box-shadow:0 8px 22px rgba(2,6,23,.15);
+  box-shadow:0 10px 26px rgba(2,6,23,.18);
+  white-space:nowrap;
 }
 
 /* =========================================================
-   Layout
+   LAYOUT
 ========================================================= */
 main.layout{
   flex:1;
@@ -115,28 +133,30 @@ main.layout{
 }
 
 /* =========================================================
-   Card System
+   CARD SYSTEM (Readable + Dashboard Feel)
 ========================================================= */
 .card{
   position:relative;
   background:var(--card);
   color:var(--text);
-  border-radius:var(--radius);
-  border:1px solid rgba(148,163,184,.22);
+  border-radius:var(--radius-lg);
+  border:1px solid var(--stroke);
   box-shadow:var(--shadow);
   overflow:hidden;
 }
 
+/* subtle top sheen */
 .card::before{
   content:"";
   position:absolute;
-  inset:0;
+  inset:-1px;
   background:
-    radial-gradient(500px 300px at 15% 0%, rgba(37,99,235,.10), transparent 60%),
-    radial-gradient(450px 260px at 100% 0%, rgba(236,72,153,.08), transparent 60%);
+    radial-gradient(600px 320px at 12% -10%, rgba(37,99,235,.10), transparent 60%),
+    radial-gradient(520px 280px at 105% 0%, rgba(124,58,237,.08), transparent 60%);
   pointer-events:none;
 }
 
+/* header: stronger hierarchy */
 .card-header{
   padding:12px 14px;
   border-bottom:1px solid rgba(148,163,184,.16);
@@ -145,6 +165,8 @@ main.layout{
   align-items:center;
   position:relative;
   z-index:1;
+
+  background:linear-gradient(180deg, rgba(248,250,252,.96), rgba(241,245,249,.86));
 }
 
 .card-title{
@@ -152,9 +174,19 @@ main.layout{
   align-items:center;
   gap:10px;
   font-size:1rem;
-  font-weight:900;
+  font-weight:950;
+  letter-spacing:.01em;
 }
 
+.card-subtitle{
+  font-size:.82rem;
+  color:var(--muted);
+  line-height:1.25;
+  text-align:right;
+  max-width:58%;
+}
+
+/* body spacing for readability */
 .card-body{
   padding:12px 14px 14px;
   display:flex;
@@ -162,26 +194,34 @@ main.layout{
   gap:12px;
   position:relative;
   z-index:1;
+  min-height:0;
 }
 
 /* =========================================================
-   Map Panel
+   MAP PANEL
 ========================================================= */
-.map-panel{
-  display:flex;
-  flex-direction:column;
-}
+.map-panel{ display:flex; flex-direction:column; }
 
 #mapContainer{
   flex:1;
   min-height:560px;
   border-radius:14px;
-  border:1px solid rgba(148,163,184,.25);
-  background:linear-gradient(180deg,rgba(219,234,254,.9),rgba(243,244,246,.9));
+  border:1px solid rgba(148,163,184,.24);
+  background:linear-gradient(180deg,#eef2ff,#f8fafc);
+  box-shadow:
+    inset 0 0 0 1px rgba(148,163,184,.18),
+    inset 0 -30px 60px rgba(15,23,42,.06);
+}
+
+/* map hint text */
+.legend-note{
+  font-size:.82rem;
+  color:#475569;
+  line-height:1.5;
 }
 
 /* =========================================================
-   Right Control Panel (Single Scroll Source)
+   RIGHT CONTROL PANEL (Single Scroll Source)
 ========================================================= */
 .control-panel{
   position:sticky;
@@ -199,13 +239,21 @@ main.layout{
   overscroll-behavior:contain;
 }
 
+/* nicer scroll bar */
+.control-panel::-webkit-scrollbar{ width:10px; }
+.control-panel::-webkit-scrollbar-track{ background:transparent; }
+.control-panel::-webkit-scrollbar-thumb{
+  background:rgba(148,163,184,.40);
+  border-radius:999px;
+  border:2px solid rgba(255,255,255,.70);
+}
 .control-panel > .card{
   flex:0 0 auto;
   box-shadow:var(--shadow-soft);
 }
 
 /* =========================================================
-   Controls
+   FORMS / CONTROLS
 ========================================================= */
 .controls{
   display:grid;
@@ -213,33 +261,35 @@ main.layout{
   gap:10px;
 }
 
-.control-group{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
+.control-group{ display:flex; flex-direction:column; gap:6px; }
 
 .control-label{
   font-size:.78rem;
-  font-weight:800;
+  font-weight:900;
   color:#475569;
+  letter-spacing:.01em;
 }
 
 select{
-  padding:9px 12px;
+  padding:10px 12px;
   border-radius:14px;
   border:1px solid rgba(148,163,184,.35);
-  background:rgba(255,255,255,.92);
+  background:rgba(255,255,255,.96);
   font-size:.92rem;
+  color:#0f172a;
+  outline:none;
+  transition: .15s ease;
 }
 
+select:hover{ border-color: rgba(148,163,184,.55); }
 select:focus{
-  border-color:rgba(37,99,235,.8);
-  box-shadow:var(--ring);
+  border-color: rgba(37,99,235,.85);
+  box-shadow: var(--ring);
+  transform: translateY(-1px);
 }
 
 /* =========================================================
-   KPI / Threshold
+   PILLS / KPI (Clear hierarchy + numeric alignment)
 ========================================================= */
 .thresholds{
   display:grid;
@@ -250,9 +300,40 @@ select:focus{
 .pill,.kpi{
   padding:10px 12px;
   border-radius:14px;
-  background:rgba(255,255,255,.8);
+  background:rgba(248,250,252,.96);
   border:1px solid rgba(148,163,184,.22);
 }
+
+.pill .p-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  font-size:.78rem;
+  font-weight:950;
+  color:#0f172a;
+}
+
+.pill .p-desc{
+  margin-top:6px;
+  font-size:.78rem;
+  color:var(--muted);
+  line-height:1.35;
+}
+
+.light-chip{
+  font-size:.74rem;
+  padding:3px 10px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,.20);
+  background:rgba(255,255,255,.92);
+  font-weight:950;
+  white-space:nowrap;
+}
+
+.chip-green{ color: #166534; border-color: rgba(34,197,94,.25); background: rgba(34,197,94,.10); }
+.chip-yellow{ color: #92400e; border-color: rgba(245,158,11,.25); background: rgba(245,158,11,.12); }
+.chip-red{ color: #991b1b; border-color: rgba(239,68,68,.25); background: rgba(239,68,68,.12); }
 
 .kpi-row{
   display:grid;
@@ -273,25 +354,33 @@ select:focus{
 }
 
 .kpi .v{
-  font-size:1.05rem;
+  margin-top:2px;
+  font-size:1.25rem;
   font-weight:950;
   color:#0b1220;
+  letter-spacing:.03em;
+  font-variant-numeric: tabular-nums;
 }
 
+.kpi.badge-green .v{ color:#166534; }
+.kpi.badge-yellow .v{ color:#92400e; }
+.kpi.badge-red .v{ color:#991b1b; }
+
 /* =========================================================
-   Top10 Chart
+   TOP10 CHART
 ========================================================= */
 #barContainer{
   width:100%;
   height:240px;
   min-height:240px;
   border-radius:14px;
-  background:rgba(249,250,251,.95);
-  border:1px solid rgba(148,163,184,.25);
+  background:rgba(249,250,251,.97);
+  border:1px solid rgba(148,163,184,.24);
+  box-shadow: inset 0 0 0 1px rgba(148,163,184,.12);
 }
 
 /* =========================================================
-   Red List (No Inner Scroll)
+   RED LIST (Alert Mood)
 ========================================================= */
 #redList{
   list-style:none;
@@ -304,16 +393,85 @@ select:focus{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:9px 12px;
+  padding:10px 12px;
   border-radius:16px;
-  background:rgba(239,68,68,.08);
-  border:1px solid rgba(239,68,68,.18);
-  font-weight:900;
+  background:linear-gradient(90deg, rgba(239,68,68,.14), rgba(239,68,68,.05));
+  border:1px solid rgba(239,68,68,.22);
+  font-weight:950;
   color:#7f1d1d;
+  cursor:pointer;
+  transition:.12s ease;
+}
+
+.red-item:hover{
+  transform: translateY(-1px);
+  box-shadow:0 12px 26px rgba(239,68,68,.12);
+}
+
+.red-item.active{
+  outline: 3px solid rgba(239,68,68,.28);
+  box-shadow:0 16px 34px rgba(239,68,68,.16);
+}
+
+.ok-item{
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(34,197,94,.10);
+  border:1px solid rgba(34,197,94,.20);
+  font-weight:950;
+  color:#166534;
 }
 
 /* =========================================================
-   Mobile
+   BUTTONS (If present)
+========================================================= */
+.btn{
+  padding:7px 12px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,.30);
+  background:rgba(255,255,255,.92);
+  color:#0f172a;
+  font-weight:950;
+  cursor:pointer;
+  transition:.15s ease;
+  white-space:nowrap;
+}
+
+.btn:hover{ transform: translateY(-1px); box-shadow:0 10px 24px rgba(2,6,23,.12); }
+.btn.red{
+  background:rgba(239,68,68,.12);
+  border-color:rgba(239,68,68,.24);
+  color:#991b1b;
+}
+.btn.copy{
+  background:rgba(37,99,235,.10);
+  border-color:rgba(37,99,235,.24);
+  color:#1d4ed8;
+}
+
+/* =========================================================
+   SELECTED SUMMARY (Policy Sentence)
+========================================================= */
+#selSentence{
+  background:rgba(248,250,252,.98);
+  border-left:4px solid var(--accent);
+  padding:10px 12px;
+  border-radius:12px;
+  line-height:1.45;
+}
+
+/* =========================================================
+   FOOTER HINT
+========================================================= */
+.footer-hint{
+  margin-top:6px;
+  font-size:.78rem;
+  color:#64748b;
+  line-height:1.35;
+}
+
+/* =========================================================
+   MOBILE
 ========================================================= */
 @media (max-width:1100px){
   main.layout{ grid-template-columns:1fr; }
@@ -329,7 +487,15 @@ select:focus{
   #barContainer{ height:260px; min-height:260px; }
 }
 
-</style>
+@media (max-width:720px){
+  header{ flex-direction:column; align-items:flex-start; }
+  .meta-right{ align-items:flex-start; text-align:left; }
+  main.layout{ padding:12px 12px 14px; }
+  .controls{ grid-template-columns:1fr; }
+  .thresholds{ grid-template-columns:1fr; }
+  .kpi-row{ grid-template-columns:1fr; }
+  .kpi3{ grid-template-columns:1fr 1fr; }
+}
 
 
   
