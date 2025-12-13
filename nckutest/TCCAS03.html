@@ -445,6 +445,128 @@
       #barContainer{ height: 260px; }
       #redList{ max-height: 260px; }
     }
+
+    /* ===== Right Panel Card System (override) ===== */
+.control-panel{
+  gap: 12px;
+}
+
+.control-panel .card{
+  border-radius: 20px;
+  box-shadow: 0 10px 28px rgba(2,6,23,.16);
+  border: 1px solid rgba(148,163,184,.20);
+}
+
+.control-panel .card-header{
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(148,163,184,.16);
+  align-items: center;
+}
+
+.control-panel .card-title{
+  font-size: 1.0rem;
+  font-weight: 950;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.card-icon{
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  display:grid;
+  place-items:center;
+  background: rgba(37,99,235,.10);
+  border: 1px solid rgba(37,99,235,.18);
+  color: #1d4ed8;
+  font-weight: 950;
+}
+
+.card-actions{
+  display:flex;
+  gap: 8px;
+  align-items:center;
+}
+
+.card-body{
+  padding: 12px 14px 14px;
+}
+
+/* 更緊湊的表單區 */
+.controls{
+  grid-template-columns: 1fr;
+}
+@media (min-width: 980px){
+  .controls{ grid-template-columns: 1fr 1fr; }
+}
+
+/* KPI chips（取代原本大片 stat 方塊） */
+.kpi-row{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+.kpi{
+  border-radius: 16px;
+  padding: 10px 12px;
+  background: rgba(15,23,42,.04);
+  border: 1px solid rgba(148,163,184,.20);
+}
+.kpi .k{ font-size:.74rem; color:#475569; font-weight:900; }
+.kpi .v{ margin-top:2px; font-size:1.05rem; color:#0b1220; font-weight:950; }
+.kpi3{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap:10px;
+  margin-top: 10px;
+}
+.kpi.badge-green .v{ color: #166534; }
+.kpi.badge-yellow .v{ color: #92400e; }
+.kpi.badge-red .v{ color: #991b1b; }
+
+/* 門檻：更像儀表板說明列 */
+.thresholds{
+  grid-template-columns: 1fr;
+}
+@media (min-width: 980px){
+  .thresholds{ grid-template-columns: 1fr 1fr; }
+}
+.pill{
+  background: rgba(255,255,255,.75);
+}
+
+/* 選取摘要：更清楚的資訊層 */
+.sel-pill{
+  background: rgba(255,255,255,.78);
+}
+.sel-badge{
+  font-weight: 950;
+}
+
+/* Top10：固定高度更一致 */
+#barContainer{
+  height: 220px;
+}
+
+/* 紅燈清單：不做卡片內捲動（交給右欄整體捲動） */
+#redList{
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
+}
+
+/* 紅燈條目更像清單列 */
+.red-item{
+  background: rgba(239,68,68,.08);
+  border: 1px solid rgba(239,68,68,.18);
+  border-radius: 16px;
+}
+.red-item span:last-child{
+  font-variant-numeric: tabular-nums;
+}
+
   </style>
 </head>
 
@@ -483,147 +605,169 @@
     </section>
 
     <!-- 右側：固定資訊欄（可捲動） -->
-    <aside class="control-panel">
-      <!-- 1) 分析條件 -->
-      <section class="card">
-        <div class="card-header">
-          <div class="card-title">分析條件</div>
-          <div class="card-subtitle">年度 / 指標 / 門檻</div>
+   <aside class="control-panel">
+
+  <!-- 1) 分析條件（含 KPI） -->
+  <section class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="card-icon">⚙</span>
+        分析條件
+      </div>
+      <div class="card-subtitle">年度 / 指標 / 門檻</div>
+    </div>
+
+    <div class="card-body">
+      <div class="controls">
+        <div class="control-group">
+          <label for="yearSelect" class="control-label">年度</label>
+          <select id="yearSelect">
+            <option value="2024" selected>2024</option>
+            <option value="2023">2023</option>
+            <option value="2022">2022</option>
+          </select>
         </div>
-        <div class="card-body">
-          <div class="controls">
-            <div class="control-group">
-              <label for="yearSelect" class="control-label">年度</label>
-              <select id="yearSelect">
-                <option value="2024" selected>2024</option>
-                <option value="2023">2023</option>
-                <option value="2022">2022</option>
-              </select>
-            </div>
 
-            <div class="control-group">
-              <label for="metricSelect" class="control-label">指標類型</label>
-              <select id="metricSelect">
-                <option value="mean_score" selected>平均 TCCAS 分數（0–100）</option>
-                <option value="high_risk_pct">社群貼文情緒分數（0–100）</option>
-                <option value="severe_score">平均心理韌性分數（0–100）</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="thresholds">
-            <div class="pill">
-              <div class="p-title">
-                綠燈門檻
-                <span class="light-chip chip-green">綠</span>
-              </div>
-              <div class="p-desc" id="thGreen">—</div>
-            </div>
-            <div class="pill">
-              <div class="p-title">
-                黃燈門檻
-                <span class="light-chip chip-yellow">黃</span>
-              </div>
-              <div class="p-desc" id="thYellow">—</div>
-            </div>
-          </div>
-
-          <div class="pill">
-            <div class="p-title">
-              紅燈條件
-              <span class="light-chip chip-red">紅</span>
-            </div>
-            <div class="p-desc" id="thRed">—</div>
-            <div class="footer-hint">※ 心理韌性為反向燈號（高分→綠）</div>
-          </div>
-
-          <div class="stat-grid">
-            <div class="stat">
-              <div class="label">全國平均（指標）</div>
-              <div class="value" id="statAvg">—</div>
-            </div>
-            <div class="stat">
-              <div class="label">最高縣市（指標）</div>
-              <div class="value" id="statMax">—</div>
-            </div>
-          </div>
-
-          <div class="stat-grid three">
-            <div class="stat">
-              <div class="label">綠燈數</div>
-              <div class="value" id="statGreen">—</div>
-            </div>
-            <div class="stat">
-              <div class="label">黃燈數</div>
-              <div class="value" id="statYellow">—</div>
-            </div>
-            <div class="stat">
-              <div class="label">紅燈數</div>
-              <div class="value" id="statRed">—</div>
-            </div>
-          </div>
+        <div class="control-group">
+          <label for="metricSelect" class="control-label">指標類型</label>
+          <select id="metricSelect">
+            <option value="mean_score" selected>平均 TCCAS 分數（0–100）</option>
+            <option value="high_risk_pct">社群貼文情緒分數（0–100）</option>
+            <option value="severe_score">平均心理韌性分數（0–100）</option>
+          </select>
         </div>
-      </section>
+      </div>
 
-      <!-- 2) ✅ 選取縣市摘要（放在更上面，互動回饋更即時） -->
-      <section class="card">
-        <div class="card-header">
-          <div class="card-title">📌 選取縣市摘要</div>
-          <button id="copySummary" class="btn copy">複製摘要</button>
-        </div>
-        <div class="card-body">
-          <div class="sel-pill">
-            <div class="sel-line">
-              <div class="k">縣市</div>
-              <div class="sel-badge" id="selLight">—</div>
-            </div>
-            <div class="v" id="selName">尚未選取（點地圖或點紅燈清單）</div>
+      <div class="thresholds">
+        <div class="pill">
+          <div class="p-title">
+            綠燈門檻 <span class="light-chip chip-green">綠</span>
           </div>
+          <div class="p-desc" id="thGreen">—</div>
+        </div>
 
-          <div class="sel-grid">
-            <div class="sel-pill">
-              <div class="k">指標分數（value）</div>
-              <div class="v" id="selValue">—</div>
-            </div>
-            <div class="sel-pill">
-              <div class="k">預警分數（warn）</div>
-              <div class="v" id="selWarn">—</div>
-            </div>
+        <div class="pill">
+          <div class="p-title">
+            黃燈門檻 <span class="light-chip chip-yellow">黃</span>
           </div>
+          <div class="p-desc" id="thYellow">—</div>
+        </div>
+      </div>
 
-          <div class="sel-pill">
-            <div class="k">政策摘要句（可直接貼報告）</div>
-            <div class="v" id="selSentence" style="font-size:.9rem; line-height:1.35; font-weight:900; color:#0f172a;">—</div>
-          </div>
+      <div class="pill">
+        <div class="p-title">
+          紅燈條件 <span class="light-chip chip-red">紅</span>
         </div>
-      </section>
+        <div class="p-desc" id="thRed">—</div>
+        <div class="footer-hint">※ 心理韌性為反向燈號（高分→綠）</div>
+      </div>
 
-      <!-- 3) Top10 -->
-      <section class="card" data-card="top10">
-        <div class="card-header">
-          <div class="card-title">Top 10 縣市比較</div>
-          <div class="card-subtitle" id="barTitle">—</div>
+      <!-- KPI：更像儀表板 -->
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="k">全國平均（指標）</div>
+          <div class="v" id="statAvg">—</div>
         </div>
-        <div class="card-body">
-          <div id="barContainer"></div>
-          <div class="legend-note">
-            條圖顏色依「預警燈號」著色：綠／黃／紅（以預警分數判斷）。
-          </div>
+        <div class="kpi">
+          <div class="k">最高縣市（指標）</div>
+          <div class="v" id="statMax">—</div>
         </div>
-      </section>
+      </div>
 
-      <!-- 4) 紅燈清單 + CSV -->
-      <section class="card">
-        <div class="card-header">
-          <div class="card-title">🔴 紅燈縣市清單</div>
-          <button id="downloadCSV" class="btn red">下載 CSV</button>
+      <div class="kpi3">
+        <div class="kpi badge-green">
+          <div class="k">綠燈數</div>
+          <div class="v" id="statGreen">—</div>
         </div>
-        <div class="card-body">
-          <ul id="redList"></ul>
-          <div class="legend-note">※ 依「預警分數」與燈號門檻判定（心理韌性為反向燈號）</div>
+        <div class="kpi badge-yellow">
+          <div class="k">黃燈數</div>
+          <div class="v" id="statYellow">—</div>
         </div>
-      </section>
-    </aside>
+        <div class="kpi badge-red">
+          <div class="k">紅燈數</div>
+          <div class="v" id="statRed">—</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2) 選取摘要 -->
+  <section class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="card-icon">📌</span>
+        選取縣市摘要
+      </div>
+      <div class="card-actions">
+        <button id="copySummary" class="btn copy">複製摘要</button>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="sel-pill">
+        <div class="sel-line">
+          <div class="k">縣市</div>
+          <div class="sel-badge" id="selLight">—</div>
+        </div>
+        <div class="v" id="selName">尚未選取（點地圖或點紅燈清單）</div>
+      </div>
+
+      <div class="sel-grid">
+        <div class="sel-pill">
+          <div class="k">指標分數（value）</div>
+          <div class="v" id="selValue">—</div>
+        </div>
+        <div class="sel-pill">
+          <div class="k">預警分數（warn）</div>
+          <div class="v" id="selWarn">—</div>
+        </div>
+      </div>
+
+      <div class="sel-pill">
+        <div class="k">政策摘要句（可直接貼報告）</div>
+        <div class="v" id="selSentence" style="font-size:.9rem; line-height:1.35; font-weight:950; color:#0f172a;">—</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3) Top10 -->
+  <section class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="card-icon">📊</span>
+        Top 10 縣市比較
+      </div>
+      <div class="card-subtitle" id="barTitle">—</div>
+    </div>
+
+    <div class="card-body">
+      <div id="barContainer"></div>
+      <div class="legend-note">
+        條圖顏色依「預警燈號」著色：綠／黃／紅（以預警分數判斷）。
+      </div>
+    </div>
+  </section>
+
+  <!-- 4) 紅燈清單 + CSV -->
+  <section class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <span class="card-icon" style="background:rgba(239,68,68,.10);border-color:rgba(239,68,68,.20);color:#b91c1c;">🔴</span>
+        紅燈縣市清單
+      </div>
+      <div class="card-actions">
+        <button id="downloadCSV" class="btn red">下載 CSV</button>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <ul id="redList"></ul>
+      <div class="legend-note">※ 依「預警分數」與門檻判定（心理韌性為反向燈號）</div>
+    </div>
+  </section>
+
+</aside>
+
   </main>
 
   <script>
