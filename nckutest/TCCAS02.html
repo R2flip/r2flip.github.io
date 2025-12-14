@@ -980,28 +980,28 @@ select:focus{
           { name: "連江縣", value: 52, warn: 51 }
         ],
         "high_risk_pct": [
-          { name: "台北市", value: 78, warn: 80 },
-          { name: "新北市", value: 72, warn: 73 },
-          { name: "桃園市", value: 70, warn: 69 },
-          { name: "台中市", value: 69, warn: 68 },
-          { name: "台南市", value: 65, warn: 64 },
-          { name: "高雄市", value: 75, warn: 77 },
-          { name: "基隆市", value: 68, warn: 70 },
-          { name: "新竹市", value: 80, warn: 83 },
-          { name: "嘉義市", value: 66, warn: 65 },
-          { name: "新竹縣", value: 77, warn: 79 },
-          { name: "苗栗縣", value: 62, warn: 60 },
-          { name: "彰化縣", value: 60, warn: 59 },
-          { name: "南投縣", value: 63, warn: 61 },
-          { name: "雲林縣", value: 58, warn: 57 },
-          { name: "嘉義縣", value: 59, warn: 58 },
-          { name: "屏東縣", value: 67, warn: 66 },
-          { name: "宜蘭縣", value: 71, warn: 72 },
-          { name: "花蓮縣", value: 69, warn: 70 },
-          { name: "台東縣", value: 68, warn: 69 },
-          { name: "澎湖縣", value: 61, warn: 60 },
-          { name: "金門縣", value: 55, warn: 54 },
-          { name: "連江縣", value: 52, warn: 51 }
+          { name: "台北市", value: 28, warn: 80 },
+          { name: "新北市", value: 32, warn: 73 },
+          { name: "桃園市", value: 40, warn: 69 },
+          { name: "台中市", value: 39, warn: 68 },
+          { name: "台南市", value: 15, warn: 64 },
+          { name: "高雄市", value: 25, warn: 77 },
+          { name: "基隆市", value: 38, warn: 70 },
+          { name: "新竹市", value: 20, warn: 83 },
+          { name: "嘉義市", value: 26, warn: 65 },
+          { name: "新竹縣", value: 17, warn: 79 },
+          { name: "苗栗縣", value: 22, warn: 60 },
+          { name: "彰化縣", value: 30, warn: 59 },
+          { name: "南投縣", value: 43, warn: 61 },
+          { name: "雲林縣", value: 38, warn: 57 },
+          { name: "嘉義縣", value: 29, warn: 58 },
+          { name: "屏東縣", value: 27, warn: 66 },
+          { name: "宜蘭縣", value: 11, warn: 72 },
+          { name: "花蓮縣", value: 29, warn: 70 },
+          { name: "台東縣", value: 28, warn: 69 },
+          { name: "澎湖縣", value: 21, warn: 60 },
+          { name: "金門縣", value: 25, warn: 54 },
+          { name: "連江縣", value: 12, warn: 51 }
         ],
         "severe_score": [
           { name: "台北市", value: 78, warn: 80 },
@@ -1036,9 +1036,9 @@ select:focus{
     // 2) 燈號門檻（以「指標分數 value」判定；心理韌性反向）
     // =========================
     const warnThresholds = {
-      mean_score:    { greenMax: 65, yellowMax: 75 },
-      high_risk_pct: { greenMax: 20, yellowMax: 25 },
-      severe_score:  { greenMax: 72, yellowMax: 82 }
+      mean_score:    { greenMax: 60, yellowMax: 70 },
+      high_risk_pct: { greenMax: 20, yellowMax: 45 },
+      severe_score:  { greenMax: 70, yellowMax: 80 }
     };
 
     function getLight(metric, value){
