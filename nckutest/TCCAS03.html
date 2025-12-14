@@ -624,7 +624,38 @@ select:focus{
     </div>
   </section>
 
-  選取縣市摘要
+   <!-- ✅ 選取縣市摘要 + 一鍵複製 -->
+      <section class="card sel-card">
+        <div class="red-head" style="padding: 0 0 8px;">
+          <div class="card-title">📌 選取縣市摘要</div>
+          <button id="copySummary" class="btn copy">複製摘要</button>
+        </div>
+        <div class="card-body" style="padding:0; gap:10px;">
+          <div class="sel-pill">
+            <div class="sel-line">
+              <div class="k">縣市</div>
+              <div class="sel-badge" id="selLight">—</div>
+            </div>
+            <div class="v" id="selName">尚未選取（點地圖或點紅燈清單）</div>
+          </div>
+
+          <div class="sel-grid">
+            <div class="sel-pill">
+              <div class="k">指標分數（value）</div>
+              <div class="v" id="selValue">—</div>
+            </div>
+            <div class="sel-pill">
+              <div class="k">預警分數（warn）</div>
+              <div class="v" id="selWarn">—</div>
+            </div>
+          </div>
+
+          <div class="sel-pill">
+            <div class="k">政策摘要句（可直接貼報告）</div>
+            <div class="v" id="selSentence" style="font-size:.9rem; line-height:1.35; font-weight:850; color:#0f172a;">—</div>
+          </div>
+        </div>
+      </section>
 
   <!-- 4) 紅燈清單 + CSV -->
   <section class="card">
