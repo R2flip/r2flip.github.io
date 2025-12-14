@@ -499,6 +499,175 @@ select:focus{
   .kpi3{ grid-template-columns:1fr 1fr; }
 }
 
+/* ====== Summary Card (match screenshot style) ====== */
+:root{
+  --panel-bg: rgba(255,255,255,.68);
+  --panel-stroke: rgba(255,255,255,.65);
+  --panel-inner: rgba(243,244,246,.92); /* 淺灰區塊 */
+  --panel-inner-stroke: rgba(15,23,42,.08);
+  --text-dark:#0f172a;
+  --muted:#6b7280;
+  --shadow: 0 18px 40px rgba(2,6,23,.16);
+  --shadow-soft: 0 10px 22px rgba(2,6,23,.10);
+  --radius: 22px;
+}
+
+/* card 外觀：白霧感 + 邊框 + 陰影 */
+.card{
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-stroke);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+/* header：左圖示＋標題，右側按鈕 */
+.card-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 18px 18px 12px;
+  color: var(--text-dark);
+}
+
+.card-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight: 900;
+  letter-spacing:.2px;
+  font-size: 1.15rem;
+}
+
+.card-icon{
+  width: 34px;
+  height: 34px;
+  display:grid;
+  place-items:center;
+  border-radius: 12px;
+  background: rgba(255,255,255,.75);
+  border: 1px solid rgba(15,23,42,.08);
+  box-shadow: var(--shadow-soft);
+}
+
+.card-subtitle{
+  padding: 0 18px 12px;
+  margin-top:-4px;
+  color: var(--muted);
+  font-size: .92rem;
+  font-weight: 700;
+}
+
+/* body padding */
+.card-body{
+  padding: 10px 18px 18px;
+}
+
+/* ====== 內部「淺灰框」區塊（pills） ====== */
+.sel-pill{
+  background: var(--panel-inner);
+  border: 1px solid var(--panel-inner-stroke);
+  border-radius: 18px;
+  padding: 14px 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+}
+
+.sel-pill + .sel-pill{ margin-top: 12px; }
+
+.k{
+  color: var(--muted);
+  font-weight: 800;
+  font-size: .9rem;
+}
+
+.v{
+  margin-top: 6px;
+  color: var(--text-dark);
+  font-weight: 900;
+  font-size: 1.05rem;
+}
+
+/* 上方「縣市」那一列：左文字、右 badge */
+.sel-line{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.sel-badge{
+  min-width: 46px;
+  height: 32px;
+  padding: 0 12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius: 999px;
+  background: rgba(255,255,255,.85);
+  border: 1px solid rgba(15,23,42,.10);
+  color: var(--text-dark);
+  font-weight: 900;
+  box-shadow: 0 8px 16px rgba(2,6,23,.10);
+}
+
+/* 兩格 grid */
+.sel-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* 你的政策句：更像截圖那種「粗黑」 */
+#selSentence{
+  font-size: .95rem !important;
+  line-height: 1.35 !important;
+  font-weight: 950 !important;
+  color: var(--text-dark) !important;
+}
+
+/* ====== 右上角「複製摘要」按鈕 ====== */
+.btn.copy{
+  border: 1px solid rgba(15,23,42,.10);
+  background: rgba(255,255,255,.75);
+  color: var(--text-dark);
+  font-weight: 900;
+  padding: 10px 14px;
+  border-radius: 999px;
+  box-shadow: 0 10px 18px rgba(2,6,23,.10);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+
+.btn.copy:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 14px 22px rgba(2,6,23,.14);
+  background: rgba(255,255,255,.88);
+}
+
+.btn.copy:active{
+  transform: translateY(0px) scale(.99);
+}
+
+/* Top10 條圖容器也做成「內嵌淺灰框」 */
+#barContainer{
+  background: var(--panel-inner);
+  border: 1px solid var(--panel-inner-stroke);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+}
+
+/* 小字說明 */
+.legend-note{
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: .88rem;
+  font-weight: 700;
+}
+    
 </style>
   
 </head>
