@@ -667,6 +667,60 @@ select:focus{
   font-size: .88rem;
   font-weight: 700;
 }
+
+/* ====== 圖表白色面板 ====== */
+.chart-panel{
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px 20px;
+}
+
+/* ====== 單一 bar row ====== */
+.bar-row{
+  display:grid;
+  grid-template-columns: 72px 1fr 44px;
+  align-items:center;
+  gap:12px;
+  margin: 10px 0;
+}
+
+/* 左側縣市 */
+.bar-label{
+  text-align:right;
+  font-size: .95rem;
+  font-weight: 700;
+  color:#374151;
+}
+
+/* 中間刻度背景 */
+.bar-track{
+  position:relative;
+  height: 18px;
+  border-radius: 999px;
+  background:
+    repeating-linear-gradient(
+      to right,
+      transparent 0,
+      transparent 19%,
+      rgba(0,0,0,.06) 20%,
+      transparent 21%
+    );
+  overflow:hidden;
+}
+
+/* 實際 bar（膠囊） */
+.bar-fill{
+  height:100%;
+  background: #5fae5a;   /* 圖中的綠 */
+  border-radius: 999px;
+}
+
+/* 右側數字 */
+.bar-value{
+  font-size: .9rem;
+  font-weight: 700;
+  color:#111827;
+}
     
 </style>
   
