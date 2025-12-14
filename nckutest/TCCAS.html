@@ -467,7 +467,7 @@
             const v = params.value;
             if (v == null || v === '') return `${params.name}<br/>無資料`;
             const valStr = isPercentMetric
-              ? `${v.toFixed(1)} %`
+              ? `${v.toFixed(1)} 分`
               : `${v.toFixed(1)} 分`;
             return `${params.name}<br/>${metricText}：${valStr}`;
           }
