@@ -20,19 +20,14 @@
   --bg2:#0f172a;
 
   --card: rgba(255,255,255,.94);
-  --card-soft: rgba(255,255,255,.90);
-
   --text:#0f172a;
   --muted:#64748b;
 
-  /* 預警燈號（更穩重、適合政府/研究面板） */
   --green:#22c55e;
   --yellow:#f59e0b;
   --red:#ef4444;
 
-  /* 強調色（用在選取、重點框線） */
   --accent:#2563eb;
-  --accent-2:#7c3aed;
 
   --radius:18px;
   --radius-lg:20px;
@@ -42,7 +37,6 @@
   --ring:0 0 0 3px rgba(37,99,235,.22);
 
   --stroke: rgba(148,163,184,.22);
-  --stroke-strong: rgba(148,163,184,.30);
 }
 
 /* =========================================================
@@ -90,7 +84,7 @@ header{
 header h1{
   font-size:1.25rem;
   font-weight:900;
-  letter-spacing:.05em;
+  letter-spacing:.02em;
   line-height:1.25;
 }
 
@@ -135,7 +129,7 @@ main.layout{
 }
 
 /* =========================================================
-   CARD SYSTEM (Readable + Dashboard Feel)
+   CARD SYSTEM (統一風格：清晰可讀)
 ========================================================= */
 .card{
   position:relative;
@@ -158,7 +152,6 @@ main.layout{
   pointer-events:none;
 }
 
-/* header: stronger hierarchy */
 .card-header{
   padding:12px 14px;
   border-bottom:1px solid rgba(148,163,184,.16);
@@ -188,7 +181,6 @@ main.layout{
   max-width:58%;
 }
 
-/* body spacing for readability */
 .card-body{
   padding:12px 14px 14px;
   display:flex;
@@ -215,7 +207,6 @@ main.layout{
     inset 0 -30px 60px rgba(15,23,42,.06);
 }
 
-/* map hint text */
 .legend-note{
   font-size:.82rem;
   color:#475569;
@@ -223,7 +214,7 @@ main.layout{
 }
 
 /* =========================================================
-   RIGHT CONTROL PANEL (Single Scroll Source)
+   RIGHT CONTROL PANEL
 ========================================================= */
 .control-panel{
   position:sticky;
@@ -241,7 +232,6 @@ main.layout{
   overscroll-behavior:contain;
 }
 
-/* nicer scroll bar */
 .control-panel::-webkit-scrollbar{ width:10px; }
 .control-panel::-webkit-scrollbar-track{ background:transparent; }
 .control-panel::-webkit-scrollbar-thumb{
@@ -255,23 +245,20 @@ main.layout{
 }
 
 /* =========================================================
-   FORMS / CONTROLS
+   CONTROLS
 ========================================================= */
 .controls{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
 }
-
 .control-group{ display:flex; flex-direction:column; gap:6px; }
-
 .control-label{
   font-size:.78rem;
   font-weight:900;
   color:#475569;
   letter-spacing:.01em;
 }
-
 select{
   padding:10px 12px;
   border-radius:14px;
@@ -282,7 +269,6 @@ select{
   outline:none;
   transition: .15s ease;
 }
-
 select:hover{ border-color: rgba(148,163,184,.55); }
 select:focus{
   border-color: rgba(37,99,235,.85);
@@ -291,21 +277,19 @@ select:focus{
 }
 
 /* =========================================================
-   PILLS / KPI (Clear hierarchy + numeric alignment)
+   PILLS / KPI
 ========================================================= */
 .thresholds{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
 }
-
 .pill,.kpi{
   padding:10px 12px;
   border-radius:14px;
   background:rgba(248,250,252,.96);
   border:1px solid rgba(148,163,184,.22);
 }
-
 .pill .p-title{
   display:flex;
   align-items:center;
@@ -315,14 +299,12 @@ select:focus{
   font-weight:950;
   color:#0f172a;
 }
-
 .pill .p-desc{
   margin-top:6px;
   font-size:.78rem;
   color:var(--muted);
   line-height:1.35;
 }
-
 .light-chip{
   font-size:.74rem;
   padding:3px 10px;
@@ -332,7 +314,6 @@ select:focus{
   font-weight:950;
   white-space:nowrap;
 }
-
 .chip-green{ color: #166534; border-color: rgba(34,197,94,.25); background: rgba(34,197,94,.10); }
 .chip-yellow{ color: #92400e; border-color: rgba(245,158,11,.25); background: rgba(245,158,11,.12); }
 .chip-red{ color: #991b1b; border-color: rgba(239,68,68,.25); background: rgba(239,68,68,.12); }
@@ -342,19 +323,16 @@ select:focus{
   grid-template-columns:1fr 1fr;
   gap:10px;
 }
-
 .kpi3{
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
   gap:10px;
 }
-
 .kpi .k{
   font-size:.74rem;
   font-weight:900;
   color:#475569;
 }
-
 .kpi .v{
   margin-top:2px;
   font-size:1.25rem;
@@ -363,69 +341,12 @@ select:focus{
   letter-spacing:.03em;
   font-variant-numeric: tabular-nums;
 }
-
 .kpi.badge-green .v{ color:#166534; }
 .kpi.badge-yellow .v{ color:#92400e; }
 .kpi.badge-red .v{ color:#991b1b; }
 
 /* =========================================================
-   TOP10 CHART
-========================================================= */
-#barContainer{
-  width:100%;
-  height:240px;
-  min-height:240px;
-  border-radius:14px;
-  background:rgba(249,250,251,.97);
-  border:1px solid rgba(148,163,184,.24);
-  box-shadow: inset 0 0 0 1px rgba(148,163,184,.12);
-}
-
-/* =========================================================
-   RED LIST (Alert Mood)
-========================================================= */
-#redList{
-  list-style:none;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-.red-item{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:10px 12px;
-  border-radius:16px;
-  background:linear-gradient(90deg, rgba(239,68,68,.14), rgba(239,68,68,.05));
-  border:1px solid rgba(239,68,68,.22);
-  font-weight:950;
-  color:#7f1d1d;
-  cursor:pointer;
-  transition:.12s ease;
-}
-
-.red-item:hover{
-  transform: translateY(-1px);
-  box-shadow:0 12px 26px rgba(239,68,68,.12);
-}
-
-.red-item.active{
-  outline: 3px solid rgba(239,68,68,.28);
-  box-shadow:0 16px 34px rgba(239,68,68,.16);
-}
-
-.ok-item{
-  padding:10px 12px;
-  border-radius:14px;
-  background:rgba(34,197,94,.10);
-  border:1px solid rgba(34,197,94,.20);
-  font-weight:950;
-  color:#166534;
-}
-
-/* =========================================================
-   BUTTONS (If present)
+   BUTTONS
 ========================================================= */
 .btn{
   padding:7px 12px;
@@ -438,7 +359,6 @@ select:focus{
   transition:.15s ease;
   white-space:nowrap;
 }
-
 .btn:hover{ transform: translateY(-1px); box-shadow:0 10px 24px rgba(2,6,23,.12); }
 .btn.red{
   background:rgba(239,68,68,.12);
@@ -452,19 +372,128 @@ select:focus{
 }
 
 /* =========================================================
-   SELECTED SUMMARY (Policy Sentence)
+   SELECTED SUMMARY (只針對摘要卡：玻璃霧質感)
 ========================================================= */
-#selSentence{
-  background:rgba(248,250,252,.98);
-  border-left:4px solid var(--accent);
-  padding:10px 12px;
-  border-radius:12px;
-  line-height:1.45;
+.summary-card{
+  background: rgba(255,255,255,.68);
+  border: 1px solid rgba(255,255,255,.65);
+  border-radius: 22px;
+  box-shadow: 0 18px 40px rgba(2,6,23,.16);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.summary-card .card-header{
+  padding: 18px 18px 12px;
+  border-bottom: 0;
+  background: transparent;
+}
+.summary-card .card-body{ padding: 10px 18px 18px; }
+.summary-card .sel-pill{
+  background: rgba(243,244,246,.92);
+  border: 1px solid rgba(15,23,42,.08);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+}
+.summary-card .sel-pill + .sel-pill{ margin-top: 12px; }
+.summary-card .k{ color:#6b7280; font-weight:800; font-size:.9rem; }
+.summary-card .v{ margin-top:6px; color:#0f172a; font-weight:900; font-size:1.05rem; }
+.summary-card .sel-line{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.summary-card .sel-badge{
+  min-width:46px; height:32px; padding:0 12px;
+  display:inline-flex; align-items:center; justify-content:center;
+  border-radius:999px;
+  background: rgba(255,255,255,.85);
+  border: 1px solid rgba(15,23,42,.10);
+  font-weight:900;
+  box-shadow: 0 8px 16px rgba(2,6,23,.10);
+}
+.summary-card .sel-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+.summary-card #selSentence{
+  font-size:.95rem !important;
+  line-height:1.35 !important;
+  font-weight:950 !important;
+  color:#0f172a !important;
 }
 
 /* =========================================================
-   FOOTER HINT
+   TOP10: 像你參考圖的「白底圖表面板」
 ========================================================= */
+.top10-card .card-header{
+  background: transparent;
+  border-bottom: 0;
+  padding: 14px 14px 6px;
+}
+.top10-card .card-title{ font-size: 1.05rem; font-weight: 950; }
+.top10-card .card-subtitle{
+  max-width: 64%;
+  font-size: .9rem;
+  font-weight: 800;
+  color: #6b7280;
+}
+#barContainer{
+  width:100%;
+  height:240px;
+  min-height:240px;
+  background:#ffffff;
+  border:1px solid rgba(148,163,184,.18);
+  border-radius:16px;
+}
+
+/* Top10 legend 降噪 */
+.top10-card .legend-note{
+  color:#94a3b8;
+  font-weight:700;
+  font-size:.85rem;
+  margin-top: 8px;
+}
+
+/* =========================================================
+   RED LIST
+========================================================= */
+#redList{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.red-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 12px;
+  border-radius:16px;
+  background:linear-gradient(90deg, rgba(239,68,68,.14), rgba(239,68,68,.05));
+  border:1px solid rgba(239,68,68,.22);
+  font-weight:950;
+  color:#7f1d1d;
+  cursor:pointer;
+  transition:.12s ease;
+}
+.red-item:hover{
+  transform: translateY(-1px);
+  box-shadow:0 12px 26px rgba(239,68,68,.12);
+}
+.red-item.active{
+  outline: 3px solid rgba(239,68,68,.28);
+  box-shadow:0 16px 34px rgba(239,68,68,.16);
+}
+.ok-item{
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(34,197,94,.10);
+  border:1px solid rgba(34,197,94,.20);
+  font-weight:950;
+  color:#166534;
+}
+
 .footer-hint{
   margin-top:6px;
   font-size:.78rem;
@@ -477,18 +506,15 @@ select:focus{
 ========================================================= */
 @media (max-width:1100px){
   main.layout{ grid-template-columns:1fr; }
-
   .control-panel{
     position:static;
     height:auto;
     overflow:visible;
     padding-right:0;
   }
-
   #mapContainer{ min-height:460px; }
   #barContainer{ height:260px; min-height:260px; }
 }
-
 @media (max-width:720px){
   header{ flex-direction:column; align-items:flex-start; }
   .meta-right{ align-items:flex-start; text-align:left; }
@@ -498,232 +524,7 @@ select:focus{
   .kpi-row{ grid-template-columns:1fr; }
   .kpi3{ grid-template-columns:1fr 1fr; }
 }
-
-/* ====== Summary Card (match screenshot style) ====== */
-:root{
-  --panel-bg: rgba(255,255,255,.68);
-  --panel-stroke: rgba(255,255,255,.65);
-  --panel-inner: rgba(243,244,246,.92); /* 淺灰區塊 */
-  --panel-inner-stroke: rgba(15,23,42,.08);
-  --text-dark:#0f172a;
-  --muted:#6b7280;
-  --shadow: 0 18px 40px rgba(2,6,23,.16);
-  --shadow-soft: 0 10px 22px rgba(2,6,23,.10);
-  --radius: 22px;
-}
-
-/* card 外觀：白霧感 + 邊框 + 陰影 */
-.card{
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-stroke);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  overflow: hidden;
-}
-
-/* header：左圖示＋標題，右側按鈕 */
-.card-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding: 18px 18px 12px;
-  color: var(--text-dark);
-}
-
-.card-title{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight: 900;
-  letter-spacing:.2px;
-  font-size: 1.15rem;
-}
-
-.card-icon{
-  width: 34px;
-  height: 34px;
-  display:grid;
-  place-items:center;
-  border-radius: 12px;
-  background: rgba(255,255,255,.75);
-  border: 1px solid rgba(15,23,42,.08);
-  box-shadow: var(--shadow-soft);
-}
-
-.card-subtitle{
-  padding: 0 18px 12px;
-  margin-top:-4px;
-  color: var(--muted);
-  font-size: .92rem;
-  font-weight: 700;
-}
-
-/* body padding */
-.card-body{
-  padding: 10px 18px 18px;
-}
-
-/* ====== 內部「淺灰框」區塊（pills） ====== */
-.sel-pill{
-  background: var(--panel-inner);
-  border: 1px solid var(--panel-inner-stroke);
-  border-radius: 18px;
-  padding: 14px 14px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
-}
-
-.sel-pill + .sel-pill{ margin-top: 12px; }
-
-.k{
-  color: var(--muted);
-  font-weight: 800;
-  font-size: .9rem;
-}
-
-.v{
-  margin-top: 6px;
-  color: var(--text-dark);
-  font-weight: 900;
-  font-size: 1.05rem;
-}
-
-/* 上方「縣市」那一列：左文字、右 badge */
-.sel-line{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-}
-
-.sel-badge{
-  min-width: 46px;
-  height: 32px;
-  padding: 0 12px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  border-radius: 999px;
-  background: rgba(255,255,255,.85);
-  border: 1px solid rgba(15,23,42,.10);
-  color: var(--text-dark);
-  font-weight: 900;
-  box-shadow: 0 8px 16px rgba(2,6,23,.10);
-}
-
-/* 兩格 grid */
-.sel-grid{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 12px;
-}
-
-/* 你的政策句：更像截圖那種「粗黑」 */
-#selSentence{
-  font-size: .95rem !important;
-  line-height: 1.35 !important;
-  font-weight: 950 !important;
-  color: var(--text-dark) !important;
-}
-
-/* ====== 右上角「複製摘要」按鈕 ====== */
-.btn.copy{
-  border: 1px solid rgba(15,23,42,.10);
-  background: rgba(255,255,255,.75);
-  color: var(--text-dark);
-  font-weight: 900;
-  padding: 10px 14px;
-  border-radius: 999px;
-  box-shadow: 0 10px 18px rgba(2,6,23,.10);
-  cursor: pointer;
-  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
-}
-
-.btn.copy:hover{
-  transform: translateY(-1px);
-  box-shadow: 0 14px 22px rgba(2,6,23,.14);
-  background: rgba(255,255,255,.88);
-}
-
-.btn.copy:active{
-  transform: translateY(0px) scale(.99);
-}
-
-/* Top10 條圖容器也做成「內嵌淺灰框」 */
-#barContainer{
-  background: var(--panel-inner);
-  border: 1px solid var(--panel-inner-stroke);
-  border-radius: 18px;
-  padding: 14px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
-}
-
-/* 小字說明 */
-.legend-note{
-  margin-top: 10px;
-  color: var(--muted);
-  font-size: .88rem;
-  font-weight: 700;
-}
-
-/* ====== 圖表白色面板 ====== */
-.chart-panel{
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 18px 20px;
-}
-
-/* ====== 單一 bar row ====== */
-.bar-row{
-  display:grid;
-  grid-template-columns: 72px 1fr 44px;
-  align-items:center;
-  gap:12px;
-  margin: 10px 0;
-}
-
-/* 左側縣市 */
-.bar-label{
-  text-align:right;
-  font-size: .95rem;
-  font-weight: 700;
-  color:#374151;
-}
-
-/* 中間刻度背景 */
-.bar-track{
-  position:relative;
-  height: 18px;
-  border-radius: 999px;
-  background:
-    repeating-linear-gradient(
-      to right,
-      transparent 0,
-      transparent 19%,
-      rgba(0,0,0,.06) 20%,
-      transparent 21%
-    );
-  overflow:hidden;
-}
-
-/* 實際 bar（膠囊） */
-.bar-fill{
-  height:100%;
-  background: #5fae5a;   /* 圖中的綠 */
-  border-radius: 999px;
-}
-
-/* 右側數字 */
-.bar-value{
-  font-size: .9rem;
-  font-weight: 700;
-  color:#111827;
-}
-    
-</style>
-  
+  </style>
 </head>
 
 <body>
@@ -733,13 +534,13 @@ select:focus{
       <div class="subtitle">資訊分層：主視覺地圖 → 右欄決策摘要（條件/摘要/Top10/紅燈清單）</div>
     </div>
     <div class="meta-right">
-      <div class="badge"><span class="dot"></span>資料來源：TCCAS 校園調查、線上問卷（示範資料）</div>
+      <div class="badge">資料來源：TCCAS 校園調查、線上問卷（示範資料）</div>
       <div class="subtitle" id="currentMeta">年度：—　｜　指標：—</div>
     </div>
   </header>
 
   <main class="layout">
-    <!-- 左側：主視覺地圖卡 -->
+    <!-- 左側：地圖 -->
     <section class="card map-panel">
       <div class="card-header">
         <div class="card-title">
@@ -755,174 +556,173 @@ select:focus{
       <div class="card-body">
         <div id="mapContainer"></div>
         <div class="legend-note">
-          說明：熱力圖顏色表示<strong>指標分數</strong>（中性色階避免與紅黃綠混淆）；圓點顏色表示<strong>預警燈號</strong>。點擊縣市可在右欄自動生成摘要並定位紅燈清單。
+          說明：熱力圖顏色表示<strong>指標分數</strong>；圓點顏色表示<strong>預警燈號</strong>。點擊縣市可在右欄自動生成摘要並定位紅燈清單。
         </div>
       </div>
     </section>
 
-    <!-- 右側：固定資訊欄（可捲動） -->
-   <aside class="control-panel">
+    <!-- 右側：控制面板 -->
+    <aside class="control-panel">
 
-  <!-- 1) 分析條件（含 KPI） -->
-  <section class="card">
-    <div class="card-header">
-      <div class="card-title">
-        <span class="card-icon">⚙</span>
-        分析條件
-      </div>
-      <div class="card-subtitle">年度 / 指標 / 門檻</div>
-    </div>
-
-    <div class="card-body">
-      <div class="controls">
-        <div class="control-group">
-          <label for="yearSelect" class="control-label">年度</label>
-          <select id="yearSelect">
-            <option value="2024" selected>2024</option>
-            <option value="2023">2023</option>
-            <option value="2022">2022</option>
-          </select>
-        </div>
-
-        <div class="control-group">
-          <label for="metricSelect" class="control-label">指標類型</label>
-          <select id="metricSelect">
-            <option value="mean_score" selected>平均 TCCAS 分數（0–100）</option>
-            <option value="high_risk_pct">社群貼文情緒分數（0–100）</option>
-            <option value="severe_score">平均心理韌性分數（0–100）</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="thresholds">
-        <div class="pill">
-          <div class="p-title">
-            綠燈門檻 <span class="light-chip chip-green">綠</span>
+      <!-- 1) 分析條件 -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-icon">⚙</span>
+            分析條件
           </div>
-          <div class="p-desc" id="thGreen">—</div>
+          <div class="card-subtitle">年度 / 指標 / 門檻</div>
         </div>
 
-        <div class="pill">
-          <div class="p-title">
-            黃燈門檻 <span class="light-chip chip-yellow">黃</span>
+        <div class="card-body">
+          <div class="controls">
+            <div class="control-group">
+              <label for="yearSelect" class="control-label">年度</label>
+              <select id="yearSelect">
+                <option value="2024" selected>2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="metricSelect" class="control-label">指標類型</label>
+              <select id="metricSelect">
+                <option value="mean_score" selected>平均 TCCAS 分數（0–100）</option>
+                <option value="high_risk_pct">社群貼文情緒分數（0–100）</option>
+                <option value="severe_score">平均心理韌性分數（0–100）</option>
+              </select>
+            </div>
           </div>
-          <div class="p-desc" id="thYellow">—</div>
+
+          <div class="thresholds">
+            <div class="pill">
+              <div class="p-title">
+                綠燈門檻 <span class="light-chip chip-green">綠</span>
+              </div>
+              <div class="p-desc" id="thGreen">—</div>
+            </div>
+
+            <div class="pill">
+              <div class="p-title">
+                黃燈門檻 <span class="light-chip chip-yellow">黃</span>
+              </div>
+              <div class="p-desc" id="thYellow">—</div>
+            </div>
+          </div>
+
+          <div class="pill">
+            <div class="p-title">
+              紅燈條件 <span class="light-chip chip-red">紅</span>
+            </div>
+            <div class="p-desc" id="thRed">—</div>
+            <div class="footer-hint">※ 心理韌性為反向燈號（高分→綠）</div>
+          </div>
+
+          <div class="kpi-row">
+            <div class="kpi">
+              <div class="k">全國平均（指標）</div>
+              <div class="v" id="statAvg">—</div>
+            </div>
+            <div class="kpi">
+              <div class="k">最高縣市（指標）</div>
+              <div class="v" id="statMax">—</div>
+            </div>
+          </div>
+
+          <div class="kpi3">
+            <div class="kpi badge-green">
+              <div class="k">綠燈數</div>
+              <div class="v" id="statGreen">—</div>
+            </div>
+            <div class="kpi badge-yellow">
+              <div class="k">黃燈數</div>
+              <div class="v" id="statYellow">—</div>
+            </div>
+            <div class="kpi badge-red">
+              <div class="k">紅燈數</div>
+              <div class="v" id="statRed">—</div>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div class="pill">
-        <div class="p-title">
-          紅燈條件 <span class="light-chip chip-red">紅</span>
+      <!-- 2) 選取摘要（玻璃霧卡） -->
+      <section class="card summary-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-icon">📌</span>
+            選取縣市摘要
+          </div>
+          <div class="card-actions">
+            <button id="copySummary" class="btn copy">複製摘要</button>
+          </div>
         </div>
-        <div class="p-desc" id="thRed">—</div>
-        <div class="footer-hint">※ 心理韌性為反向燈號（高分→綠）</div>
-      </div>
 
-      <!-- KPI：更像儀表板 -->
-      <div class="kpi-row">
-        <div class="kpi">
-          <div class="k">全國平均（指標）</div>
-          <div class="v" id="statAvg">—</div>
+        <div class="card-body">
+          <div class="sel-pill">
+            <div class="sel-line">
+              <div class="k">縣市</div>
+              <div class="sel-badge" id="selLight">—</div>
+            </div>
+            <div class="v" id="selName">尚未選取（點地圖或點紅燈清單）</div>
+          </div>
+
+          <div class="sel-grid">
+            <div class="sel-pill">
+              <div class="k">指標分數（value）</div>
+              <div class="v" id="selValue">—</div>
+            </div>
+            <div class="sel-pill">
+              <div class="k">預警分數（warn）</div>
+              <div class="v" id="selWarn">—</div>
+            </div>
+          </div>
+
+          <div class="sel-pill">
+            <div class="k">政策摘要句（可直接貼報告）</div>
+            <div class="v" id="selSentence">—</div>
+          </div>
         </div>
-        <div class="kpi">
-          <div class="k">最高縣市（指標）</div>
-          <div class="v" id="statMax">—</div>
+      </section>
+
+      <!-- 3) Top10（參考圖樣式） -->
+      <section class="card top10-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-icon">📊</span>
+            Top 10 縣市比較
+          </div>
+          <div class="card-subtitle" id="barTitle">—</div>
         </div>
-      </div>
 
-      <div class="kpi3">
-        <div class="kpi badge-green">
-          <div class="k">綠燈數</div>
-          <div class="v" id="statGreen">—</div>
+        <div class="card-body">
+          <div id="barContainer"></div>
+          <div class="legend-note">
+            ＊此圖以「指標分數」排序；顏色示範採用單一綠色（如需紅黃綠可再切回燈號色）。
+          </div>
         </div>
-        <div class="kpi badge-yellow">
-          <div class="k">黃燈數</div>
-          <div class="v" id="statYellow">—</div>
+      </section>
+
+      <!-- 4) 紅燈清單 + CSV -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-icon" style="background:rgba(239,68,68,.10);border-color:rgba(239,68,68,.20);color:#b91c1c;">🔴</span>
+            紅燈縣市清單
+          </div>
+          <div class="card-actions">
+            <button id="downloadCSV" class="btn red">下載 CSV</button>
+          </div>
         </div>
-        <div class="kpi badge-red">
-          <div class="k">紅燈數</div>
-          <div class="v" id="statRed">—</div>
+
+        <div class="card-body">
+          <ul id="redList"></ul>
+          <div class="legend-note">※ 依「預警分數」與門檻判定（心理韌性為反向燈號）</div>
         </div>
-      </div>
-    </div>
-  </section>
-  <!-- 2) 選取摘要 -->
-  <section class="card">
-    <div class="card-header">
-      <div class="card-title">
-        <span class="card-icon">📌</span>
-        選取縣市摘要
-      </div>
-      <div class="card-actions">
-        <button id="copySummary" class="btn copy">複製摘要</button>
-      </div>
-    </div>
+      </section>
 
-    <div class="card-body">
-      <div class="sel-pill">
-        <div class="sel-line">
-          <div class="k">縣市</div>
-          <div class="sel-badge" id="selLight">—</div>
-        </div>
-        <div class="v" id="selName">尚未選取（點地圖或點紅燈清單）</div>
-      </div>
-
-      <div class="sel-grid">
-        <div class="sel-pill">
-          <div class="k">指標分數（value）</div>
-          <div class="v" id="selValue">—</div>
-        </div>
-        <div class="sel-pill">
-          <div class="k">預警分數（warn）</div>
-          <div class="v" id="selWarn">—</div>
-        </div>
-      </div>
-
-      <div class="sel-pill">
-        <div class="k">政策摘要句（可直接貼報告）</div>
-        <div class="v" id="selSentence" style="font-size:.9rem; line-height:1.35; font-weight:950; color:#0f172a;">—</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 3) Top10 -->
-  <section class="card">
-    <div class="card-header">
-      <div class="card-title">
-        <span class="card-icon">📊</span>
-        Top 10 縣市比較
-      </div>
-      <div class="card-subtitle" id="barTitle">—</div>
-    </div>
-
-    <div class="card-body">
-      <div id="barContainer"></div>
-      <div class="legend-note">
-        條圖顏色依「預警燈號」著色：綠／黃／紅（以預警分數判斷）。
-      </div>
-    </div>
-  </section>
-
-  <!-- 4) 紅燈清單 + CSV -->
-  <section class="card">
-    <div class="card-header">
-      <div class="card-title">
-        <span class="card-icon" style="background:rgba(239,68,68,.10);border-color:rgba(239,68,68,.20);color:#b91c1c;">🔴</span>
-        紅燈縣市清單
-      </div>
-      <div class="card-actions">
-        <button id="downloadCSV" class="btn red">下載 CSV</button>
-      </div>
-    </div>
-
-    <div class="card-body">
-      <ul id="redList"></ul>
-      <div class="legend-note">※ 依「預警分數」與門檻判定（心理韌性為反向燈號）</div>
-    </div>
-  </section>
-
-</aside>
-
+    </aside>
   </main>
 
   <script>
@@ -1016,7 +816,7 @@ select:focus{
       return light === "green" ? "綠燈" : light === "yellow" ? "黃燈" : "紅燈";
     }
     function lightColor(light){
-      return light === "green" ? "#22c55e" : light === "yellow" ? "#fbbf24" : "#ef4444";
+      return light === "green" ? "#22c55e" : light === "yellow" ? "#f59e0b" : "#ef4444";
     }
     function metricLabel(metric){
       return ({
@@ -1027,7 +827,7 @@ select:focus{
     }
 
     // =========================
-    // 3) DOM + 圖表
+    // 3) DOM + 圖表初始化
     // =========================
     const mapChart = echarts.init(document.getElementById('mapContainer'));
     const barChart = echarts.init(document.getElementById('barContainer'));
@@ -1061,12 +861,11 @@ select:focus{
     let countyCentroid = new Map();
     let MAIN_ISLAND_BBOX = null;
 
-    // ✅ 選取狀態
     let selectedCounty = null;
     let lastEnriched = [];
 
     // =========================
-    // 4) 幾何：centroid + 本島 bbox（自動 fit）
+    // 4) 幾何：centroid + 本島 bbox
     // =========================
     function centroidOfPolygon(coords){
       const ring = coords?.[0];
@@ -1296,7 +1095,6 @@ select:focus{
     yearSelect.addEventListener('change', updateCharts);
     metricSelect.addEventListener('change', updateCharts);
 
-    // ✅ 點地圖：高亮/tooltip/摘要/清單定位
     mapChart.on('click', (params) => {
       if (!params || !params.name) return;
       selectCounty(params.name);
@@ -1305,13 +1103,28 @@ select:focus{
     // =========================
     // 8) 更新主函式
     // =========================
+    function niceMax(maxVal){
+      if (!isFinite(maxVal) || maxVal <= 0) return 1;
+      const padded = maxVal * 1.08;               // 留白（不貼邊）
+      const mag = Math.pow(10, Math.floor(Math.log10(padded)));
+      const norm = padded / mag;
+      let nice;
+      if (norm <= 1) nice = 1;
+      else if (norm <= 1.5) nice = 1.5;
+      else if (norm <= 2) nice = 2;
+      else if (norm <= 3) nice = 3;
+      else if (norm <= 5) nice = 5;
+      else nice = 10;
+      return nice * mag;
+    }
+
     function updateCharts(){
       const year = yearSelect.value;
       const metric = metricSelect.value;
 
       const metricText = metricLabel(metric);
       currentMeta.textContent = `年度：${year}　｜　指標：${metricText}`;
-      barTitle.textContent = `${year} 年 ${metricText} Top 10（燈號依預警分數）`;
+      barTitle.textContent = `${year} 年 ${metricText}（0–100）前 10 名`;
 
       const t = warnThresholds[metric] || { greenMax: 60, yellowMax: 75 };
       if (metric === "severe_score") {
@@ -1335,6 +1148,7 @@ select:focus{
         statRed.textContent = '—';
         redList.innerHTML = `<li class="ok-item">目前無資料</li>`;
         lastEnriched = [];
+        selectedCounty = null;
         updateSelectedSummary(null);
         return;
       }
@@ -1363,6 +1177,8 @@ select:focus{
       statRed.textContent = `${redCount}`;
 
       const top10 = [...enriched].sort((a,b)=>b.value-a.value).slice(0,10).reverse();
+      const top10Max = Math.max(...top10.map(d => d.value));
+      const xMax = niceMax(top10Max);
 
       const lightPoints = enriched
         .filter(d => !EXCLUDE_COUNTIES.has(d.name))
@@ -1379,7 +1195,7 @@ select:focus{
         })
         .filter(Boolean);
 
-      // ✅ 紅燈清單
+      // 紅燈清單
       const redItems = enriched.filter(d => d.light === "red").sort((a,b)=> b.warnScore - a.warnScore);
       redList.innerHTML = "";
       if (!redItems.length) {
@@ -1395,23 +1211,16 @@ select:focus{
         });
       }
 
+      // 地圖
       const mapOption = {
         backgroundColor: 'transparent',
         geo: {
           map: 'taiwan',
           roam: true,
-
-          // ✅ 自動 fit 台灣本島 bbox（排除離島）
           boundingCoords: MAIN_ISLAND_BBOX || null,
           layoutCenter: ['50%', '54%'],
           layoutSize: '98%',
-
-          // ✅ 右側留 visualMap
-          top: 44,
-          bottom: 10,
-          left: 10,
-          right: 64,
-
+          top: 44, bottom: 10, left: 10, right: 64,
           aspectScale: 0.8,
           nameProperty: 'COUNTYNAME',
           itemStyle: { borderColor: 'rgba(148,163,184,.55)', borderWidth: 0.8 },
@@ -1457,28 +1266,20 @@ select:focus{
           dimension: 0,
           min: Math.min(...values),
           max: Math.max(...values),
-
           orient: 'vertical',
           right: 12,
           top: 74,
           bottom: 18,
-
           itemWidth: 12,
           itemHeight: 280,
-
           calculable: true,
           realtime: true,
-
           text: ['高', '低'],
           textGap: 8,
           textStyle: { color: '#334155', fontWeight: 800, fontSize: 12 },
-
           handleSize: 18,
           handleStyle: { color: '#334155', borderColor: '#0f172a', borderWidth: 1 },
-
-          /* ✅ 中性色階：避免跟紅黃綠燈混淆 */
           inRange: { color: ['#eef2ff', '#c7d2fe', '#818cf8', '#312e81'] },
-
           backgroundColor: 'transparent',
           borderWidth: 0,
           padding: 0
@@ -1517,22 +1318,32 @@ select:focus{
       };
       mapChart.setOption(mapOption, true);
 
+      // Top10：參考圖樣式（自動 max）
       const barOption = {
         backgroundColor: 'transparent',
-        grid: { left: 110, right: 18, top: 18, bottom: 24 },
+        grid: { left: 88, right: 34, top: 10, bottom: 26 },
         xAxis: {
           type: 'value',
-          axisLabel: { color: '#475569', fontWeight: 700 },
-          splitLine: { show: true, lineStyle: { type: 'dashed', color: 'rgba(148,163,184,.45)' } }
+          min: 0,
+          max: xMax,                     // ✅ 自動 max
+          axisLine: { show: false },
+          axisTick: { show: false },
+          axisLabel: { color: '#6b7280', fontWeight: 700 },
+          splitLine: {
+            show: true,
+            lineStyle: { type: 'dashed', color: 'rgba(148,163,184,.35)' }
+          }
         },
         yAxis: {
           type: 'category',
           data: top10.map(d => d.name),
-          axisLabel: { color: '#334155', fontWeight: 900, fontSize: 12 }
+          axisLine: { show: true, lineStyle: { color: 'rgba(148,163,184,.55)' } },
+          axisTick: { show: true, length: 6, lineStyle: { color: 'rgba(148,163,184,.55)' } },
+          axisLabel: { color: '#374151', fontWeight: 800, fontSize: 12 }
         },
         tooltip: {
           trigger: 'axis',
-          axisPointer: { type: 'shadow' },
+          axisPointer: { type: 'none' },
           extraCssText: 'border-radius:14px; box-shadow:0 18px 45px rgba(2,6,23,.25);',
           formatter: (params) => {
             const p = params[0];
@@ -1559,16 +1370,19 @@ select:focus{
         series: [
           {
             type: 'bar',
-            barWidth: 16,
-            data: top10.map(d => ({
-              value: d.value,
-              itemStyle: { color: lightColor(d.light), borderRadius: [0, 10, 10, 0] }
-            })),
+            barWidth: 18,
+            itemStyle: {
+              color: '#5fae5a',
+              borderRadius: [999, 999, 999, 999]
+            },
+            emphasis: { itemStyle: { opacity: 0.92 } },
+            data: top10.map(d => d.value),
             label: {
               show: true,
               position: 'right',
-              color: '#0b1220',
-              fontWeight: 950,
+              distance: 6,
+              color: '#111827',
+              fontWeight: 800,
               formatter: (p) => Number(p.value).toFixed(1)
             }
           }
@@ -1576,7 +1390,7 @@ select:focus{
       };
       barChart.setOption(barOption, true);
 
-      // ✅ 保留選取（若仍存在）
+      // 保留選取（若仍存在）
       if (selectedCounty) {
         const exists = enriched.some(d => d.name === selectedCounty);
         if (exists) {
