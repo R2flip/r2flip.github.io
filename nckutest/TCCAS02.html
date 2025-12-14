@@ -534,6 +534,215 @@ select:focus{
   .kpi-row{ grid-template-columns:1fr; }
   .kpi3{ grid-template-columns:1fr 1fr; }
 }
+
+ /* =========================================================
+   RIGHT PANEL – 統一視覺（放在 CSS 最後）
+========================================================= */
+
+/* 右欄卡片間距更舒服 + 滾動更乾淨 */
+.control-panel{
+  gap:14px;
+}
+
+/* Header 右側 actions 統一 */
+.card-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+/* 右欄所有 card header 字體/間距更一致 */
+.control-panel .card-header{
+  padding:12px 14px;
+}
+
+/* 右欄所有 card body 一致 */
+.control-panel .card-body{
+  padding:12px 14px 14px;
+  gap:12px;
+}
+
+/* icon 視覺更一致（避免每張卡 icon 亮度不同） */
+.control-panel .card-icon{
+  background: rgba(255,255,255,.88);
+  border: 1px solid rgba(148,163,184,.26);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.85);
+}
+
+/* =========================================================
+   Summary Card（深色玻璃）— 右欄風格一致化
+========================================================= */
+
+/* 讓 summary-card 跟 card system 結構一致，但維持深色玻璃 */
+.summary-card{
+  border-radius: var(--radius-lg);
+}
+
+/* 深色卡的 header 改為「半透明亮 header」：跟其它卡一致，但不突兀 */
+.summary-card .card-header{
+  background: linear-gradient(
+    180deg,
+    rgba(248,250,252,.92),
+    rgba(241,245,249,.78)
+  );
+  border-bottom: 1px solid rgba(148,163,184,.16);
+  color: var(--text);
+}
+
+/* 深色卡 body 內部統一「白色膠囊」模組，視覺一致 */
+.summary-card .sel-pill{
+  background: rgba(248,250,252,.94);
+  border: 1px solid rgba(148,163,184,.22);
+  border-radius: 16px;
+  padding: 12px 14px;
+  box-shadow:
+    0 10px 24px rgba(2,6,23,.14),
+    inset 0 1px 0 rgba(255,255,255,.85);
+}
+
+.summary-card .sel-pill + .sel-pill{ margin-top: 10px; }
+
+.summary-card .sel-line{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+/* key/value 排版（跟 KPI/pill 系統同語彙） */
+.summary-card .k{
+  font-size:.78rem;
+  font-weight:900;
+  color:#475569;
+  letter-spacing:.01em;
+}
+.summary-card .v{
+  margin-top:4px;
+  font-size:1.04rem;
+  font-weight:950;
+  color:#0b1220;
+  letter-spacing:.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* badge：改成「可被 JS color 控制」的膠囊，避免只有文字變色看起來怪 */
+.summary-card .sel-badge{
+  min-width: 56px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(148,163,184,.26);
+  box-shadow: 0 10px 20px rgba(2,6,23,.12);
+
+  font-weight: 950;
+  color: #0f172a; /* 預設，JS 會覆蓋 */
+}
+
+/* 句子區：做成「可直接貼報告」的小面板 */
+.summary-card #selSentence{
+  font-size:.92rem !important;
+  line-height:1.45 !important;
+  font-weight:900 !important;
+  color:#0f172a !important;
+
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(148,163,184,.20);
+  border-radius: 14px;
+  padding: 10px 12px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.86);
+}
+
+/* 兩欄資訊在右欄更不擠 */
+.summary-card .sel-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+@media (max-width:560px){
+  .summary-card .sel-grid{ grid-template-columns:1fr; }
+}
+
+/* =========================================================
+   Top10 卡：移除「透明 header」的特殊化，改為與其它卡一致
+   （請把你原本 TOP10 那段 .top10-card .card-header{background:transparent...} 刪掉/註解）
+========================================================= */
+
+.top10-card .card-header{
+  background: linear-gradient(180deg, rgba(248,250,252,.96), rgba(241,245,249,.86));
+  border-bottom:1px solid rgba(148,163,184,.16);
+  padding:12px 14px;
+}
+
+/* barContainer 視覺更像卡內面板 */
+#barContainer{
+  width:100%;
+  height:240px;
+  min-height:240px;
+
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+  border: 1px solid rgba(148,163,184,.20);
+  border-radius: 16px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.85),
+    inset 0 -28px 60px rgba(15,23,42,.05);
+}
+
+/* Top10 文字說明一致化 */
+.top10-card .legend-note{
+  color:#64748b;
+  font-weight:750;
+  font-size:.82rem;
+  margin-top: 2px;
+  line-height:1.4;
+}
+
+/* =========================================================
+   紅燈清單：列表項目高度/圓角/陰影一致化
+========================================================= */
+.red-item{
+  border-radius: 16px;
+  padding: 10px 12px;
+  border:1px solid rgba(239,68,68,.22);
+  box-shadow: 0 10px 22px rgba(239,68,68,.10);
+}
+.red-item:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px rgba(239,68,68,.14);
+}
+.red-item.active{
+  outline: 3px solid rgba(239,68,68,.24);
+  box-shadow: 0 18px 34px rgba(239,68,68,.16);
+}
+
+/* 無紅燈/無資料狀態也用同一套「pill」語彙 */
+.ok-item{
+  padding:10px 12px;
+  border-radius: 16px;
+  background: rgba(248,250,252,.96);
+  border: 1px solid rgba(148,163,184,.22);
+  font-weight: 900;
+  color: #475569;
+}
+
+/* =========================================================
+   小修：右欄按鈕一致化（更像工具列）
+========================================================= */
+.control-panel .btn{
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.80);
+}
+.control-panel .btn:hover{
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 24px rgba(2,6,23,.12),
+    inset 0 1px 0 rgba(255,255,255,.85);
+}
+   
   </style>
 </head>
 
