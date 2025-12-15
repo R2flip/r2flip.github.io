@@ -119,21 +119,24 @@ header .subtitle{
 /* =========================================================
    LAYOUT
 ========================================================= */
+
 main.layout{
-  flex:1;
-  min-height: 100vh;
-  display:grid;
+  flex: 1;
+  width: 100%;
+  max-width: none;              /* 不要被任何 max-width 限制 */
+  min-height: calc(100vh - 72px); /* 72px 估 header 高度，可依實際調整 */
+  display: grid;
 
-  /* 右欄用 clamp：小螢幕自動變窄，大螢幕維持 360 */
-  grid-template-columns: minmax(0, 1fr) clamp(280px, 30vw, 360px);
+  grid-template-columns: minmax(0, 1fr) clamp(300px, 28vw, 420px);
+  gap: clamp(12px, 1.6vw, 18px);
 
-  gap:16px;
+  /* padding 減少 → 可視面積變大 */
+  padding: clamp(8px, 1.2vw, 14px);
 
-  /* padding 也做成響應式 */
-  padding: clamp(12px, 2vw, 18px);
-
-  align-items:start;
+  align-items: start;
 }
+    
+    
 
 /* =========================================================
    CARD SYSTEM
