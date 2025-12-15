@@ -122,9 +122,15 @@ header .subtitle{
 main.layout{
   flex:1;
   display:grid;
-  grid-template-columns:minmax(640px,1fr) 360px;
+
+  /* 右欄用 clamp：小螢幕自動變窄，大螢幕維持 360 */
+  grid-template-columns: minmax(0, 1fr) clamp(280px, 30vw, 360px);
+
   gap:16px;
-  padding:16px 18px 18px;
+
+  /* padding 也做成響應式 */
+  padding: clamp(12px, 2vw, 18px);
+
   align-items:start;
 }
 
