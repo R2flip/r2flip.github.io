@@ -1501,6 +1501,8 @@ select:focus{
 
             const lt = lightText(item.light);
             const lc = lightColor(item.light);
+            const paletteNormal = ['#22c55e','#06b6d4','#facc15','#f97316','#991b1b']; // 低→高：綠→紅
+            const paletteReverse = [...paletteNormal].reverse();                      // 低→高：紅→綠（給韌性用）
 
             return `
               <div style="min-width:220px">
@@ -1519,6 +1521,7 @@ select:focus{
           }
         },
 
+        
         visualMap: {
           type: 'continuous',
           show: true,
@@ -1540,15 +1543,10 @@ select:focus{
           handleSize: 18,
           handleStyle: { color: '#334155', borderColor: '#0f172a', borderWidth: 1 },
 
-inRange: {
-  color: [
-    '#22c55e', // 綠：最輕 / 安全
-    '#06b6d4', // 青 / 藍綠：中等
-    '#facc15', // 黃：警告 / 注意
-    '#f97316', // 橙：較嚴重
-    '#991b1b'  // 暗紅：嚴重 / 危險
-  ]
-},
+         inRange: {
+             color: (metric === "severe_score") ? paletteReverse : paletteNormal
+         },
+
           backgroundColor: 'transparent',
           borderWidth: 0,
           padding: 0
