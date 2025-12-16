@@ -878,7 +878,25 @@ select:focus{
         </div>
       </section>
 
-      <!-- 2) 選取摘要 -->
+      <!-- 3) Top10 -->
+      <section class="card top10-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-icon">📊</span>
+            Top 10 縣市比較
+          </div>
+          <div class="card-subtitle" id="barTitle">—</div>
+        </div>
+
+        <div class="card-body">
+          <div id="barContainer"></div>
+          <div class="legend-note">
+            ＊Top10 依「指標分數」排序；X 軸範圍依資料自動調整。
+          </div>
+        </div>
+      </section>
+      
+       <!-- 2) 選取摘要 -->
       <section class="card summary-card">
         <div class="card-header">
           <div class="card-title">
@@ -917,24 +935,7 @@ select:focus{
         </div>
       </section>
 
-      <!-- 3) Top10 -->
-      <section class="card top10-card">
-        <div class="card-header">
-          <div class="card-title">
-            <span class="card-icon">📊</span>
-            Top 10 縣市比較
-          </div>
-          <div class="card-subtitle" id="barTitle">—</div>
-        </div>
-
-        <div class="card-body">
-          <div id="barContainer"></div>
-          <div class="legend-note">
-            ＊Top10 依「指標分數」排序；X 軸範圍依資料自動調整。
-          </div>
-        </div>
-      </section>
-
+      
       <!-- 4) 紅燈清單 + CSV -->
       <section class="card">
         <div class="card-header">
