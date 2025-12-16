@@ -962,7 +962,9 @@ select:focus{
     // 0) 檔案設定
     // =========================
     const TOPO_URL = 'twCounty_22counties_topo.json';
-
+    const paletteNormal = ['#22c55e','#06b6d4','#facc15','#f97316','#991b1b']; // 低→高：綠→紅
+    const paletteReverse = [...paletteNormal].reverse();                      // 低→高：紅→綠（給韌性用）
+    
     // =========================
     // 1) 模擬資料（示範）
     //    ※ 即使有 warn 欄位也會被忽略；燈號完全由 value 判定
@@ -1538,6 +1540,13 @@ select:focus{
           text: ['高', '低'],
           textGap: 8,
           textStyle: { color: '#334155', fontWeight: 800, fontSize: 12 },
+
+  inRange: {
+    color: (metric === "severe_score") ? paletteReverse : paletteNormal
+  },
+
+
+          
           handleSize: 18,
           handleStyle: { color: '#334155', borderColor: '#0f172a', borderWidth: 1 },
           backgroundColor: 'transparent',
