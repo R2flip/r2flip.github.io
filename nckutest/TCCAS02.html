@@ -1501,8 +1501,6 @@ select:focus{
 
             const lt = lightText(item.light);
             const lc = lightColor(item.light);
-            const paletteNormal = ['#22c55e','#06b6d4','#facc15','#f97316','#991b1b']; // 低→高：綠→紅
-            const paletteReverse = [...paletteNormal].reverse();                      // 低→高：紅→綠（給韌性用）
 
             return `
               <div style="min-width:220px">
@@ -1542,7 +1540,7 @@ select:focus{
           textStyle: { color: '#334155', fontWeight: 800, fontSize: 12 },
           handleSize: 18,
           handleStyle: { color: '#334155', borderColor: '#0f172a', borderWidth: 1 },
-
+          inverse: (metric === "severe_score"),
           inRange: { color: ['#22c55e','#06b6d4','#facc15','#f97316','#991b1b'] },
 
           backgroundColor: 'transparent',
