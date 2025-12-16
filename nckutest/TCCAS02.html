@@ -1037,11 +1037,11 @@ select:focus{
           { name: "嘉義縣", value: 59, warn: 58 },
           { name: "屏東縣", value: 67, warn: 66 },
           { name: "宜蘭縣", value: 61, warn: 72 },
-          { name: "花蓮縣", value: 29, warn: 70 },
+          { name: "花蓮縣", value: 49, warn: 70 },
           { name: "台東縣", value: 68, warn: 69 },
           { name: "澎湖縣", value: 51, warn: 60 },
           { name: "金門縣", value: 55, warn: 54 },
-          { name: "連江縣", value: 42, warn: 51 }
+          { name: "連江縣", value: 52, warn: 51 }
         ]
       },
       "2023": { "mean_score": [], "high_risk_pct": [], "severe_score": [] },
@@ -1054,7 +1054,7 @@ select:focus{
     const warnThresholds = {
       mean_score:    { greenMax: 60, yellowMax: 70 },
       high_risk_pct: { greenMax: 20, yellowMax: 35 },
-      severe_score:  { greenMax: 50, yellowMax: 60 }
+      severe_score:  { greenMax: 60, yellowMax: 70 }
     };
 
     function getLight(metric, value){
