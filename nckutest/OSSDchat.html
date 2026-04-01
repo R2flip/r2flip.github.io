@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>成大永續策略發展處專屬 LLM 機器人</title>
+  <style>
+    body {
+      font-family: "Microsoft JhengHei", sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .header {
+      background: #0b3d91;
+      color: white;
+      padding: 24px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .header p {
+      margin-top: 8px;
+      font-size: 15px;
+      opacity: 0.95;
+    }
+
+    .chat-box {
+      height: 520px;
+      overflow-y: auto;
+      padding: 20px;
+      background: #f9fafb;
+    }
+
+    .message {
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .user {
+      background: #dbeafe;
+      margin-left: 80px;
+    }
+
+    .assistant {
+      background: #e8f5e9;
+      margin-right: 80px;
+    }
+
+    .system {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      padding: 20px;
+      border-top: 1px solid #e5e7eb;
+      background: #fff;
+    }
+
+    textarea {
+      flex: 1;
+      resize: none;
+      min-height: 70px;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 0 18px;
+      font-size: 15px;
+      cursor: pointer;
+      background: #0b3d91;
+      color: white;
+    }
+
+    .status {
+      padding: 0 20px 20px 20px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>國立成功大學永續策略發展處專屬 LLM 機器人</h1>
+      <p>以繁體中文、台灣學術語境與專業結構化方式回應問題</p>
+    </div>
+
+    <div id="chatBox" class="chat-box">
+      <div class="message system">
+        您好，歡迎使用成大永續策略發展處專屬 LLM 機器人。請輸入您的問題。
+      </div>
+    </div>
+
+    <div class="input-area">
+      <textarea id="messageInput" placeholder="請輸入您的問題"></textarea>
+      <button onclick="sendMessage()">送出</button>
+    </div>
+
+    <div id="status" class="status">狀態：待命中</div>
+  </div>
+
+  <script>
+    const API_URL = "http://140.116.239.233:1234/v1/chat/completions";
+    const API_KEY = "lm-studio";
+
+    const MODEL = "google/gemma-3-27b";
+
+    const SYSTEM_PROMPT =
+      "你是國立成功大學永續策略發展處專屬 LLM 機器人。" +
+      "請全程以繁體中文回應，必要時可補充英文專有名詞。" +
+      "請使用台灣常用語，避免中國大陸用語。" +
+      "回應風格須專業、學術、精確、條理分明，符合國立成功大學正式文書、研究報告與學術論述之表達習慣。";
+
+    const chatBox = document.getElementById("chatBox");
+    const messageInput = document.getElementById("messageInput");
+    const statusText = document.getElementById("status");
+
+    let history = [
+      { role: "system", content: SYSTEM_PROMPT }
+    ];
+
+    function appendMessage(role, text) {
+      const div = document.createElement("div");
+      div.className = `message ${role}`;
+      div.textContent = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      return div;
+    }
+
+    function trimHistory(maxTurns = 10) {
+      const systemMsg = history[0];
+      const conversation = history.slice(1);
+      const keep = maxTurns * 2;
+      history = [systemMsg, ...conversation.slice(-keep)];
+    }
+
+    async function sendMessage() {
+      const message = messageInput.value.trim();
+      if (!message) return;
+
+      appendMessage("user", message);
+      messageInput.value = "";
+      statusText.textContent = "狀態：模型回應中…";
+
+      history.push({ role: "user", content: message });
+      trimHistory();
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${API_KEY}`
+          },
+          body: JSON.stringify({
+            model: MODEL,
+            messages: history,
+            temperature: 0.7,
+            max_tokens: 1200
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        const answer =
+          data?.choices?.[0]?.message?.content?.trim() || "模型未回傳內容。";
+
+        appendMessage("assistant", answer);
+        history.push({ role: "assistant", content: answer });
+        statusText.textContent = "狀態：完成";
+
+      } catch (error) {
+        appendMessage("assistant", `系統錯誤：${error.message}`);
+        statusText.textContent = "狀態：發生錯誤";
+      }
+    }
+
+    messageInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
+

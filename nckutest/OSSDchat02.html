@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>國立成功大學永續策略發展處專屬 LLM 機器人</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      background: #f4f6f8;
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 32px auto;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0b3d91, #1d4ed8);
+      color: #ffffff;
+      padding: 24px 28px;
+    }
+
+    .header h1 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
+      line-height: 1.3;
+    }
+
+    .header p {
+      margin: 0;
+      font-size: 15px;
+      opacity: 0.95;
+      line-height: 1.6;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #fafafa;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-left {
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    .toolbar-right {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chat-box {
+      height: 560px;
+      overflow-y: auto;
+      padding: 24px 20px;
+      background: #f9fafb;
+    }
+
+    .message {
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .message .role {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .user {
+      background: #dbeafe;
+      margin-left: 72px;
+      border: 1px solid #bfdbfe;
+    }
+
+    .assistant {
+      background: #ecfdf3;
+      margin-right: 72px;
+      border: 1px solid #bbf7d0;
+    }
+
+    .system {
+      background: #f3f4f6;
+      color: #374151;
+      border: 1px solid #e5e7eb;
+    }
+
+    .error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    .input-area {
+      padding: 18px 20px 22px 20px;
+      border-top: 1px solid #e5e7eb;
+      background: #ffffff;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    textarea {
+      flex: 1;
+      resize: vertical;
+      min-height: 88px;
+      max-height: 240px;
+      padding: 14px;
+      font-size: 16px;
+      line-height: 1.6;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 0 18px;
+      font-size: 15px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .send-btn {
+      background: #0b3d91;
+      color: #ffffff;
+      min-width: 92px;
+    }
+
+    .clear-btn {
+      background: #6b7280;
+      color: #ffffff;
+      padding: 10px 14px;
+    }
+
+    .sample-btn {
+      background: #e5e7eb;
+      color: #111827;
+      padding: 10px 14px;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .footer-note {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #9ca3af;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 0;
+        border-radius: 0;
+        min-height: 100vh;
+      }
+
+      .chat-box {
+        height: 52vh;
+      }
+
+      .user,
+      .assistant {
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      .input-row {
+        flex-direction: column;
+      }
+
+      .send-btn {
+        min-height: 46px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>國立成功大學永續策略發展處專屬 LLM 機器人</h1>
+      <p>
+        以繁體中文、台灣常用語與專業學術語境回應問題，適用於永續治理、ESG、SDGs、
+        校務發展、政策分析與研究寫作等情境。
+      </p>
+    </div>
+
+    <div class="toolbar">
+      <div class="toolbar-left">
+        模式：純 HTML + JavaScript 直接串接 API
+      </div>
+      <div class="toolbar-right">
+        <button class="sample-btn" onclick="fillSample('請介紹成功大學在大學永續治理上的可能重點方向。')">範例 1</button>
+        <button class="sample-btn" onclick="fillSample('請協助我撰寫一段正式、學術風格的校園淨零政策摘要。')">範例 2</button>
+        <button class="clear-btn" onclick="clearChat()">清空對話</button>
+      </div>
+    </div>
+
+    <div id="chatBox" class="chat-box">
+      <div class="message system">
+        <span class="role">系統</span>
+        您好，歡迎使用成大永續策略發展處專屬 LLM 機器人。請輸入您的問題。
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-row">
+        <textarea
+          id="messageInput"
+          placeholder="請輸入您的問題。按 Enter 送出，Shift + Enter 換行。"
+        ></textarea>
+        <button id="sendButton" class="send-btn" onclick="sendMessage()">送出</button>
+      </div>
+      <div id="status" class="status">狀態：待命中</div>
+      <div class="footer-note">
+        注意：此版本為前端直連 API，API 金鑰會出現在前端程式中，較適合本機測試或內網環境。
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // 基本設定
+    // =========================
+    const API_URL = "http://140.116.239.233:1234/v1/chat/completions";
+    const API_KEY = "lm-studio";
+    const MODEL = "google/gemma-3-27b";
+    const MAX_HISTORY_TURNS = 10;
+
+    const SYSTEM_PROMPT =
+      "你是國立成功大學永續策略發展處專屬 LLM 機器人。" +
+      "請全程以繁體中文回應，必要時可補充英文專有名詞。" +
+      "請使用台灣常用語，避免中國大陸用語。" +
+      "回應風格須專業、學術、精確、條理分明，符合國立成功大學正式文書、研究報告與學術論述之表達習慣。" +
+      "若問題涉及永續發展、ESG、SDGs、碳盤查、氣候變遷、校務治理、研究計畫、政策分析或高等教育治理，請優先採用結構化方式回答。" +
+      "若使用者輸入內容不完整、語句不通或出現亂碼，請先協助辨識並修正，再進行回覆。";
+
+    // =========================
+    // DOM 元素
+    // =========================
+    const chatBox = document.getElementById("chatBox");
+    const messageInput = document.getElementById("messageInput");
+    const statusText = document.getElementById("status");
+    const sendButton = document.getElementById("sendButton");
+
+    // =========================
+    // 對話歷程
+    // =========================
+    let history = [
+      { role: "system", content: SYSTEM_PROMPT }
+    ];
+
+    let isLoading = false;
+
+    function appendMessage(role, label, text, extraClass = "") {
+      const div = document.createElement("div");
+      div.className = `message ${role} ${extraClass}`.trim();
+
+      const roleSpan = document.createElement("span");
+      roleSpan.className = "role";
+      roleSpan.textContent = label;
+
+      const contentDiv = document.createElement("div");
+      contentDiv.textContent = text;
+
+      div.appendChild(roleSpan);
+      div.appendChild(contentDiv);
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      return contentDiv;
+    }
+
+    function trimHistory() {
+      const systemMsg = history[0];
+      const conversation = history.slice(1);
+      const keepCount = MAX_HISTORY_TURNS * 2;
+      history = [systemMsg, ...conversation.slice(-keepCount)];
+    }
+
+    function setLoadingState(loading) {
+      isLoading = loading;
+      sendButton.disabled = loading;
+      messageInput.disabled = loading;
+      sendButton.textContent = loading ? "送出中…" : "送出";
+      statusText.textContent = loading ? "狀態：模型回應中…" : "狀態：待命中";
+    }
+
+    function fillSample(text) {
+      messageInput.value = text;
+      messageInput.focus();
+    }
+
+    function clearChat() {
+      history = [{ role: "system", content: SYSTEM_PROMPT }];
+      chatBox.innerHTML = "";
+      appendMessage("system", "系統", "對話已清空。請重新輸入您的問題。");
+      statusText.textContent = "狀態：對話已清空";
+      messageInput.focus();
+    }
+
+    async function sendMessage() {
+      const message = messageInput.value.trim();
+      if (!message || isLoading) return;
+
+      appendMessage("user", "您", message);
+      messageInput.value = "";
+
+      history.push({ role: "user", content: message });
+      trimHistory();
+
+      const assistantContentDiv = appendMessage("assistant", "機器人", "");
+      setLoadingState(true);
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${API_KEY}`
+          },
+          body: JSON.stringify({
+            model: MODEL,
+            messages: history,
+            temperature: 0.7,
+            max_tokens: 1200
+          })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`HTTP ${response.status}：${errorText}`);
+        }
+
+        const data = await response.json();
+        const answer = data?.choices?.[0]?.message?.content?.trim() || "模型未回傳內容。";
+
+        assistantContentDiv.textContent = answer;
+        history.push({ role: "assistant", content: answer });
+        statusText.textContent = "狀態：完成";
+
+      } catch (error) {
+        assistantContentDiv.parentElement.classList.add("error");
+        assistantContentDiv.textContent = `系統錯誤：${error.message}`;
+        statusText.textContent = "狀態：發生錯誤";
+      } finally {
+        setLoadingState(false);
+        messageInput.focus();
+      }
+    }
+
+    messageInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
