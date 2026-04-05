@@ -10,56 +10,130 @@
     margin: 0;
     font-family: "Microsoft JhengHei", sans-serif;
     background: #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
   }
 
   .header {
     background: #243c8f;
     color: #fff;
-    padding: 16px 24px;
+    padding: 12px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
 
   .title {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
   }
 
   .btn {
     background: #fff;
     border: none;
-    padding: 8px 14px;
-    border-radius: 10px;
+    padding: 6px 12px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .btn:hover {
     background: #e2e8f0;
   }
 
+  .iframe-wrap {
+    position: relative;
+    flex: 1;
+  }
+
   iframe {
     width: 100%;
-    height: calc(100vh - 60px);
+    height: 100%;
     border: none;
+  }
+
+  /* loading 畫面 */
+  .loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 14px;
+    background: #f1f5f9;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  /* fallback 畫面 */
+  .fallback {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    background: #f8fafc;
+    color: #334155;
+  }
+
+  .fallback button {
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: none;
+    background: #243c8f;
+    color: white;
+    cursor: pointer;
   }
 </style>
 </head>
 
 <body>
 
-<div class="header">
+<header class="header">
   <div class="title">國立成功大學永續策略發展處 LLM 系統</div>
   <button class="btn" onclick="openApp()">另開視窗</button>
+</header>
+
+<div class="iframe-wrap">
+  <div id="loading" class="loading">載入系統中...</div>
+
+  <iframe
+    id="appFrame"
+    src="https://undescriptively-solar-lang.ngrok-free.dev/"
+    onload="hideLoading()">
+  </iframe>
+
+  <div id="fallback" class="fallback">
+    <div>系統無法嵌入顯示</div>
+    <button onclick="openApp()">點此開啟系統</button>
+  </div>
 </div>
 
-<iframe src="https://undescriptively-solar-lang.ngrok-free.dev/"></iframe>
-
 <script>
+  const APP_URL = "https://undescriptively-solar-lang.ngrok-free.dev/";
+
   function openApp() {
-    window.open("https://undescriptively-solar-lang.ngrok-free.dev/", "_blank");
+    window.open(APP_URL, "_blank", "noopener,noreferrer");
   }
+
+  function hideLoading() {
+    document.getElementById("loading").classList.add("hidden");
+  }
+
+  // 3 秒還沒載入 → 判定可能被 iframe 擋
+  setTimeout(() => {
+    const loading = document.getElementById("loading");
+    if (!loading.classList.contains("hidden")) {
+      loading.classList.add("hidden");
+      document.getElementById("fallback").style.display = "flex";
+    }
+  }, 3000);
 </script>
 
 </body>
