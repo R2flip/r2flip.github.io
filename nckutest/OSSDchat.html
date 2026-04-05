@@ -6,7 +6,9 @@
 <title>NCKU LLM</title>
 
 <style>
-  * { box-sizing: border-box; }
+  * {
+    box-sizing: border-box;
+  }
 
   body {
     margin: 0;
@@ -29,34 +31,10 @@
     font-weight: 700;
   }
 
-  .main {
-    padding: 40px 20px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .hero {
-    background: white;
-    border-radius: 20px;
-    padding: 32px;
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-  }
-
-  .hero h1 {
-    margin: 0 0 12px;
-    font-size: 28px;
-  }
-
-  .hero p {
-    margin: 0 0 24px;
-    color: #475569;
-    line-height: 1.7;
-  }
-
   .btn {
     border: none;
     border-radius: 12px;
-    padding: 12px 18px;
+    padding: 10px 16px;
     font-size: 14px;
     cursor: pointer;
     transition: 0.2s ease;
@@ -80,62 +58,87 @@
     background: #e2e8f0;
   }
 
-  /* 遮罩 */
-  .overlay {
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 20px;
+  }
+
+  .hero {
+    background: white;
+    border-radius: 24px;
+    padding: 36px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  }
+
+  .hero h1 {
+    margin: 0 0 12px;
+    font-size: 30px;
+  }
+
+  .hero p {
+    margin: 0 0 24px;
+    color: #475569;
+    line-height: 1.8;
+  }
+
+  /* Modal */
+  .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.35);
+    background: rgba(15, 23, 42, 0.45);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.28s ease;
+    transition: opacity 0.25s ease;
     z-index: 999;
   }
 
-  .overlay.show {
+  .modal-overlay.show {
     opacity: 1;
     pointer-events: auto;
   }
 
-  /* 右側滑入面板 */
-  .drawer {
+  .modal {
     position: fixed;
-    top: 0;
-    right: 0;
-    width: min(92vw, 1100px);
-    height: 100vh;
-    background: #ffffff;
-    box-shadow: -10px 0 30px rgba(15, 23, 42, 0.18);
-    transform: translateX(100%);
-    transition: transform 0.32s ease;
-    z-index: 1000;
+    inset: 20px;
+    background: white;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
     display: flex;
     flex-direction: column;
+    opacity: 0;
+    transform: scale(0.985) translateY(10px);
+    pointer-events: none;
+    transition: all 0.28s ease;
+    z-index: 1000;
   }
 
-  .drawer.show {
-    transform: translateX(0);
+  .modal.show {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    pointer-events: auto;
   }
 
-  .drawer-header {
+  .modal-header {
     height: 64px;
     background: #243c8f;
     color: white;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 16px 0 20px;
+    padding: 0 18px 0 22px;
     flex-shrink: 0;
   }
 
-  .drawer-title {
+  .modal-title {
     font-size: 16px;
     font-weight: 700;
   }
 
-  .drawer-actions {
+  .modal-actions {
     display: flex;
     gap: 10px;
-    align-items: center;
   }
 
   .icon-btn {
@@ -152,7 +155,7 @@
     background: rgba(255,255,255,0.24);
   }
 
-  .drawer-body {
+  .modal-body {
     position: relative;
     flex: 1;
     background: #f8fafc;
@@ -162,8 +165,8 @@
     width: 100%;
     height: 100%;
     border: none;
-    display: block;
     background: white;
+    display: block;
   }
 
   .loading {
@@ -172,9 +175,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    background: #f8fafc;
     color: #64748b;
     font-size: 14px;
-    background: #f8fafc;
     z-index: 2;
   }
 
@@ -190,27 +193,29 @@
     justify-content: center;
     flex-direction: column;
     gap: 14px;
-    background: #f8fafc;
-    color: #334155;
     text-align: center;
     padding: 24px;
+    background: #f8fafc;
+    color: #334155;
     z-index: 3;
   }
 
   .fallback h3 {
     margin: 0;
-    font-size: 20px;
+    font-size: 22px;
   }
 
   .fallback p {
     margin: 0;
+    line-height: 1.7;
     color: #64748b;
-    line-height: 1.6;
+    max-width: 520px;
   }
 
   @media (max-width: 768px) {
-    .drawer {
-      width: 100vw;
+    .modal {
+      inset: 0;
+      border-radius: 0;
     }
 
     .hero {
@@ -218,7 +223,21 @@
     }
 
     .hero h1 {
-      font-size: 22px;
+      font-size: 24px;
+    }
+
+    .modal-header {
+      height: 58px;
+      padding: 0 12px 0 16px;
+    }
+
+    .modal-actions {
+      gap: 8px;
+    }
+
+    .icon-btn {
+      padding: 7px 10px;
+      font-size: 12px;
     }
   }
 </style>
@@ -227,31 +246,33 @@
 
 <header class="header">
   <div class="title">國立成功大學永續策略發展處 LLM 系統</div>
-  <button class="btn btn-light" onclick="openDrawer()">開啟系統</button>
+  <button class="btn btn-light" onclick="openModal()">開啟系統</button>
 </header>
 
 <main class="main">
   <section class="hero">
     <h1>校內 LLM 系統入口</h1>
     <p>
-      點擊下方按鈕後，系統會從右側滑入顯示。若目標系統不允許嵌入，會自動顯示替代操作按鈕。
+      點擊下方按鈕後，系統將以全螢幕視窗開啟。若因安全性設定無法嵌入顯示，
+      系統會自動提供另開新視窗的替代操作。
     </p>
-    <button class="btn btn-primary" onclick="openDrawer()">立即進入</button>
+    <button class="btn btn-primary" onclick="openModal()">立即進入系統</button>
   </section>
 </main>
 
-<div id="overlay" class="overlay" onclick="closeDrawer()"></div>
+<div id="modalOverlay" class="modal-overlay" onclick="closeModal()"></div>
 
-<aside id="drawer" class="drawer" aria-hidden="true">
-  <div class="drawer-header">
-    <div class="drawer-title">NCKU LLM 系統</div>
-    <div class="drawer-actions">
+<div id="modal" class="modal" aria-hidden="true">
+  <div class="modal-header">
+    <div class="modal-title">NCKU LLM 系統</div>
+    <div class="modal-actions">
+      <button class="icon-btn" onclick="reloadFrame()">重新載入</button>
       <button class="icon-btn" onclick="openApp()">另開視窗</button>
-      <button class="icon-btn" onclick="closeDrawer()">關閉</button>
+      <button class="icon-btn" onclick="closeModal()">關閉</button>
     </div>
   </div>
 
-  <div class="drawer-body">
+  <div class="modal-body">
     <div id="loading" class="loading">載入系統中...</div>
 
     <iframe
@@ -263,16 +284,20 @@
 
     <div id="fallback" class="fallback">
       <h3>系統無法嵌入顯示</h3>
-      <p>此系統可能因安全性設定而無法在本頁面中開啟，請改用新視窗進入。</p>
+      <p>
+        目標系統可能因 iframe 安全性限制而無法直接顯示於本頁面，
+        請改用新視窗開啟。
+      </p>
       <button class="btn btn-primary" onclick="openApp()">點此開啟系統</button>
     </div>
   </div>
-</aside>
+</div>
 
 <script>
   const APP_URL = "https://undescriptively-solar-lang.ngrok-free.dev/";
-  const drawer = document.getElementById("drawer");
-  const overlay = document.getElementById("overlay");
+
+  const modal = document.getElementById("modal");
+  const modalOverlay = document.getElementById("modalOverlay");
   const frame = document.getElementById("appFrame");
   const loading = document.getElementById("loading");
   const fallback = document.getElementById("fallback");
@@ -281,20 +306,10 @@
   let loaded = false;
   let initialized = false;
 
-  function openDrawer() {
-    drawer.classList.add("show");
-    overlay.classList.add("show");
-    drawer.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
-
+  function startLoadingCheck() {
+    loaded = false;
     loading.classList.remove("hidden");
     fallback.style.display = "none";
-    loaded = false;
-
-    if (!initialized) {
-      frame.src = APP_URL;
-      initialized = true;
-    }
 
     clearTimeout(loadTimer);
     loadTimer = setTimeout(() => {
@@ -305,15 +320,35 @@
     }, 3000);
   }
 
-  function closeDrawer() {
-    drawer.classList.remove("show");
-    overlay.classList.remove("show");
-    drawer.setAttribute("aria-hidden", "true");
+  function openModal() {
+    modal.classList.add("show");
+    modalOverlay.classList.add("show");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+
+    if (!initialized) {
+      startLoadingCheck();
+      frame.src = APP_URL;
+      initialized = true;
+    } else {
+      startLoadingCheck();
+    }
+  }
+
+  function closeModal() {
+    modal.classList.remove("show");
+    modalOverlay.classList.remove("show");
+    modal.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
   }
 
   function openApp() {
     window.open(APP_URL, "_blank", "noopener,noreferrer");
+  }
+
+  function reloadFrame() {
+    startLoadingCheck();
+    frame.src = APP_URL;
   }
 
   function hideLoading() {
@@ -325,7 +360,7 @@
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-      closeDrawer();
+      closeModal();
     }
   });
 </script>
