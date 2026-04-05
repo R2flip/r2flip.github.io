@@ -1,89 +1,412 @@
-export default function LLMPortalPage() {
-  return (
-    <div className="min-h-screen bg-slate-100">
-      <div className="mx-auto min-h-screen max-w-[1600px] bg-white shadow-2xl">
-        {/* Top Section */}
-        <section className="bg-indigo-900 px-8 py-8 text-white md:px-14 md:py-10">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div className="max-w-4xl">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium backdrop-blur">
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-                NCKU Sustainability Strategy Development Office
-              </div>
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>國立成功大學永續策略發展處專屬 LLM 機器人</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-              <h1 className="mt-5 text-3xl font-extrabold tracking-tight md:text-5xl">
-                國立成功大學永續策略發展處專屬 LLM 機器人
-              </h1>
+    body {
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      min-height: 100vh;
+    }
 
-              <p className="mt-4 max-w-3xl text-base leading-8 text-indigo-100 md:text-xl">
-                以上下雙區塊方式整合校務專屬 LLM 入口與既有系統主畫面，
-                提供一致品牌識別、文件導向問答與集中操作體驗。
-              </p>
-            </div>
+    .page {
+      max-width: 1600px;
+      min-height: 100vh;
+      margin: 0 auto;
+      background: #ffffff;
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15);
+    }
 
-            <div className="grid gap-3 sm:grid-cols-3 lg:w-[460px]">
-              <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-                <div className="text-sm text-indigo-100">服務模式</div>
-                <div className="mt-1 text-lg font-bold">LLM 問答入口</div>
-              </div>
-              <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-                <div className="text-sm text-indigo-100">下方主畫面</div>
-                <div className="mt-1 text-lg font-bold">外部系統嵌入</div>
-              </div>
-              <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-                <div className="text-sm text-indigo-100">語言介面</div>
-                <div className="mt-1 text-lg font-bold">繁體中文</div>
-              </div>
-            </div>
+    .hero {
+      background: #243c8f;
+      color: #ffffff;
+      padding: 36px 56px;
+    }
+
+    .hero-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .hero-left {
+      max-width: 860px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      font-size: 14px;
+      backdrop-filter: blur(6px);
+    }
+
+    .badge-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #34d399;
+    }
+
+    .hero h1 {
+      margin-top: 20px;
+      font-size: 48px;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      margin-top: 16px;
+      max-width: 820px;
+      font-size: 20px;
+      line-height: 1.8;
+      color: #dbeafe;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 520px;
+      max-width: 100%;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 18px;
+      padding: 18px;
+      backdrop-filter: blur(6px);
+    }
+
+    .feature-card .icon {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    .feature-card .label {
+      font-size: 14px;
+      color: #dbeafe;
+    }
+
+    .feature-card .value {
+      margin-top: 6px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .content {
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 18px 32px;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      flex-wrap: wrap;
+    }
+
+    .content-title h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .content-title p {
+      margin-top: 6px;
+      font-size: 14px;
+      color: #64748b;
+    }
+
+    .content-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .status-badge {
+      background: #ecfdf5;
+      color: #047857;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn {
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      padding: 10px 16px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      background: #f8fafc;
+    }
+
+    .frame-wrap {
+      padding: 16px 24px 24px;
+    }
+
+    .browser {
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      border-radius: 24px;
+      background: #ffffff;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .browser-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 20px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      flex-wrap: wrap;
+    }
+
+    .browser-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot.red { background: #f87171; }
+    .dot.yellow { background: #fbbf24; }
+    .dot.green { background: #34d399; }
+
+    .url-box {
+      margin-left: 12px;
+      padding: 8px 12px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      color: #64748b;
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .browser-right {
+      font-size: 14px;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
+
+    .iframe-container {
+      height: calc(100vh - 260px);
+      min-height: 620px;
+      background: #e2e8f0;
+      position: relative;
+    }
+
+    .iframe-container iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    .note {
+      margin-top: 12px;
+      font-size: 12px;
+      line-height: 1.8;
+      color: #94a3b8;
+    }
+
+    @media (max-width: 1024px) {
+      .hero {
+        padding: 28px 24px;
+      }
+
+      .hero h1 {
+        font-size: 36px;
+      }
+
+      .hero p {
+        font-size: 17px;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+        width: 100%;
+      }
+
+      .content-header {
+        padding: 18px 20px;
+      }
+
+      .frame-wrap {
+        padding: 14px 16px 20px;
+      }
+
+      .iframe-container {
+        height: 70vh;
+        min-height: 500px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero h1 {
+        font-size: 30px;
+      }
+
+      .hero p {
+        font-size: 15px;
+        line-height: 1.7;
+      }
+
+      .content-title h2 {
+        font-size: 20px;
+      }
+
+      .browser-bar {
+        padding: 12px 14px;
+      }
+
+      .url-box {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="hero-left">
+          <div class="badge">
+            <span class="badge-dot"></span>
+            NCKU Sustainability Strategy Development Office
           </div>
-        </section>
 
-        {/* Bottom Section */}
-        <section className="border-t border-slate-200 bg-slate-50">
-          <div className="flex items-center justify-between gap-4 border-b border-slate-200 bg-white px-6 py-4 md:px-8">
-            <div>
-              <h2 className="text-xl font-bold text-slate-800">下方主畫面</h2>
-              <p className="mt-1 text-sm text-slate-500">
-                主要內容載入既有系統：undescriptively-solar-lang.ngrok-free.dev
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
-                Embedded App
-              </span>
-              <button className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100">
-                另開視窗
-              </button>
-            </div>
+          <h1>國立成功大學永續策略發展處專屬 LLM 機器人</h1>
+
+          <p>
+            以上下雙區塊方式整合校務專屬 LLM 入口與既有系統主畫面，
+            提供一致品牌識別、文件導向問答與集中操作體驗。
+          </p>
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="icon">💬</div>
+            <div class="label">服務模式</div>
+            <div class="value">LLM 問答入口</div>
           </div>
-
-          <div className="p-4 md:p-6">
-            <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
-              <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-5 py-3">
-                <div className="flex items-center gap-2 text-sm text-slate-600">
-                  <span className="h-3 w-3 rounded-full bg-red-400" />
-                  <span className="h-3 w-3 rounded-full bg-amber-400" />
-                  <span className="h-3 w-3 rounded-full bg-emerald-400" />
-                  <span className="ml-3 rounded-lg bg-white px-3 py-1 text-slate-500 border border-slate-200">
-                    https://undescriptively-solar-lang.ngrok-free.dev/
-                  </span>
-                </div>
-                <div className="text-sm text-slate-400">系統內嵌檢視</div>
-              </div>
-
-              <div className="h-[calc(100vh-270px)] min-h-[620px] bg-slate-100">
-                <iframe
-                  title="Main Embedded App"
-                  src="https://undescriptively-solar-lang.ngrok-free.dev/"
-                  className="h-full w-full border-0"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                />
-              </div>
-            </div>
+          <div class="feature-card">
+            <div class="icon">🌐</div>
+            <div class="label">下方主畫面</div>
+            <div class="value">外部系統嵌入</div>
           </div>
-        </section>
+          <div class="feature-card">
+            <div class="icon">繁</div>
+            <div class="label">語言介面</div>
+            <div class="value">繁體中文</div>
+          </div>
+        </div>
       </div>
-    </div>
-  );
-}
+    </section>
 
+    <section class="content">
+      <div class="content-header">
+        <div class="content-title">
+          <h2>下方主畫面</h2>
+          <p>主要內容載入既有系統：undescriptively-solar-lang.ngrok-free.dev</p>
+        </div>
+
+        <div class="content-actions">
+          <span class="status-badge">Embedded App</span>
+          <button class="btn" id="openWindowBtn">另開視窗</button>
+        </div>
+      </div>
+
+      <div class="frame-wrap">
+        <div class="browser">
+          <div class="browser-bar">
+            <div class="browser-left">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+              <div class="url-box" id="appUrlText">
+                https://undescriptively-solar-lang.ngrok-free.dev/
+              </div>
+            </div>
+            <div class="browser-right">系統內嵌檢視</div>
+          </div>
+
+          <div class="iframe-container">
+            <iframe
+              id="mainFrame"
+              title="Main Embedded App"
+              src="https://undescriptively-solar-lang.ngrok-free.dev/"
+              referrerpolicy="strict-origin-when-cross-origin"
+              loading="lazy"
+              allow="clipboard-read; clipboard-write"
+            ></iframe>
+          </div>
+        </div>
+
+        <p class="note">
+          若外部系統拒絕 iframe 載入，請改用「另開視窗」方式開啟。
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const APP_URL = "https://undescriptively-solar-lang.ngrok-free.dev/";
+    const openWindowBtn = document.getElementById("openWindowBtn");
+    const appUrlText = document.getElementById("appUrlText");
+    const mainFrame = document.getElementById("mainFrame");
+
+    appUrlText.textContent = APP_URL;
+    mainFrame.src = APP_URL;
+
+    openWindowBtn.addEventListener("click", function () {
+      window.open(APP_URL, "_blank", "noopener,noreferrer");
+    });
+  </script>
+</body>
+</html>
