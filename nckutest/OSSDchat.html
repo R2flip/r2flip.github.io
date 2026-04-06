@@ -326,7 +326,8 @@ function openModal() {
 
   // 0.5秒後跳轉（有動畫感）
   setTimeout(() => {
-    window.location.href = "https://undescriptively-solar-lang.ngrok-free.dev/auth?redirect=%2F";
+   // window.location.href = "https://undescriptively-solar-lang.ngrok-free.dev/auth?redirect=%2F";
+    window.open(APP_URL, "_blank");
   }, 500);
 }
 
