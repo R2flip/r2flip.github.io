@@ -1,369 +1,647 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NCKU LLM</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NCKU OSSD Chat</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<style>
-  * {
-    box-sizing: border-box;
-  }
+    body {
+      margin: 0;
+      font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      background: #f1f5f9;
+      color: #1f2937;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-  body {
-    margin: 0;
-    font-family: "Microsoft JhengHei", sans-serif;
-    background: #f1f5f9;
-    color: #1e293b;
-  }
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
 
-  .header {
-    background: #243c8f;
-    color: #fff;
-    padding: 14px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+    .header {
+      height: 64px;
+      background: linear-gradient(90deg, #1e3a8a, #243c8f);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+      position: relative;
+      z-index: 20;
+    }
 
-  .title {
-    font-size: 18px;
-    font-weight: 700;
-  }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
 
-  .btn {
-    border: none;
-    border-radius: 12px;
-    padding: 10px 16px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.2s ease;
-  }
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      backdrop-filter: blur(4px);
+    }
 
-  .btn-primary {
-    background: #243c8f;
-    color: white;
-  }
+    .title-wrap {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
 
-  .btn-primary:hover {
-    background: #1d3278;
-  }
+    .title {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
 
-  .btn-light {
-    background: white;
-    color: #243c8f;
-  }
+    .subtitle {
+      font-size: 12px;
+      opacity: 0.85;
+      white-space: nowrap;
+    }
 
-  .btn-light:hover {
-    background: #e2e8f0;
-  }
+    .header-right {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
 
-  .main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 48px 20px;
-  }
+    .user-trigger {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px 12px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      user-select: none;
+    }
 
-  .hero {
-    background: white;
-    border-radius: 24px;
-    padding: 36px;
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-  }
+    .user-trigger:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
 
-  .hero h1 {
-    margin: 0 0 12px;
-    font-size: 30px;
-  }
+    .avatar-wrap {
+      width: 40px;
+      height: 40px;
+      position: relative;
+      flex-shrink: 0;
+    }
 
-  .hero p {
-    margin: 0 0 24px;
-    color: #475569;
-    line-height: 1.8;
-  }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      background: #dbeafe;
+      border: 2px solid rgba(255,255,255,0.75);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
 
-  /* Modal */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.45);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease;
-    z-index: 999;
-  }
-
-  .modal-overlay.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .modal {
-    position: fixed;
-    inset: 20px;
-    background: white;
-    border-radius: 22px;
-    overflow: hidden;
-    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
-    display: flex;
-    flex-direction: column;
-    opacity: 0;
-    transform: scale(0.985) translateY(10px);
-    pointer-events: none;
-    transition: all 0.28s ease;
-    z-index: 1000;
-  }
-
-  .modal.show {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-    pointer-events: auto;
-  }
-
-  .modal-header {
-    height: 64px;
-    background: #243c8f;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 18px 0 22px;
-    flex-shrink: 0;
-  }
-
-  .modal-title {
-    font-size: 16px;
-    font-weight: 700;
-  }
-
-  .modal-actions {
-    display: flex;
-    gap: 10px;
-  }
-
-  .icon-btn {
-    border: none;
-    background: rgba(255,255,255,0.14);
-    color: white;
-    border-radius: 10px;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-size: 13px;
-  }
-
-  .icon-btn:hover {
-    background: rgba(255,255,255,0.24);
-  }
-
-  .modal-body {
-    position: relative;
-    flex: 1;
-    background: #f8fafc;
-  }
-
-  iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    background: white;
-    display: block;
-  }
-
-  .loading {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f8fafc;
-    color: #64748b;
-    font-size: 14px;
-    z-index: 2;
-  }
-
-  .hidden {
-    display: none !important;
-  }
-
-  .fallback {
-    position: absolute;
-    inset: 0;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 14px;
-    text-align: center;
-    padding: 24px;
-    background: #f8fafc;
-    color: #334155;
-    z-index: 3;
-  }
-
-  .fallback h3 {
-    margin: 0;
-    font-size: 22px;
-  }
-
-  .fallback p {
-    margin: 0;
-    line-height: 1.7;
-    color: #64748b;
-    max-width: 520px;
-  }
-
-  @media (max-width: 768px) {
-    .modal {
+    .avatar-loading {
+      position: absolute;
       inset: 0;
-      border-radius: 0;
+      border-radius: 50%;
+      background: linear-gradient(90deg, #dbeafe 25%, #eff6ff 50%, #dbeafe 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite linear;
+      border: 2px solid rgba(255,255,255,0.75);
     }
 
-    .hero {
-      padding: 24px;
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
 
-    .hero h1 {
-      font-size: 24px;
+    .user-meta {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
     }
 
-    .modal-header {
-      height: 58px;
-      padding: 0 12px 0 16px;
+    .user-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
     }
 
-    .modal-actions {
+    .user-status {
+      font-size: 12px;
+      color: rgba(255,255,255,0.9);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      display: inline-block;
+      box-shadow: 0 0 0 3px rgba(34,197,94,0.18);
+    }
+
+    .caret {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-left: 4px;
+    }
+
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      width: 330px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+      border: 1px solid #e5e7eb;
+      padding: 14px;
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+      pointer-events: none;
+      transition: all 0.2s ease;
+    }
+
+    .dropdown.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .dropdown-user {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 16px;
+    }
+
+    .dropdown-user img {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #e5e7eb;
+    }
+
+    .dropdown-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .dropdown-status {
+      font-size: 14px;
+      color: #4b5563;
+      display: flex;
+      align-items: center;
       gap: 8px;
     }
 
-    .icon-btn {
-      padding: 7px 10px;
-      font-size: 12px;
+    .status-dot-lg {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      display: inline-block;
     }
-  }
-</style>
+
+    .status-btn {
+      margin-top: 12px;
+      width: 100%;
+      border: none;
+      background: #f3f4f6;
+      color: #111827;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .status-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .menu-divider {
+      height: 1px;
+      background: #e5e7eb;
+      margin: 14px 0 10px;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 12px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      color: #111827;
+      font-size: 16px;
+    }
+
+    .menu-item:hover {
+      background: #f3f4f6;
+    }
+
+    .menu-icon {
+      width: 24px;
+      text-align: center;
+      font-size: 20px;
+      color: #374151;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: #ffffff;
+      border-right: 1px solid #e5e7eb;
+      padding: 18px;
+      overflow-y: auto;
+    }
+
+    .sidebar-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e3a8a;
+      margin-bottom: 14px;
+    }
+
+    .chat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-item {
+      padding: 14px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .chat-item:hover {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+
+    .chat-item.active {
+      background: #dbeafe;
+      border-color: #93c5fd;
+    }
+
+    .chat-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: #f8fafc;
+    }
+
+    .chat-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(6px);
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .msg {
+      max-width: 720px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      line-height: 1.6;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .msg.bot {
+      align-self: flex-start;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+    }
+
+    .msg.user {
+      align-self: flex-end;
+      background: #243c8f;
+      color: #fff;
+    }
+
+    .input-area {
+      border-top: 1px solid #e5e7eb;
+      background: #fff;
+      padding: 14px 16px;
+    }
+
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f8fafc;
+      border: 1px solid #d1d5db;
+      border-radius: 18px;
+      padding: 10px;
+    }
+
+    .input-wrap input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 15px;
+      padding: 8px;
+    }
+
+    .send-btn {
+      border: none;
+      background: #243c8f;
+      color: #fff;
+      border-radius: 12px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s ease;
+    }
+
+    .send-btn:hover {
+      background: #1e3a8a;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        display: none;
+      }
+
+      .dropdown {
+        width: 300px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .header {
+        padding: 0 12px;
+      }
+
+      .title {
+        font-size: 15px;
+      }
+
+      .subtitle,
+      .user-meta {
+        display: none;
+      }
+
+      .dropdown {
+        width: min(92vw, 320px);
+        right: -6px;
+      }
+
+      .messages {
+        padding: 16px;
+      }
+
+      .msg {
+        max-width: 92%;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="app">
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">成</div>
+        <div class="title-wrap">
+          <div class="title">NCKU OSSD 智慧校務助理</div>
+          <div class="subtitle">Office of Sustainable Smart Development</div>
+        </div>
+      </div>
 
-<header class="header">
-  <div class="title">國立成功大學永續策略發展處 LLM 系統</div>
-  <button class="btn btn-light" onclick="openModal()">開啟系統</button>
-</header>
+      <div class="header-right">
+        <div class="user-trigger" id="userTrigger">
+          <div class="avatar-wrap">
+            <div class="avatar-loading" id="avatarLoading"></div>
+            <img id="avatar" class="avatar" alt="avatar" />
+          </div>
+          <div class="user-meta">
+            <div class="user-name">OSSD_User02</div>
+            <div class="user-status">
+              <span class="status-dot"></span>
+              線上
+            </div>
+          </div>
+          <div class="caret">▾</div>
+        </div>
 
-<main class="main">
-  <section class="hero">
-    <h1>校內 LLM 系統入口</h1>
-    <p>
-      點擊下方按鈕後，系統將以全螢幕視窗開啟。若因安全性設定無法嵌入顯示，
-      系統會自動提供另開新視窗的替代操作。
-    </p>
-    <button class="btn btn-primary" onclick="openModal()">立即進入系統</button>
-  </section>
-</main>
+        <div class="dropdown" id="dropdownMenu">
+          <div class="dropdown-user">
+            <img id="dropdownAvatar" alt="profile" />
+            <div>
+              <div class="dropdown-name">OSSD_User02</div>
+              <div class="dropdown-status">
+                <span class="status-dot-lg"></span>
+                線上
+              </div>
+            </div>
+          </div>
 
-<div id="modalOverlay" class="modal-overlay" onclick="closeModal()"></div>
+          <button class="status-btn">🙂 更新您的狀態</button>
 
-<div id="modal" class="modal" aria-hidden="true">
-  <div class="modal-header">
-    <div class="modal-title">NCKU LLM 系統</div>
-    <div class="modal-actions">
-      <button class="icon-btn" onclick="reloadFrame()">重新載入</button>
-      <button class="icon-btn" onclick="openApp()">另開視窗</button>
-      <button class="icon-btn" onclick="closeModal()">關閉</button>
+          <div class="menu-divider"></div>
+
+          <div class="menu-item">
+            <span class="menu-icon">⚙️</span>
+            <span>設定</span>
+          </div>
+          <div class="menu-item">
+            <span class="menu-icon">🗂️</span>
+            <span>封存的對話紀錄</span>
+          </div>
+          <div class="menu-item">
+            <span class="menu-icon">🚪</span>
+            <span>登出</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <aside class="sidebar">
+        <div class="sidebar-title">最近對話</div>
+        <div class="chat-list">
+          <div class="chat-item active">智慧校務平台整合規劃</div>
+          <div class="chat-item">AI 驅動校務文案</div>
+          <div class="chat-item">永續創新成果彙整</div>
+          <div class="chat-item">系統 UI 視覺優化</div>
+        </div>
+      </aside>
+
+      <main class="chat-main">
+        <div class="chat-header">智慧校務助理對話視窗</div>
+
+        <div class="messages" id="messages">
+          <div class="msg bot">您好，歡迎使用 NCKU OSSD 智慧校務助理。</div>
+          <div class="msg user">請協助我查詢系統整合進度。</div>
+          <div class="msg bot">目前已完成前端入口、使用者選單與頭像載入優化。</div>
+        </div>
+
+        <div class="input-area">
+          <div class="input-wrap">
+            <input id="messageInput" type="text" placeholder="請輸入訊息..." />
+            <button class="send-btn" id="sendBtn">送出</button>
+          </div>
+        </div>
+      </main>
     </div>
   </div>
 
-  <div class="modal-body">
-    <div id="loading" class="loading">載入系統中...</div>
+  <script>
+    const API_URL = "https://undescriptively-solar-lang.ngrok-free.dev/api/v1/users/e43db23a-16b8-49de-8bfb-ba36420dec95/profile/image";
 
-    <iframe
-      id="appFrame"
-      title="NCKU LLM"
-      src=""
-      onload="hideLoading()">
-    </iframe>
+    // 如果有 token 就填入，沒有就留空字串
+    const TOKEN = "3Bu4PX1k2jLQcTBpBLapmnLNH5O_5adFJqpvaJRjZ5VVqpTFX";
 
-    <div id="fallback" class="fallback">
-      <h3>系統無法嵌入顯示</h3>
-      <p>
-        目標系統可能因 iframe 安全性限制而無法直接顯示於本頁面，
-        請改用新視窗開啟。
-      </p>
-      <button class="btn btn-primary" onclick="openApp()">點此開啟系統</button>
-    </div>
-  </div>
-</div>
+    const avatar = document.getElementById("avatar");
+    const dropdownAvatar = document.getElementById("dropdownAvatar");
+    const avatarLoading = document.getElementById("avatarLoading");
+    const userTrigger = document.getElementById("userTrigger");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    const messageInput = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const messages = document.getElementById("messages");
 
-<script>
-  const APP_URL = "https://undescriptively-solar-lang.ngrok-free.dev/";
+    function fallbackAvatar() {
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+          <rect width="100%" height="100%" fill="#dbeafe"/>
+          <circle cx="40" cy="30" r="14" fill="#93c5fd"/>
+          <path d="M20 66c4-12 16-18 20-18s16 6 20 18" fill="#93c5fd"/>
+        </svg>
+      `;
+      const dataUrl = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+      avatar.src = dataUrl;
+      dropdownAvatar.src = dataUrl;
+      avatarLoading.style.display = "none";
+    }
 
-  const modal = document.getElementById("modal");
-  const modalOverlay = document.getElementById("modalOverlay");
-  const frame = document.getElementById("appFrame");
-  const loading = document.getElementById("loading");
-  const fallback = document.getElementById("fallback");
+    async function loadAvatar() {
+      try {
+        const options = TOKEN
+          ? {
+              headers: {
+                Authorization: `Bearer ${TOKEN}`
+              }
+            }
+          : {};
 
-  let loadTimer = null;
-  let loaded = false;
-  let initialized = false;
+        const res = await fetch(API_URL, options);
 
-  function startLoadingCheck() {
-    loaded = false;
-    loading.classList.remove("hidden");
-    fallback.style.display = "none";
+        if (!res.ok) {
+          throw new Error("image fetch failed");
+        }
 
-    clearTimeout(loadTimer);
-    loadTimer = setTimeout(() => {
-      if (!loaded) {
-        loading.classList.add("hidden");
-        fallback.style.display = "flex";
+        const contentType = res.headers.get("content-type") || "";
+        if (!contentType.startsWith("image/")) {
+          throw new Error("response is not image");
+        }
+
+        const blob = await res.blob();
+        const objectUrl = URL.createObjectURL(blob);
+
+        avatar.src = objectUrl;
+        dropdownAvatar.src = objectUrl;
+        avatarLoading.style.display = "none";
+      } catch (error) {
+        console.error("頭像載入失敗：", error);
+        fallbackAvatar();
       }
-    }, 3000);
-  }
-
-  function openModal() {
-    modal.classList.add("show");
-    modalOverlay.classList.add("show");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
-
-    if (!initialized) {
-      startLoadingCheck();
-      frame.src = APP_URL;
-      initialized = true;
-    } else {
-      startLoadingCheck();
     }
-  }
 
-  function closeModal() {
-    modal.classList.remove("show");
-    modalOverlay.classList.remove("show");
-    modal.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
-  }
-
-  function openApp() {
-    window.open(APP_URL, "_blank", "noopener,noreferrer");
-  }
-
-  function reloadFrame() {
-    startLoadingCheck();
-    frame.src = APP_URL;
-  }
-
-  function hideLoading() {
-    loaded = true;
-    clearTimeout(loadTimer);
-    loading.classList.add("hidden");
-    fallback.style.display = "none";
-  }
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      closeModal();
+    function toggleDropdown() {
+      dropdownMenu.classList.toggle("show");
     }
-  });
-</script>
 
+    function closeDropdown() {
+      dropdownMenu.classList.remove("show");
+    }
+
+    userTrigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleDropdown();
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!dropdownMenu.contains(e.target) && !userTrigger.contains(e.target)) {
+        closeDropdown();
+      }
+    });
+
+    function appendMessage(text, type = "user") {
+      const div = document.createElement("div");
+      div.className = `msg ${type}`;
+      div.textContent = text;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function sendMessage() {
+      const text = messageInput.value.trim();
+      if (!text) return;
+
+      appendMessage(text, "user");
+      messageInput.value = "";
+
+      setTimeout(() => {
+        appendMessage("已收到您的訊息，系統可再串接後端 API 或 LLM 回應。", "bot");
+      }, 500);
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    messageInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
+
+    loadAvatar();
+  </script>
 </body>
 </html>
