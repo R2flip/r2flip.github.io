@@ -3,362 +3,440 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NCKU LLM</title>
+<title>NCKU OSSD LLM System</title>
 
 <style>
   * {
     box-sizing: border-box;
   }
 
-  body {
-    margin: 0;
-    font-family: "Microsoft JhengHei", sans-serif;
-    background: #f1f5f9;
-    color: #1e293b;
+  :root {
+    --blue-1: #35479a;
+    --blue-2: #4e67d8;
+    --blue-3: #6f86ea;
+    --text: #14213d;
+    --muted: #5b6785;
+    --bg: #eef2f7;
+    --card: #ffffff;
+    --border: #dfe5f0;
+    --shadow: 0 14px 32px rgba(34, 54, 102, 0.08);
   }
 
-  .header {
-    background: #243c8f;
-    color: #fff;
-    padding: 14px 20px;
+  body {
+    margin: 0;
+    font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    background: linear-gradient(180deg, #f7f9fc 0%, #eef2f7 100%);
+    color: var(--text);
+  }
+
+  .page {
+    max-width: 1860px;
+    margin: 0 auto;
+    padding: 18px 28px 36px;
+  }
+
+  /* top bar */
+  .topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 16px;
+    margin-bottom: 26px;
   }
 
-  .title {
-    font-size: 18px;
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-width: 0;
+  }
+
+  .brand-logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #31449a, #4b63d2);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
     font-weight: 700;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+
+  .brand-text {
+    min-width: 0;
+  }
+
+  .brand-title {
+    margin: 0 0 6px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #0f1f47;
+  }
+
+  .brand-subtitle {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .top-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
   }
 
   .btn {
     border: none;
-    border-radius: 12px;
-    padding: 10px 16px;
-    font-size: 14px;
+    border-radius: 18px;
+    padding: 16px 26px;
+    font-size: 16px;
+    font-weight: 700;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
   }
 
-  .btn-primary {
-    background: #243c8f;
-    color: white;
-  }
-
-  .btn-primary:hover {
-    background: #1d3278;
+  .btn:hover {
+    transform: translateY(-1px);
   }
 
   .btn-light {
-    background: white;
-    color: #243c8f;
+    background: #fff;
+    color: #25346d;
+    border: 1px solid #d8dfec;
+    box-shadow: 0 6px 18px rgba(36, 60, 143, 0.05);
   }
 
-  .btn-light:hover {
-    background: #e2e8f0;
+  .btn-primary {
+    background: linear-gradient(135deg, #3e52ba, #4a5fd4);
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(62, 82, 186, 0.22);
   }
 
-  .main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 48px 20px;
-  }
-
+  /* hero */
   .hero {
-    background: white;
-    border-radius: 24px;
-    padding: 36px;
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-  }
-
-  .hero h1 {
-    margin: 0 0 12px;
-    font-size: 30px;
-  }
-
-  .hero p {
-    margin: 0 0 24px;
-    color: #475569;
-    line-height: 1.8;
-  }
-
-  /* Modal */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.45);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease;
-    z-index: 999;
-  }
-
-  .modal-overlay.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .modal {
-    position: fixed;
-    inset: 20px;
-    background: white;
-    border-radius: 22px;
+    position: relative;
     overflow: hidden;
-    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
-    display: flex;
-    flex-direction: column;
-    opacity: 0;
-    transform: scale(0.985) translateY(10px);
+    border-radius: 34px;
+    padding: 44px 46px;
+    min-height: 308px;
+    background: linear-gradient(90deg, #374996 0%, #5067d0 58%, #647de2 100%);
+    color: #fff;
+    box-shadow: 0 18px 38px rgba(52, 73, 154, 0.18);
+  }
+
+  .hero::before,
+  .hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
     pointer-events: none;
-    transition: all 0.28s ease;
-    z-index: 1000;
   }
 
-  .modal.show {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-    pointer-events: auto;
+  .hero::before {
+    width: 330px;
+    height: 330px;
+    right: -70px;
+    top: -26px;
   }
 
-  .modal-header {
-    height: 64px;
-    background: #243c8f;
-    color: white;
+  .hero::after {
+    width: 240px;
+    height: 240px;
+    right: 180px;
+    bottom: -105px;
+    background: rgba(255,255,255,0.10);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1220px;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    margin-bottom: 22px;
+    padding: 11px 18px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: rgba(255,255,255,0.95);
+    font-size: 18px;
+    backdrop-filter: blur(10px);
+  }
+
+  .hero-title {
+    margin: 0 0 20px;
+    font-size: 56px;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .hero-desc {
+    margin: 0;
+    max-width: 1240px;
+    color: rgba(255,255,255,0.94);
+    font-size: 20px;
+    line-height: 2;
+  }
+
+  /* features */
+  .feature-grid {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .feature-card {
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 26px 26px 28px;
+    box-shadow: var(--shadow);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 34px rgba(34, 54, 102, 0.12);
+  }
+
+  .feature-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #eef2ff, #dfe7ff);
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 18px 0 22px;
-    flex-shrink: 0;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 18px;
   }
 
-  .modal-title {
-    font-size: 16px;
+  .feature-title {
+    margin: 0 0 12px;
+    font-size: 20px;
+    color: #1c284f;
     font-weight: 700;
   }
 
-  .modal-actions {
-    display: flex;
-    gap: 10px;
+  .feature-desc {
+    margin: 0;
+    color: #5a6787;
+    font-size: 16px;
+    line-height: 1.9;
   }
 
-  .icon-btn {
-    border: none;
-    background: rgba(255,255,255,0.14);
-    color: white;
-    border-radius: 10px;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-size: 13px;
-  }
-
-  .icon-btn:hover {
-    background: rgba(255,255,255,0.24);
-  }
-
-  .modal-body {
-    position: relative;
-    flex: 1;
-    background: #f8fafc;
-  }
-
-  iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    background: white;
-    display: block;
-  }
-
-  .loading {
-    position: absolute;
+  /* loading overlay */
+  .screen-loading {
+    position: fixed;
     inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f8fafc;
-    color: #64748b;
-    font-size: 14px;
-    z-index: 2;
-  }
-
-  .hidden {
-    display: none !important;
-  }
-
-  .fallback {
-    position: absolute;
-    inset: 0;
+    background: rgba(244, 247, 252, 0.88);
+    backdrop-filter: blur(4px);
     display: none;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    gap: 14px;
+    z-index: 9999;
+  }
+
+  .screen-loading.show {
+    display: flex;
+  }
+
+  .loading-box {
+    background: #fff;
+    border-radius: 24px;
+    padding: 26px 32px;
+    box-shadow: 0 18px 38px rgba(34, 54, 102, 0.16);
     text-align: center;
-    padding: 24px;
-    background: #f8fafc;
-    color: #334155;
-    z-index: 3;
+    min-width: 260px;
   }
 
-  .fallback h3 {
+  .spinner {
+    width: 42px;
+    height: 42px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    border: 4px solid #dce4ff;
+    border-top-color: #4b62d0;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .loading-text {
     margin: 0;
-    font-size: 22px;
+    color: #41517f;
+    font-size: 16px;
+    font-weight: 600;
   }
 
-  .fallback p {
-    margin: 0;
-    line-height: 1.7;
-    color: #64748b;
-    max-width: 520px;
+  @media (max-width: 1280px) {
+    .hero-title {
+      font-size: 42px;
+    }
+
+    .hero-desc {
+      font-size: 18px;
+    }
+
+    .feature-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
-  @media (max-width: 768px) {
-    .modal {
-      inset: 0;
-      border-radius: 0;
+  @media (max-width: 820px) {
+    .page {
+      padding: 16px 16px 28px;
+    }
+
+    .topbar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .top-actions {
+      width: 100%;
+    }
+
+    .top-actions .btn {
+      flex: 1;
     }
 
     .hero {
-      padding: 24px;
+      padding: 28px 24px;
+      min-height: auto;
     }
 
-    .hero h1 {
-      font-size: 24px;
+    .hero-title {
+      font-size: 32px;
     }
 
-    .modal-header {
-      height: 58px;
-      padding: 0 12px 0 16px;
+    .hero-badge {
+      font-size: 14px;
+      line-height: 1.5;
     }
 
-    .modal-actions {
-      gap: 8px;
+    .hero-desc {
+      font-size: 16px;
+      line-height: 1.8;
     }
 
-    .icon-btn {
-      padding: 7px 10px;
-      font-size: 12px;
+    .feature-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .brand-title {
+      font-size: 20px;
+    }
+
+    .brand-subtitle {
+      font-size: 14px;
     }
   }
 </style>
 </head>
 <body>
 
-<header class="header">
-  <div class="title">國立成功大學永續策略發展處 LLM 系統</div>
-  <button class="btn btn-light" onclick="openModal()">開啟系統</button>
-</header>
+<div class="page">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo">NCKU</div>
+      <div class="brand-text">
+        <h1 class="brand-title">NCKU OSSD LLM System</h1>
+        <p class="brand-subtitle">國立成功大學永續策略發展處 ｜ 本地端校內部署智慧知識系統</p>
+      </div>
+    </div>
 
-<main class="main">
+    <div class="top-actions">
+      <button class="btn btn-light" onclick="viewSystem()">查看系統</button>
+      <button class="btn btn-primary" onclick="openApp()">另開視窗</button>
+    </div>
+  </header>
+
   <section class="hero">
-    <h1>校內 LLM 系統入口</h1>
-    <p>
-      點擊下方按鈕後，系統將以全螢幕視窗開啟。若因安全性設定無法嵌入顯示，
-      系統會自動提供另開新視窗的替代操作。
-    </p>
-    <button class="btn btn-primary" onclick="openModal()">立即進入系統</button>
-  </section>
-</main>
-
-<div id="modalOverlay" class="modal-overlay" onclick="closeModal()"></div>
-
-<div id="modal" class="modal" aria-hidden="true">
-  <div class="modal-header">
-    <div class="modal-title">NCKU LLM 系統</div>
-    <div class="modal-actions">
-      <button class="icon-btn" onclick="reloadFrame()">重新載入</button>
-      <button class="icon-btn" onclick="openApp()">另開視窗</button>
-      <button class="icon-btn" onclick="closeModal()">關閉</button>
-    </div>
-  </div>
-
-  <div class="modal-body">
-    <div id="loading" class="loading">載入系統中...</div>
-
-    <iframe
-      id="appFrame"
-      title="NCKU LLM"
-      src=""
-      onload="hideLoading()">
-    </iframe>
-
-    <div id="fallback" class="fallback">
-      <h3>系統無法嵌入顯示</h3>
-      <p>
-        目標系統可能因 iframe 安全性限制而無法直接顯示於本頁面，
-        請改用新視窗開啟。
+    <div class="hero-content">
+      <div class="hero-badge">Local Deployment ・ No Third-Party Data ・ Secure Knowledge System</div>
+      <h2 class="hero-title">國立成功大學永續策略發展處 LLM 系統 ｜ AI驅動校務</h2>
+      <p class="hero-desc">
+        本系統採完全本地端部署架構，所有資料運算與儲存均於校內機器完成，確保資訊安全與資料主權。
+        在不依賴第三方平台的前提下，建立專屬於校內的智慧知識系統，作為支撐永續治理、知識整合與策略決策的重要基礎設施。
       </p>
-      <button class="btn btn-primary" onclick="openApp()">點此開啟系統</button>
     </div>
+  </section>
+
+  <section class="feature-grid">
+    <article class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3 class="feature-title">本地端大語言模型部署</h3>
+      <p class="feature-desc">
+        不透過外部 API，降低敏感資料外流風險，確保校務資訊與研究內容完整保護。
+      </p>
+    </article>
+
+    <article class="feature-card">
+      <div class="feature-icon">📚</div>
+      <h3 class="feature-title">校內資料專屬訓練與檢索</h3>
+      <p class="feature-desc">
+        整合校務文件、永續報告、政策資料與研究成果，使回應更具脈絡理解與準確性。
+      </p>
+    </article>
+
+    <article class="feature-card">
+      <div class="feature-icon">🧩</div>
+      <h3 class="feature-title">模組化系統設計</h3>
+      <p class="feature-desc">
+        可延伸至教學、行政、研究與永續評估等多元場景，形成跨領域應用基盤。
+      </p>
+    </article>
+
+    <article class="feature-card">
+      <div class="feature-icon">⚙️</div>
+      <h3 class="feature-title">高隱私與高可控性</h3>
+      <p class="feature-desc">
+        模型行為、資料來源與權限控管皆可由校內自主調整，符合未來 AI 校務治理需求。
+      </p>
+    </article>
+  </section>
+</div>
+
+<div id="screenLoading" class="screen-loading">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <p class="loading-text">正在前往系統登入頁面...</p>
   </div>
 </div>
 
 <script>
-  const APP_URL = "https://undescriptively-solar-lang.ngrok-free.dev/";
+  const APP_URL = "https://undescriptively-solar-lang.ngrok-free.dev/auth?redirect=%2F";
 
-  const modal = document.getElementById("modal");
-  const modalOverlay = document.getElementById("modalOverlay");
-  const frame = document.getElementById("appFrame");
-  const loading = document.getElementById("loading");
-  const fallback = document.getElementById("fallback");
+  function showLoadingAndRedirect(target = APP_URL) {
+    const loading = document.getElementById("screenLoading");
+    loading.classList.add("show");
 
-  let loadTimer = null;
-  let loaded = false;
-  let initialized = false;
-
-  function startLoadingCheck() {
-    loaded = false;
-    loading.classList.remove("hidden");
-    fallback.style.display = "none";
-
-    clearTimeout(loadTimer);
-    loadTimer = setTimeout(() => {
-      if (!loaded) {
-        loading.classList.add("hidden");
-        fallback.style.display = "flex";
-      }
-    }, 3000);
+    setTimeout(() => {
+      window.location.href = target;
+    }, 500);
   }
 
-function openModal() {
-  // 顯示 loading UI（可選）
-  document.getElementById("loading").classList.remove("hidden");
-
-  // 0.5秒後跳轉（有動畫感）
-  setTimeout(() => {
-   // window.location.href = "https://undescriptively-solar-lang.ngrok-free.dev/auth?redirect=%2F";
-    window.open(APP_URL, "_blank");
-  }, 500);
-}
-
-  function closeModal() {
-    modal.classList.remove("show");
-    modalOverlay.classList.remove("show");
-    modal.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
+  function viewSystem() {
+    showLoadingAndRedirect();
   }
 
   function openApp() {
     window.open(APP_URL, "_blank", "noopener,noreferrer");
   }
-
-  function reloadFrame() {
-    startLoadingCheck();
-    frame.src = APP_URL;
-  }
-
-  function hideLoading() {
-    loaded = true;
-    clearTimeout(loadTimer);
-    loading.classList.add("hidden");
-    fallback.style.display = "none";
-  }
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      closeModal();
-    }
-  });
 </script>
 
 </body>
