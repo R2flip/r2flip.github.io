@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YuLab 投稿追蹤系統</title>
+  <style>
+    html, body { height: 100%; margin: 0; }
+
+    .wrap { position: fixed; inset: 0; display: grid; grid-template-rows: auto 1fr; }
+    header {
+      padding: 8px 12px;
+      font: 14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans TC","PingFang TC","Microsoft JhengHei",Arial;
+      background: #f7f7f7; border-bottom: 1px solid #e5e5e5;
+      display: flex; align-items: center; gap: 8px;
+    }
+    header b { font-weight: 600; }
+    #openBtn { padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; background: #fff; cursor: pointer; }
+    #status { color: #666; }
+    iframe { width: 100%; height: 100%; border: 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+
+    </header>
+
+    <!-- Google Apps Script -->
+    <iframe id="gasFrame"
+      src="https://script.google.com/macros/s/AKfycbxlK29woLVcZvcVdctRyQi1kr2ScLzF8Jd5xdJq4MpFxdNKdhyDnQKCZDw5_grzHEaezw/exec"
+      loading="eager"
+      allow="fullscreen"
+      referrerpolicy="no-referrer">
+    </iframe>
+  </div>
+
+</body>
+</html>
