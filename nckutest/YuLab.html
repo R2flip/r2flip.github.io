@@ -35,5 +35,68 @@
     </iframe>
   </div>
 
+<script>
+(function() {
+  const certURL = "https://140.116.239.233:444/mycert.crt";
+  const checkURL = "https://140.116.239.233:444/test.html"; // 伺服器可提供一個簡單頁面
+  const btn = document.getElementById("openBtn");
+  const status = document.getElementById("status");
+
+  // 下載憑證
+  btn.addEventListener("click", () => {
+    const a = document.createElement("a");
+    a.href = certURL;
+    a.download = "mycert.crt";
+    a.target = "_blank";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  });
+
+  // 檢查 HTTPS 是否受信任：以 iframe 嘗試載入 443 連線
+  async function checkCertTrust() {
+    return new Promise((resolve) => {
+      const testFrame = document.createElement("iframe");
+      testFrame.src = checkURL;
+      testFrame.style.display = "none";
+      document.body.appendChild(testFrame);
+
+      const timer = setTimeout(() => {
+        document.body.removeChild(testFrame);
+        resolve(false); // 超時視為不信任
+      }, 5000);
+
+      testFrame.onload = () => {
+        clearTimeout(timer);
+        document.body.removeChild(testFrame);
+        resolve(true); // 成功載入 → 可信任
+      };
+
+      testFrame.onerror = () => {
+        clearTimeout(timer);
+        document.body.removeChild(testFrame);
+        resolve(false);
+      };
+    });
+  }
+
+  (async () => {
+    const trusted = await checkCertTrust();
+    if (trusted) {
+      btn.style.display = "none";
+      status.textContent = "✅ 憑證已安裝且連線安全。";
+      status.innerHTML = `
+        ⚠️ 請下載並安裝 <b><a href="https://140.116.239.233:444/mycert.crt" target="_blank"> mycert.crt </a></b> 。下載後點選「右鍵」 → 「安裝憑證」→ 「本機電腦」→ 「將所有憑證放入下列存放區」→ 「受信任的根憑證授權單位」→ 按「確定」→「下一步」→「完成」。完成後重開瀏覽器再訪問本網站。
+      `;
+
+    ;
+    } else {
+      status.innerHTML = `
+        ⚠️ 請下載並安裝 <b><a href="https://140.116.239.233:444/mycert.crt" target="_blank"> mycert.crt </a></b> 至「受信任的根憑證授權單位」。完成後重開瀏覽器再訪問 <a href="https://140.116.239.233:444/" target="_blank">https://140.116.239.233:444/</a>。
+      `;
+    }
+  })();
+})();
+</script>
 </body>
 </html>
