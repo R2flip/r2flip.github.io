@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YuLab 投稿追蹤系統</title>
+  <style>
+    html, body { height: 100%; margin: 0; }
+
+    .wrap { position: fixed; inset: 0; display: grid; grid-template-rows: auto 1fr; }
+    header {
+      padding: 8px 12px;
+      font: 14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans TC","PingFang TC","Microsoft JhengHei",Arial;
+      background: #f7f7f7; border-bottom: 1px solid #e5e5e5;
+      display: flex; align-items: center; gap: 8px;
+    }
+    header b { font-weight: 600; }
+    #openBtn { padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px; background: #fff; cursor: pointer; }
+    #status { color: #666; }
+    iframe { width: 100%; height: 100%; border: 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+
+    </header>
+
+    <!-- Google Apps Script -->
+    <iframe id="gasFrame"
+      src="https://script.google.com/macros/s/AKfycbyM2NPp7Vz-vM7lF3f2hh92zRfEvQHIiGxS5G4uWThOJEr_x6MVUJGNM8yNhPSMhgybqw/exec"
+      loading="eager"
+      allow="fullscreen"
+      referrerpolicy="no-referrer">
+    </iframe>
+  </div>
+
+<script>
+(function() {
+  const certURL = "https://140.116.239.233:444/mycert.crt";
+  const checkURL = "https://140.116.239.233:444/test.html"; // 伺服器可提供一個簡單頁面
+  const btn = document.getElementById("openBtn");
+  const status = document.getElementById("status");
+
+  // 下載憑證
+  btn.addEventListener("click", () => {
+    const a = document.createElement("a");
+    a.href = certURL;
+    a.download = "mycert.crt";
+    a.target = "_blank";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  });
+
+  // 檢查 HTTPS 是否受信任：以 iframe 嘗試載入 443 連線
+  async function checkCertTrust() {
+    return new Promise((resolve) => {
+      const testFrame = document.createElement("iframe");
+      testFrame.src = checkURL;
+      testFrame.style.display = "none";
+      document.body.appendChild(testFrame);
+
+      const timer = setTimeout(() => {
+        document.body.removeChild(testFrame);
+        resolve(false); // 超時視為不信任
+      }, 5000);
+
+      testFrame.onload = () => {
+        clearTimeout(timer);
+        document.body.removeChild(testFrame);
+        resolve(true); // 成功載入 → 可信任
+      };
+
+      testFrame.onerror = () => {
+        clearTimeout(timer);
+        document.body.removeChild(testFrame);
+        resolve(false);
+      };
+    });
+  }
+
+  (async () => {
+    const trusted = await checkCertTrust();
+    if (trusted) {
+      btn.style.display = "none";
+      status.textContent = "✅ 憑證已安裝且連線安全。";
+      status.innerHTML = `
+        ⚠️ 請下載並安裝 <b><a href="https://140.116.239.233:444/mycert.crt" target="_blank"> mycert.crt </a></b> 。下載後點選「右鍵」 → 「安裝憑證」→ 「本機電腦」→ 「將所有憑證放入下列存放區」→ 「受信任的根憑證授權單位」→ 按「確定」→「下一步」→「完成」。完成後重開瀏覽器再訪問本網站。
+      `;
+
+    ;
+    } else {
+      status.innerHTML = `
+        ⚠️ 請下載並安裝 <b><a href="https://140.116.239.233:444/mycert.crt" target="_blank"> mycert.crt </a></b> 至「受信任的根憑證授權單位」。完成後重開瀏覽器再訪問 <a href="https://140.116.239.233:444/" target="_blank">https://140.116.239.233:444/</a>。
+      `;
+    }
+  })();
+})();
+</script>
+</body>
+</html>
